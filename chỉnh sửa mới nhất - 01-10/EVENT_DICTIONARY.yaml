@@ -1,4 +1,4 @@
-version: "1.0.1"
+version: "1.0.2"
 namespace: "https://example.org/wfkg/v1#"
 cutoff_timezone: "Asia/Ho_Chi_Minh"
 identity_policy:
@@ -72,7 +72,8 @@ entries:
     expected_direction: [POSITIVE, NEGATIVE, NEUTRAL, UNKNOWN]
     positive_examples: ["chưa có đàm phán cụ thể"]
     negative_examples: ["bài chỉ lặp lại tin cũ không có thông tin mới"]
-    confusable_cases: [M_AND_A_RUMOR, updates]
+    confusable_cases: [M_AND_A_RUMOR]
+    confusable_relations: [updates]
   - eventType: M_AND_A_COMPLETION
     description: "M&A hoặc giao dịch mua bán đã được xác nhận hoàn tất."
     required_roles: [buyer, target, completion_action, occurrence_id]
@@ -112,7 +113,8 @@ entries:
     expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
     positive_examples: ["bổ nhiệm tổng giám đốc"]
     negative_examples: ["tin đồn nhân sự không xác nhận"]
-    confusable_cases: [LEGAL_INVESTIGATION, updates]
+    confusable_cases: [LEGAL_INVESTIGATION]
+    confusable_relations: [updates]
   - eventType: CAPITAL_RAISE
     description: "Phát hành cổ phiếu, trái phiếu hoặc huy động vốn."
     required_roles: [company, capital_action, occurrence_id]

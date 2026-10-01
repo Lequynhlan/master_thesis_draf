@@ -1,6 +1,6 @@
 # SCORING_SPEC.md
 
-Version: 1.0.1
+Version: 1.0.2
 Namespace: `https://example.org/wfkg/v1#`
 
 ## 1. Candidate-time score
@@ -48,15 +48,19 @@ If new Evidence arrives after the cutoff, it creates a new snapshot/Candidate ve
 
 ## 2. Reaction-time score
 
-After all observations for the configured event window, including the preceding `t-1` observation for the first return, are available:
+After all observations for the configured event window are available, including the exchange session immediately before the first in-window session:
 
 ```text
 R(i,t) = adjustedClose(i,t) / adjustedClose(i,t-1) - 1
 AR(i,t) = R(i,t) - R(m,t)
-CAR(i,[a,b]) = sum(AR(i,t) for trading days t in [a,b])
+CAR(i,[a,b]) = sum(AR(i,t) for trading sessions t in [a,b])
 impactScore = min(1, abs(CAR) / tau)
 reactionWeight = impactScore * confidenceScore * relationStrength
 ```
+
+`adjustedClose` is the source of truth for both the stock and benchmark. `returnValue` may be stored as a cache, but it must be recomputed from consecutive adjusted closes and must agree within absolute tolerance `1e-9`; it is not sufficient provenance by itself. For offsets `[a,b]`, the Reaction links the selected observations for sessions `t_(a-1), t_a, ..., t_b`, one per asset per session, and the stock/index date sets must match. Each linked observation must belong to the Candidate's stock or the Reaction's benchmark, respectively.
+
+Every supported baseline window includes offset `0`. The single `abnormalReturn` field on `EventStockReaction` means `AR(i,0)`; `cumulativeAbnormalReturn` means the sum of daily AR values over the entire inclusive window `[a,b]`. Thus multi-day CAR is independently reproducible even though daily ARs are not separately materialized as RDF nodes. SHACL checks the daily return arithmetic for the window sessions and the CAR sum; a calendar-aware validator checks that the linked dates are precisely the sessions required by the frozen exchange calendar.
 
 The baseline uses `tau=0.10` and `epsilon=0`. `signedWeight` is `reactionWeight` multiplied by `+1`, `-1`, or `0` according to CAR relative to epsilon.
 

@@ -1,6 +1,6 @@
 # ANNOTATION_GUIDELINE.md
 
-Version: 1.0.1
+Version: 1.0.2
 
 ## Annotation units
 
@@ -35,9 +35,16 @@ Each annotation is tied to `articleId`, text offsets, annotator id, guideline ve
 - Follow dictionary `identity_policy` including optional-key missing rules and original `occurrence_id`. `positive_examples`/`negative_examples` mean examples/non-examples of the event type, not positive/negative market direction. Out-of-scope confusables are review labels only, not additional ontology classes.
 - Substantive updates/clarifications keep different Event URIs and link newer to older. Duplicate coverage alone joins a cluster; a relation link never merges it. Directed relation labels may be multi-label when the evidence independently supports e.g. both clarifies and contradicts; NONE applies only when no relation is supported.
 
-## Independent double-labeling
+## Independent double-labeling and agreement
 
-At least 25% of the gold set is labeled independently by two annotators. Agreement is reported separately for Evidence span overlap, event type macro-F1, entity-link exact match, relation type accuracy and Event–Stock relevance weighted kappa. Disagreements are adjudicated by a third reviewer; the adjudicated label becomes the final gold label and the original labels remain in the audit file.
+At least 25% of the gold set is labeled independently by two annotators. Compute agreement before adjudication, report support and confusion tables, then adjudicate disagreements with a third reviewer. Preserve both original labels and the adjudicated label in the audit file.
+
+- Evidence spans use half-open character offsets `[start,end)`. For each article, compare the union of covered character positions and report micro precision, recall and F1; also report exact-boundary span-match F1.
+- Event type and expected direction are nominal labels: report Cohen's kappa, raw agreement and confusion matrices. Event type macro-F1 is also reported to expose class imbalance.
+- Entity links report exact match by role. Duplicate canonicalization reports pairwise precision/recall/F1 on unordered mention pairs, plus false-merge and missed-merge counts.
+- Event relations are multi-label over a frozen ordered Event-pair universe. Score each relation independently as one-vs-rest and report per-label precision/recall/F1, micro/macro-F1 and exact-set accuracy; `NONE` is exclusive. Use the same universe, including sampled negative pairs, for both annotators.
+- Event–Stock relevance uses quadratic weighted Cohen's kappa on resolved ordinal labels 0/1/2, with weight `w(i,j)=1-((i-j)/2)^2`. Report agreement on `RESOLVED`/`UNRESOLVED` separately; never convert `UNRESOLVED` to 0. Report relevance agreement by impactType as well as overall.
+- If kappa is undefined because a label has no variation, report `N/A`, the raw agreement and the full label distribution; do not replace it with zero.
 
 ## Quality gates
 

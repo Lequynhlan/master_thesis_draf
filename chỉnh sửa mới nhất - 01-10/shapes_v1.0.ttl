@@ -1,7 +1,21 @@
+# SHACL contract version: 1.0.2
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix wfkg: <https://example.org/wfkg/v1#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+wfkg:TimezoneAwareDateTimeShape a sh:NodeShape ;
+    sh:targetSubjectsOf wfkg:availableAt, wfkg:publishedAt, wfkg:inferenceCutoff, wfkg:generatedAt, wfkg:occurredAt ;
+    sh:sparql [ sh:message "Các timestamp phải có múi giờ rõ ràng (Z hoặc ±HH:MM)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this ?predicate ?timestamp .
+              FILTER (?predicate IN (wfkg:availableAt, wfkg:publishedAt, wfkg:inferenceCutoff, wfkg:generatedAt, wfkg:occurredAt))
+              FILTER (DATATYPE(?timestamp) = xsd:dateTime)
+              FILTER (!REGEX(STR(?timestamp), "(Z|[+-][0-9]{2}:[0-9]{2})$"))
+            }
+        """ ] .
 
 wfkg:BankShape a sh:NodeShape ;
     sh:property [ sh:class wfkg:IndustryExposure ;
@@ -147,20 +161,21 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path wfkg:candidateStock ],
         [ sh:datatype xsd:string ;
-            sh:in ( "DIRECT" "INDIRECT_INDUSTRY" "INDIRECT_SUBSIDIARY" "INDIRECT_LEADERSHIP" ) ;
+            sh:in ( "DIRECT"^^xsd:string "INDIRECT_INDUSTRY"^^xsd:string "INDIRECT_SUBSIDIARY"^^xsd:string "INDIRECT_LEADERSHIP"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:impactType ],
         [ sh:datatype xsd:string ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path wfkg:relationPath ],
+                    sh:in ( "DIRECT"^^xsd:string "INDIRECT_INDUSTRY"^^xsd:string "INDIRECT_SUBSIDIARY"^^xsd:string "INDIRECT_LEADERSHIP"^^xsd:string ) ;
+                    sh:maxCount 1 ;
+                    sh:minCount 1 ;
+                    sh:path wfkg:relationPath ],
         [ sh:datatype xsd:string ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:candidateReason ],
         [ sh:datatype xsd:string ;
-            sh:in ( "POSITIVE" "NEGATIVE" "NEUTRAL" "UNKNOWN" ) ;
+            sh:in ( "POSITIVE"^^xsd:string "NEGATIVE"^^xsd:string "NEUTRAL"^^xsd:string "UNKNOWN"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:expectedDirection ],
@@ -182,7 +197,7 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
         [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:relationConfidence ],
         [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:candidateScore ],
         [ sh:datatype xsd:string ;
-            sh:in ( "GENERATED" "VALIDATED" "REJECTED" "PENDING_MARKET_WINDOW" "REACTION_READY" ) ;
+            sh:in ( "GENERATED"^^xsd:string "VALIDATED"^^xsd:string "REJECTED"^^xsd:string "PENDING_MARKET_WINDOW"^^xsd:string "REACTION_READY"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:candidateStatus ],
@@ -237,6 +252,68 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
               FILTER (?status != "REACTION_READY")\r
             }\r
         """ ] ;
+    sh:sparql [ sh:message "relationPath phải trùng với impactType trong baseline."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:impactType ?impact ; wfkg:relationPath ?path .
+              FILTER (?impact != ?path)
+            }
+        """ ],
+        [ sh:message "Phase 1 baseline cố định sourceConfidence=0.5."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:sourceConfidence ?source .
+              FILTER (?source != 0.5)
+            }
+        """ ],
+        [ sh:message "DIRECT Candidate phải có đường Event → Company → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "DIRECT"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesCompany ?company .
+                ?company wfkg:hasStock ?stock .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_INDUSTRY Candidate phải có đường Event → Industry ← IndustryExposure ← Bank → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_INDUSTRY"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:relatedToIndustry ?industry .
+                ?bank wfkg:hasIndustryExposure ?exposure ; wfkg:hasStock ?stock .
+                ?exposure wfkg:exposureBank ?bank ; wfkg:exposureIndustry ?industry .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_SUBSIDIARY Candidate phải nối công ty con với parent sở hữu cổ phiếu."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_SUBSIDIARY"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesCompany ?subsidiary .
+                ?parent wfkg:hasSubsidiaryRelation ?relation ; wfkg:hasStock ?stock .
+                ?relation wfkg:subsidiaryCompany ?subsidiary ; wfkg:parentCompany ?parent .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_LEADERSHIP Candidate phải có đường Event → Leader → Position → Company → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_LEADERSHIP"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesLeader ?leader .
+                ?leader wfkg:hasLeadershipPosition ?position .
+                ?position wfkg:positionHolder ?leader ; wfkg:positionAtCompany ?company .
+                ?company wfkg:hasStock ?stock .
+              }
+            }
+        """ ] ;
     sh:targetClass wfkg:EventStockCandidate .
 
 wfkg:EventStockReactionShape a sh:NodeShape ;
@@ -275,7 +352,7 @@ wfkg:EventStockReactionShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path wfkg:cumulativeAbnormalReturn ],
         [ sh:datatype xsd:string ;
-            sh:in ( "POSITIVE" "NEGATIVE" "NEUTRAL" ) ;
+            sh:in ( "POSITIVE"^^xsd:string "NEGATIVE"^^xsd:string "NEUTRAL"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:marketReactionDirection ],
@@ -305,7 +382,131 @@ wfkg:EventStockReactionShape a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:availableAt ] ;
-    sh:sparql [ sh:message "windowEndOffset phải lớn hơn hoặc bằng windowStartOffset."@vi ;
+    sh:sparql [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho cổ phiếu (gồm predecessor)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end ;
+                    wfkg:derivedFromObservation ?obs .
+              ?obs wfkg:tradingDate ?date .
+            }
+            GROUP BY $this ?start ?end
+            HAVING (COUNT(DISTINCT ?date) != (?end - ?start + 2))
+        """ ],
+        [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho benchmark (gồm predecessor)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end ;
+                    wfkg:derivedFromIndexObservation ?obs .
+              ?obs wfkg:tradingDate ?date .
+            }
+            GROUP BY $this ?start ?end
+            HAVING (COUNT(DISTINCT ?date) != (?end - ?start + 2))
+        """ ],
+        [ sh:message "Stock và benchmark observations phải có cùng tập tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              { $this wfkg:derivedFromObservation ?stockObs .
+                ?stockObs wfkg:tradingDate ?date .
+                FILTER NOT EXISTS {
+                  $this wfkg:derivedFromIndexObservation ?indexObs .
+                  ?indexObs wfkg:tradingDate ?date .
+                }
+              }
+              UNION
+              { $this wfkg:derivedFromIndexObservation ?indexObs .
+                ?indexObs wfkg:tradingDate ?date .
+                FILTER NOT EXISTS {
+                  $this wfkg:derivedFromObservation ?stockObs .
+                  ?stockObs wfkg:tradingDate ?date .
+                }
+              }
+            }
+        """ ],
+        [ sh:message "Mỗi stock observation phải thuộc candidateStock."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate ; wfkg:derivedFromObservation ?obs .
+              ?candidate wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS { ?stock wfkg:hasMarketObservation ?obs . }
+            }
+        """ ],
+        [ sh:message "Mỗi index observation phải thuộc benchmarkIndex."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:benchmarkIndex ?index ; wfkg:derivedFromIndexObservation ?obs .
+              FILTER NOT EXISTS { ?index wfkg:hasIndexObservation ?obs . }
+            }
+        """ ],
+        [ sh:message "Reaction không được có nhiều stock observations cùng tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromObservation ?obs1, ?obs2 .
+              FILTER (?obs1 != ?obs2)
+              ?obs1 wfkg:tradingDate ?date .
+              ?obs2 wfkg:tradingDate ?date .
+            }
+        """ ],
+        [ sh:message "Reaction không được có nhiều benchmark observations cùng tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromIndexObservation ?obs1, ?obs2 .
+              FILTER (?obs1 != ?obs2)
+              ?obs1 wfkg:tradingDate ?date .
+              ?obs2 wfkg:tradingDate ?date .
+            }
+        """ ],
+        [ sh:message "Các event window baseline phải chứa offset 0."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end .
+              FILTER (?start > 0 || ?end < 0)
+            }
+        """ ],
+        [ sh:message "Reaction phải có cặp stock/index observation tại effectiveTradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate .
+              ?candidate wfkg:forEvent ?event .
+              ?event wfkg:effectiveTradingDate ?date .
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromObservation ?stockObs ;
+                      wfkg:derivedFromIndexObservation ?indexObs .
+                ?stockObs wfkg:tradingDate ?date .
+                ?indexObs wfkg:tradingDate ?date .
+              }
+            }
+        """ ],
+        [ sh:message "Daily stock returnValue phải khớp tỷ suất tính từ adjustedClose của session trước."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromObservation ?current, ?previous .
+              ?current wfkg:tradingDate ?date ; wfkg:adjustedClose ?close ; wfkg:returnValue ?return .
+              ?previous wfkg:tradingDate ?previousDate ; wfkg:adjustedClose ?previousClose .
+              FILTER (?previousDate < ?date)
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromObservation ?nearer .
+                ?nearer wfkg:tradingDate ?nearerDate .
+                FILTER (?nearerDate > ?previousDate && ?nearerDate < ?date)
+              }
+              FILTER (ABS(?return - ((?close / ?previousClose) - 1)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "Daily benchmark returnValue phải khớp tỷ suất tính từ adjustedClose của session trước."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromIndexObservation ?current, ?previous .
+              ?current wfkg:tradingDate ?date ; wfkg:adjustedClose ?close ; wfkg:returnValue ?return .
+              ?previous wfkg:tradingDate ?previousDate ; wfkg:adjustedClose ?previousClose .
+              FILTER (?previousDate < ?date)
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromIndexObservation ?nearer .
+                ?nearer wfkg:tradingDate ?nearerDate .
+                FILTER (?nearerDate > ?previousDate && ?nearerDate < ?date)
+              }
+              FILTER (ABS(?return - ((?close / ?previousClose) - 1)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "windowEndOffset phải lớn hơn hoặc bằng windowStartOffset."@vi ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE {
               $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end .
@@ -325,11 +526,10 @@ wfkg:EventStockReactionShape a sh:NodeShape ;
                 ?o wfkg:availableAt ?input . FILTER (?ready < ?input) }
             }
         """ ],
-        [ sh:message "For a single-day [0,0] window, AR must match the paired stock and benchmark returns."@en ;
+        [ sh:message "abnormalReturn must equal AR at the Event effectiveTradingDate (offset 0)."@en ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE {
-              $this wfkg:windowStartOffset 0 ; wfkg:windowEndOffset 0 ;
-                    wfkg:abnormalReturn ?ar ; wfkg:onCandidate ?candidate ;
+              $this wfkg:abnormalReturn ?ar ; wfkg:onCandidate ?candidate ;
                     wfkg:derivedFromObservation ?stockObs ;
                     wfkg:derivedFromIndexObservation ?indexObs .
               ?candidate wfkg:forEvent ?event .
@@ -339,12 +539,29 @@ wfkg:EventStockReactionShape a sh:NodeShape ;
               FILTER (ABS(?ar - (?stockReturn - ?indexReturn)) > 0.000000001)
             }
         """ ],
+        [ sh:message "cumulativeAbnormalReturn must equal the sum of daily AR values in the event window."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ;
+                    wfkg:derivedFromObservation ?stockObs ;
+                    wfkg:derivedFromIndexObservation ?indexObs .
+              ?stockObs wfkg:tradingDate ?date ; wfkg:returnValue ?stockReturn .
+              ?indexObs wfkg:tradingDate ?date ; wfkg:returnValue ?indexReturn .
+              FILTER EXISTS {
+                $this wfkg:derivedFromObservation ?priorObs .
+                ?priorObs wfkg:tradingDate ?priorDate .
+                FILTER (?priorDate < ?date)
+              }
+            }
+            GROUP BY $this ?car
+            HAVING (ABS(?car - SUM(?stockReturn - ?indexReturn)) > 0.000000001)
+        """ ],
         [ sh:message "For a [0,0] window, CAR must equal AR."@en ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE {
               $this wfkg:windowStartOffset 0 ; wfkg:windowEndOffset 0 ;
                     wfkg:abnormalReturn ?ar ; wfkg:cumulativeAbnormalReturn ?car .
-              FILTER (?ar != ?car)
+              FILTER (ABS(?ar - ?car) > 0.000000001)
             }
         """ ],
         [ sh:message "Reaction weight must equal impactScore × Candidate confidence × relationStrength."@en ;
@@ -438,7 +655,7 @@ wfkg:FinancialMetricShape a sh:NodeShape ;
             sh:minCount 1 ;
             sh:path wfkg:periodEnd ],
         [ sh:datatype xsd:string ;
-            sh:in ( "DAY" "MONTH" "QUARTER" "HALF_YEAR" "YEAR" "TRAILING_TWELVE_MONTHS" ) ;
+            sh:in ( "DAY"^^xsd:string "MONTH"^^xsd:string "QUARTER"^^xsd:string "HALF_YEAR"^^xsd:string "YEAR"^^xsd:string "TRAILING_TWELVE_MONTHS"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:periodType ],
@@ -523,7 +740,7 @@ wfkg:IndustryExposureShape a sh:NodeShape ;
             sh:minInclusive 0 ;
             sh:path wfkg:relationConfidence ],
         [ sh:datatype xsd:string ;
-            sh:in ( "DAY" "MONTH" "QUARTER" "HALF_YEAR" "YEAR" "TRAILING_TWELVE_MONTHS" ) ;
+            sh:in ( "DAY"^^xsd:string "MONTH"^^xsd:string "QUARTER"^^xsd:string "HALF_YEAR"^^xsd:string "YEAR"^^xsd:string "TRAILING_TWELVE_MONTHS"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:periodType ],

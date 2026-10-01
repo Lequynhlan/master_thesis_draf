@@ -1,6 +1,6 @@
 # EVALUATION_PROTOCOL.md
 
-Version: 1.0.1
+Version: 1.0.2
 
 ## Dataset separation
 
@@ -49,11 +49,17 @@ Compare keyword/co-occurrence, DIRECT-only and the four-path KG on the same Even
 - direct-mention versus non-direct cases;
 - error analysis by path and missing provenance.
 
+### Minimum support and final-set freeze
+
+For each `impactType`, target at least 100 adjudicated positive Event–Stock pairs contributed by at least 30 distinct canonical Events. Estimate the total chronological collection interval from development/validation prevalence, then freeze the interval, target sample, per-type support and split manifest before opening final labels or predictions. Do not top up a deficient stratum after inspecting final results. If either support floor is missed for a type, report that stratum as descriptive only and make no confirmatory per-type claim; always report its actual support and confidence interval. This floor is a minimum reporting gate, not a substitute for inspecting interval width or dependence between pairs from the same Event.
+
 ## RQ3 — weighting and ranking
 
 Compare unweighted score `1` against `candidateScore` at inference cutoff. `reactionWeight` is reported only as post-window descriptive analysis and is never used as a ranking feature for the cutoff evaluation. Report nDCG@5/@10, Precision@K, paired Event-level comparison, component ablations and confidence intervals. Labels are independent of score and CAR.
 
 ## Reproducibility
+
+Freeze the ontology, SHACL shapes, dictionary, annotation guideline, market/calendar inputs and scoring configuration before final evaluation. Retain the immutable input/output manifests, validator logs, validation report and hashes. A final result is reproducible only if the same versioned inputs and calendar/reporting-period selections regenerate the same Candidate and Reaction data.
 
 ## Frozen metric and sampling contract
 
@@ -69,4 +75,4 @@ Compare unweighted score `1` against `candidateScore` at inference cutoff. `reac
 
 ## Run manifest
 
-Every run records ontology version, SHACL version, dictionary version, annotation guideline version, methodVersion, cutoff timezone, market calendar, staleness threshold, tau, epsilon, event windows, random seed, input manifest hash and output hash. Synthetic demo results are structural tests only and are excluded from RQ conclusions.
+Every run records ontology version, SHACL version, dictionary version, annotation guideline version, methodVersion, cutoff timezone, market calendar, staleness threshold, tau, epsilon, event windows, random seed, input manifest hash and output hash. For AR/CAR reproducibility, also record the market-data provider and dataset/snapshot ID or hash, adjusted-price/corporate-action adjustment convention and version, exchange, calendar ID/version/hash, benchmarkIndex URI, and reaction-validator version. For `IndustryExposure`, record `periodType` (baseline `YEAR`) and reporting scope (`consolidated` or `standalone`). Record the final chronological interval, target sample size, minimum support by `impactType`, and actual per-type support. Store validation totals and failures for observation ownership, date coverage/pairing, daily return recomputation, AR and CAR recomputation. A run with a missing or mismatched required session is invalid, not a partial-window result. Synthetic demo results are structural tests only and are excluded from RQ conclusions.

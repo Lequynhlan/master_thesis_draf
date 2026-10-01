@@ -1,5 +1,7 @@
 # EVENT_SCHEMA.md
 
+Version: 1.0.2
+
 ## Canonical namespace
 
 `wfkg: = https://example.org/wfkg/v1#`
@@ -25,6 +27,17 @@ NewsArticle -> Evidence -> Event -> EventStockCandidate -> Market observations -
 - `Reaction derivedFromObservation MarketObservation`: `1..*`.
 - `Reaction derivedFromIndexObservation MarketIndexObservation`: `1..*`.
 
+## Baseline impactType and relationPath contract
+
+`relationPath` is a stable route code and must equal `impactType` in the Phase 1 baseline. Allowed pairs are `DIRECT`, `INDIRECT_INDUSTRY`, `INDIRECT_SUBSIDIARY` and `INDIRECT_LEADERSHIP`. Their graph paths are:
+
+- `DIRECT`: `Event → Company → Stock`.
+- `INDIRECT_INDUSTRY`: `Event → Industry ← IndustryExposure ← Bank → Stock`; this path creates candidates only for a Bank with a selected eligible exposure, not every stock in the industry.
+- `INDIRECT_SUBSIDIARY`: `Event → subsidiary Company`; a `SubsidiaryRelation` must identify that subsidiary and a parent Company, and the parent must own the Candidate Stock.
+- `INDIRECT_LEADERSHIP`: `Event → CorporateLeader → LeadershipPosition → Company → Stock`.
+
+SHACL 1.0.2 checks the route code and required graph links. The curated inference gate must additionally apply cutoff availability and validity rules to route facts; for `IndustryExposure`, it must use the frozen reporting-period selection below. Phase 1 `sourceConfidence` remains fixed at `0.5`; changing that baseline requires a new method/shape version.
+
 ## Scoring timing
 
 ```text
@@ -33,6 +46,16 @@ reactionWeight = impactScore * confidenceScore * relationStrength
 ```
 
 `candidateScore` is allowed at `inferenceCutoff`. `reactionWeight` is allowed only after the complete event window and all required observations are available. The canonical property is `reactionWeight`; the legacy bare property `weight` is not part of v1.0.
+
+## AR/CAR source and provenance contract (1.0.2)
+
+- `adjustedClose` is the authoritative input for both `MarketObservation` and `MarketIndexObservation`; each value must be positive and retain its `sourceReference`. `returnValue` is a derived/cache field, never the sole source for recomputing a reaction.
+- Window offsets are exchange-session offsets relative to `Event.effectiveTradingDate` (`t0`). For a window `[a,b]`, the Reaction must link one Stock observation and one benchmark observation for every session `t_(a-1), t_a, ..., t_b`. The predecessor `t_(a-1)` supplies the denominator for the first in-window return.
+- Linked Stock observations must belong to `Candidate.candidateStock`; linked index observations must belong to `Reaction.benchmarkIndex`. The two sets must have the same unique `tradingDate` values, with exactly one selected observation per asset and session.
+- All supported windows contain offset `0`. `EventStockReaction.abnormalReturn` stores `AR(i,0)`; `cumulativeAbnormalReturn` stores `sum(AR(i,t), t=a..b)`. Each daily AR is recomputed from adjusted closes, not copied from a cached return.
+- For each in-window session `t`, recompute `R(i,t)=adjustedClose(i,t)/adjustedClose(i,t-1)-1` and the corresponding benchmark return from the immediately preceding exchange session, then `AR(i,t)=R(i,t)-R(m,t)`. Validate cached `returnValue`, `abnormalReturn`, and `cumulativeAbnormalReturn` against these recomputations with absolute tolerance `1e-9`.
+- SHACL validates observation ownership, date pairing, unique-date counts, required positive adjusted closes, daily return arithmetic, and the CAR sum. A calendar-aware validator must additionally compare the linked dates with the exact session sequence from the frozen exchange calendar; SHACL alone cannot infer holidays or session offsets from dates.
+- The run manifest records market-data provider/dataset snapshot, adjusted-price and corporate-action adjustment convention, benchmark URI, exchange, and calendar identifier/version/hash so the close series can be reproduced.
 
 ## Phase 1 source baseline
 
@@ -49,12 +72,12 @@ evaluation retrospectively.
 
 - `availableAt <= inferenceCutoff` for Candidate inputs.
 - `effectiveTradingDate` uses the availability/calendar rule below, not the repost's publication day.
-- `MarketIndexObservation` must contain `adjustedClose` sufficient to recompute benchmark returns. The generic `adjustedClose` OWL property is domain-neutral, while SHACL constrains it separately for stock and index observations.
-- Reaction provenance includes every observation in the window and the `t-1` observation needed for the first return.
+- Both `MarketObservation` and `MarketIndexObservation` require positive `adjustedClose`, `returnValue`, `availableAt` and `sourceReference`; only `adjustedClose` is authoritative for recomputation. See the AR/CAR contract above.
+- Reaction provenance contains exactly the predecessor session plus every session in the configured event window for both the Candidate stock and benchmark; the calendar-aware validator checks the exact session dates.
 - `LeadershipPosition`, `SubsidiaryRelation`, `IndexMembership`: `validFrom` required, `validTo` optional. Eligibility is `availableAt <= cutoff AND validFrom <= date(cutoff) AND (validTo absent OR date(cutoff) <= validTo)`; dates are inclusive. Missing start is ineligible, not an unbounded tenure.
 - `IndustryExposure` uses reporting-period selection below; `validFrom`/`validTo` are optional metadata, not the baseline eligibility filter.
 
-## Frozen cutoff and daily calendar contract (1.0.1)
+## Frozen cutoff and daily calendar contract (1.0.2)
 
 - Use timezone-aware instants; compare instants in UTC and derive dates in `Asia/Ho_Chi_Minh`. A naive timestamp is rejected. Equality at cutoff is eligible (`<=`).
 - Event availability is the earliest supporting Evidence availability; Evidence availability must be no earlier than both its Article's `publishedAt` and actual first system availability. Do not invent crawler latency. Missing acquisition timestamps require a declared publication-time proxy dataset, not a claim of observed historical availability.

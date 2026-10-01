@@ -4,9 +4,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.org/wfkg/v1> a owl:Ontology ;
-    rdfs:label "Vietnamese Weighted Financial Knowledge Graph Ontology v1.0"@en ;
+    rdfs:label "Vietnamese Weighted Financial Knowledge Graph Ontology v1.0.2"@en ;
     rdfs:comment "Ontology cho sự kiện tài chính tiếng Việt, sinh ứng viên Event–Stock và đo phản ứng thị trường. Candidate là quan hệ suy ra; Reaction là kết quả chỉ được tạo khi đủ dữ liệu thị trường và benchmark. Không khẳng định quan hệ nhân quả."@vi ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "1.0.2" .
 
 wfkg:abnormalReturn a owl:DatatypeProperty ;
     rdfs:domain wfkg:EventStockReaction ;
