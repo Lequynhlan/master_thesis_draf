@@ -1,0 +1,606 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix wfkg: <https://example.org/wfkg/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/wfkg/v1> a owl:Ontology ;
+    rdfs:label "Vietnamese Weighted Financial Knowledge Graph Ontology v1.0"@en ;
+    rdfs:comment "Ontology cho sự kiện tài chính tiếng Việt, sinh ứng viên Event–Stock và đo phản ứng thị trường. Candidate là quan hệ suy ra; Reaction là kết quả chỉ được tạo khi đủ dữ liệu thị trường và benchmark. Không khẳng định quan hệ nhân quả."@vi ;
+    owl:versionInfo "1.0.0" .
+
+wfkg:abnormalReturn a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:decimal .
+
+wfkg:adjustedClose a owl:DatatypeProperty ;
+    rdfs:range xsd:decimal .
+
+wfkg:aliasId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:CompanyAlias ;
+    rdfs:range xsd:string .
+
+wfkg:aliasName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:CompanyAlias ;
+    rdfs:range xsd:string .
+
+wfkg:aliasType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:CompanyAlias ;
+    rdfs:range xsd:string .
+
+wfkg:articleId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsArticle ;
+    rdfs:range xsd:string .
+
+wfkg:availableAt a owl:DatatypeProperty ;
+    rdfs:comment "Thời điểm fact/data trở nên khả dụng cho pipeline; chỉ được dùng khi availableAt không lớn hơn cutoff suy luận."@vi ;
+    rdfs:range xsd:dateTime .
+
+wfkg:belongsToGroup a owl:ObjectProperty ;
+    rdfs:domain wfkg:Industry ;
+    rdfs:range wfkg:IndustryGroup .
+
+wfkg:belongsToIndustry a owl:ObjectProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range wfkg:Industry .
+
+wfkg:benchmarkIndex a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range wfkg:MarketIndex .
+
+wfkg:candidateId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:candidateReason a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:candidateStatus a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:candidateStock a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range wfkg:Stock .
+
+wfkg:canonicalKey a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:string .
+
+wfkg:clarifies a owl:ObjectProperty ;
+    rdfs:label "làm rõ"@vi ;
+    rdfs:subPropertyOf wfkg:relatedEvent .
+
+wfkg:companyId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range xsd:string .
+
+wfkg:companyType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range xsd:string .
+
+wfkg:confidenceScore a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:decimal .
+
+wfkg:contradicts a owl:ObjectProperty,
+        owl:SymmetricProperty ;
+    rdfs:label "mâu thuẫn với"@vi ;
+    rdfs:subPropertyOf wfkg:relatedEvent .
+
+wfkg:cumulativeAbnormalReturn a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:decimal .
+
+wfkg:dataQualityFlag a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:derivedFromIndexObservation a owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range wfkg:MarketIndexObservation .
+
+wfkg:derivedFromObservation a owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range wfkg:MarketObservation .
+
+wfkg:description a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:string .
+
+wfkg:effectiveTradingDate a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:date .
+
+wfkg:endOffset a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range xsd:integer .
+
+wfkg:eventId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:string .
+
+wfkg:eventType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:string .
+
+wfkg:evidenceId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range xsd:string .
+
+wfkg:evidenceText a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range xsd:string .
+
+wfkg:exchange a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Stock ;
+    rdfs:range xsd:string .
+
+wfkg:expectedDirection a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:exposureBank a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:IndustryExposure ;
+    rdfs:range wfkg:Bank .
+
+wfkg:exposureIndustry a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:IndustryExposure ;
+    rdfs:range wfkg:Industry .
+
+wfkg:exposureRatio a owl:DatatypeProperty ;
+    rdfs:domain wfkg:IndustryExposure ;
+    rdfs:range xsd:decimal .
+
+wfkg:exposureStrength a owl:DatatypeProperty ;
+    rdfs:domain wfkg:IndustryExposure ;
+    rdfs:range xsd:decimal .
+
+wfkg:extractedFrom a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "được trích từ"@vi ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range wfkg:NewsArticle .
+
+wfkg:forEvent a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range wfkg:Event ;
+    owl:inverseOf wfkg:hasEventStockCandidate .
+
+wfkg:fullName a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:generatedAt a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:dateTime .
+
+wfkg:hasAlias a owl:ObjectProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range wfkg:CompanyAlias .
+
+wfkg:hasFinancialMetric a owl:ObjectProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range wfkg:FinancialMetric .
+
+wfkg:hasIndexMembership a owl:ObjectProperty ;
+    rdfs:domain wfkg:Stock ;
+    rdfs:range wfkg:IndexMembership .
+
+wfkg:hasIndexObservation a owl:ObjectProperty ;
+    rdfs:domain wfkg:MarketIndex ;
+    rdfs:range wfkg:MarketIndexObservation .
+
+wfkg:hasIndustryExposure a owl:ObjectProperty ;
+    rdfs:domain wfkg:Bank ;
+    rdfs:range wfkg:IndustryExposure .
+
+wfkg:hasLeadershipPosition a owl:ObjectProperty ;
+    rdfs:domain wfkg:CorporateLeader ;
+    rdfs:range wfkg:LeadershipPosition .
+
+wfkg:hasMarketObservation a owl:ObjectProperty ;
+    rdfs:domain wfkg:Stock ;
+    rdfs:range wfkg:MarketObservation .
+
+wfkg:hasStock a owl:ObjectProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range wfkg:Stock .
+
+wfkg:hasSubsidiaryRelation a owl:ObjectProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range wfkg:SubsidiaryRelation .
+
+wfkg:impactScore a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:decimal .
+
+wfkg:impactType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:indexCode a owl:DatatypeProperty ;
+    rdfs:domain wfkg:MarketIndex ;
+    rdfs:range xsd:string .
+
+wfkg:indexId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:MarketIndex ;
+    rdfs:range xsd:string .
+
+wfkg:indexName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:MarketIndex ;
+    rdfs:range xsd:string .
+
+wfkg:industryCode a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Industry ;
+    rdfs:range xsd:string .
+
+wfkg:industryGroupId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:IndustryGroup ;
+    rdfs:range xsd:string .
+
+wfkg:industryGroupName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:IndustryGroup ;
+    rdfs:range xsd:string .
+
+wfkg:industryId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Industry ;
+    rdfs:range xsd:string .
+
+wfkg:industryName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Industry ;
+    rdfs:range xsd:string .
+
+wfkg:inferenceCutoff a owl:DatatypeProperty ;
+    rdfs:comment "Mốc thông tin dùng để sinh Candidate; chỉ dùng fact có availableAt không lớn hơn mốc này."@vi ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:dateTime .
+
+wfkg:involvesCompany a owl:ObjectProperty ;
+    rdfs:label "liên quan doanh nghiệp"@vi ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:Company ;
+    rdfs:subPropertyOf wfkg:involves .
+
+wfkg:involvesLeader a owl:ObjectProperty ;
+    rdfs:label "liên quan lãnh đạo"@vi ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:CorporateLeader ;
+    rdfs:subPropertyOf wfkg:involves .
+
+wfkg:issuedBy a owl:ObjectProperty ;
+    rdfs:label "được ban hành bởi"@vi ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:GovernmentOrganization .
+
+wfkg:marketReactionDirection a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:string .
+
+wfkg:memberIndex a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:IndexMembership ;
+    rdfs:range wfkg:MarketIndex .
+
+wfkg:memberStock a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:IndexMembership ;
+    rdfs:range wfkg:Stock .
+
+wfkg:methodVersion a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:metricId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:FinancialMetric ;
+    rdfs:range xsd:string .
+
+wfkg:metricType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:FinancialMetric ;
+    rdfs:range xsd:string .
+
+wfkg:metricValue a owl:DatatypeProperty ;
+    rdfs:domain wfkg:FinancialMetric ;
+    rdfs:range xsd:decimal .
+
+wfkg:observationId a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:occurredAt a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:dateTime .
+
+wfkg:onCandidate a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range wfkg:EventStockCandidate ;
+    owl:inverseOf wfkg:hasReaction .
+
+wfkg:organizationId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:GovernmentOrganization ;
+    rdfs:range xsd:string .
+
+wfkg:organizationName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:GovernmentOrganization ;
+    rdfs:range xsd:string .
+
+wfkg:parentCompany a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:SubsidiaryRelation ;
+    rdfs:range wfkg:Company .
+
+wfkg:periodEnd a owl:DatatypeProperty ;
+    rdfs:range xsd:date .
+
+wfkg:periodStart a owl:DatatypeProperty ;
+    rdfs:range xsd:date .
+
+wfkg:periodType a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:personId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:CorporateLeader ;
+    rdfs:range xsd:string .
+
+wfkg:positionAtCompany a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:LeadershipPosition ;
+    rdfs:range wfkg:Company .
+
+wfkg:positionHolder a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:LeadershipPosition ;
+    rdfs:range wfkg:CorporateLeader .
+
+wfkg:positionTitle a owl:DatatypeProperty ;
+    rdfs:domain wfkg:LeadershipPosition ;
+    rdfs:range xsd:string .
+
+wfkg:publishedAt a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsArticle ;
+    rdfs:range xsd:dateTime .
+
+wfkg:publishedBy a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "được xuất bản bởi"@vi ;
+    rdfs:domain wfkg:NewsArticle ;
+    rdfs:range wfkg:NewsSource .
+
+wfkg:reactionId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:string .
+
+wfkg:referencesMetric a owl:ObjectProperty ;
+    rdfs:label "tham chiếu chỉ tiêu"@vi ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:FinancialMetric .
+
+wfkg:relatedToIndustry a owl:ObjectProperty ;
+    rdfs:label "liên quan ngành"@vi ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:Industry .
+
+wfkg:relationConfidence a owl:DatatypeProperty ;
+    rdfs:comment "Độ tin cậy của relation/path; domain-neutral trong OWL và được ràng buộc theo từng class bằng SHACL."@vi ;
+    rdfs:range xsd:decimal .
+
+wfkg:relationPath a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:string .
+
+wfkg:relationStrength a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:decimal .
+
+wfkg:reliabilityScore a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsSource ;
+    rdfs:range xsd:decimal .
+
+wfkg:reportedCategory a owl:DatatypeProperty ;
+    rdfs:domain wfkg:IndustryExposure ;
+    rdfs:range xsd:string .
+
+wfkg:reports a owl:ObjectProperty ;
+    rdfs:label "đưa tin về"@vi ;
+    rdfs:domain wfkg:NewsArticle ;
+    rdfs:range wfkg:Event .
+
+wfkg:returnValue a owl:DatatypeProperty ;
+    rdfs:range xsd:decimal .
+
+wfkg:severityScore a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range xsd:decimal .
+
+wfkg:shortName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Company ;
+    rdfs:range xsd:string .
+
+wfkg:signedWeight a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:decimal .
+
+wfkg:sourceId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsSource ;
+    rdfs:range xsd:string .
+
+wfkg:sourceName a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsSource ;
+    rdfs:range xsd:string .
+
+wfkg:sourceReference a owl:ObjectProperty .
+
+wfkg:sourceType a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsSource ;
+    rdfs:range xsd:string .
+
+wfkg:startOffset a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range xsd:integer .
+
+wfkg:stockId a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Stock ;
+    rdfs:range xsd:string .
+
+wfkg:subsidiaryCompany a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:domain wfkg:SubsidiaryRelation ;
+    rdfs:range wfkg:Company .
+
+wfkg:supersedes a owl:ObjectProperty ;
+    rdfs:label "thay thế"@vi ;
+    rdfs:subPropertyOf wfkg:relatedEvent .
+
+wfkg:supports a owl:ObjectProperty ;
+    rdfs:label "hỗ trợ"@vi ;
+    rdfs:domain wfkg:Evidence ;
+    rdfs:range wfkg:Event .
+
+wfkg:taxonomyName a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+wfkg:tickerSymbol a owl:DatatypeProperty ;
+    rdfs:domain wfkg:Stock ;
+    rdfs:range xsd:string .
+
+wfkg:title a owl:DatatypeProperty ;
+    rdfs:domain wfkg:NewsArticle ;
+    rdfs:range xsd:string .
+
+wfkg:tradingDate a owl:DatatypeProperty ;
+    rdfs:range xsd:date .
+
+wfkg:unit a owl:DatatypeProperty ;
+    rdfs:domain wfkg:FinancialMetric ;
+    rdfs:range xsd:string .
+
+wfkg:updates a owl:ObjectProperty ;
+    rdfs:label "cập nhật"@vi ;
+    rdfs:subPropertyOf wfkg:relatedEvent .
+
+wfkg:url a owl:ObjectProperty ;
+    rdfs:domain wfkg:NewsArticle .
+
+wfkg:validFrom a owl:DatatypeProperty ;
+    rdfs:range xsd:date .
+
+wfkg:validTo a owl:DatatypeProperty ;
+    rdfs:range xsd:date .
+
+wfkg:volume a owl:DatatypeProperty ;
+    rdfs:domain wfkg:MarketObservation ;
+    rdfs:range xsd:decimal .
+
+
+wfkg:windowEndOffset a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:integer .
+
+wfkg:windowStartOffset a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:integer .
+
+wfkg:hasEventStockCandidate a owl:ObjectProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:EventStockCandidate .
+
+wfkg:hasReaction a owl:ObjectProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range wfkg:EventStockReaction .
+
+wfkg:Bank a owl:Class ;
+    rdfs:label "Ngân hàng"@vi ;
+    rdfs:subClassOf wfkg:Company .
+
+wfkg:MarketIndexObservation a owl:Class ;
+    rdfs:label "Quan sát chỉ số theo phiên"@vi .
+
+wfkg:involves a owl:ObjectProperty ;
+    rdfs:label "liên quan đến"@vi ;
+    rdfs:domain wfkg:Event .
+
+wfkg:GovernmentOrganization a owl:Class ;
+    rdfs:label "Cơ quan nhà nước"@vi .
+
+wfkg:IndexMembership a owl:Class ;
+    rdfs:label "Tư cách thành viên chỉ số theo thời gian"@vi .
+
+wfkg:IndustryGroup a owl:Class ;
+    rdfs:label "Nhóm ngành"@vi .
+
+wfkg:SubsidiaryRelation a owl:Class ;
+    rdfs:label "Quan hệ công ty con theo thời gian"@vi .
+
+wfkg:CompanyAlias a owl:Class ;
+    rdfs:label "Tên gọi khác của doanh nghiệp"@vi .
+
+wfkg:CorporateLeader a owl:Class ;
+    rdfs:label "Lãnh đạo doanh nghiệp"@vi .
+
+wfkg:LeadershipPosition a owl:Class ;
+    rdfs:label "Nhiệm kỳ lãnh đạo"@vi .
+
+wfkg:MarketObservation a owl:Class ;
+    rdfs:label "Quan sát cổ phiếu theo phiên"@vi .
+
+wfkg:relatedEvent a owl:ObjectProperty ;
+    rdfs:domain wfkg:Event ;
+    rdfs:range wfkg:Event .
+
+wfkg:NewsSource a owl:Class ;
+    rdfs:label "Nguồn tin"@vi .
+
+wfkg:Evidence a owl:Class ;
+    rdfs:label "Bằng chứng văn bản"@vi .
+
+wfkg:FinancialMetric a owl:Class ;
+    rdfs:label "Chỉ tiêu tài chính"@vi .
+
+wfkg:IndustryExposure a owl:Class ;
+    rdfs:label "Mức độ tiếp xúc ngành"@vi ;
+    rdfs:comment "Entity nghiệp vụ có kỳ báo cáo, tỷ lệ, nguồn, chất lượng và thời điểm khả dụng; không dùng rdf:Statement."@vi .
+
+wfkg:MarketIndex a owl:Class ;
+    rdfs:label "Chỉ số thị trường"@vi .
+
+wfkg:Industry a owl:Class ;
+    rdfs:label "Ngành"@vi .
+
+wfkg:NewsArticle a owl:Class ;
+    rdfs:label "Bài báo tài chính"@vi .
+
+wfkg:Stock a owl:Class ;
+    rdfs:label "Cổ phiếu"@vi .
+
+wfkg:Company a owl:Class ;
+    rdfs:label "Doanh nghiệp"@vi .
+
+wfkg:EventStockReaction a owl:Class ;
+    rdfs:label "Phản ứng Event–Stock quan sát được"@vi ;
+    rdfs:comment "Kết quả event study cho một Candidate sau khi đủ dữ liệu cổ phiếu, benchmark và event window."@vi .
+
+wfkg:EventStockCandidate a owl:Class ;
+    rdfs:label "Ứng viên Event–Stock"@vi ;
+    rdfs:comment "Cổ phiếu được suy ra là liên quan tới Event qua một relation path; tồn tại trước và độc lập với phản ứng giá quan sát được."@vi .
+
+wfkg:Event a owl:Class ;
+    rdfs:label "Sự kiện tài chính đã canonicalize"@vi ;
+    rdfs:comment "Một sự kiện kinh tế duy nhất có thể được nhiều bài báo đưa tin; một bài báo có thể đưa tin về nhiều Event."@vi .
+# Phase 2 scoring and provenance contract additions.
+# adjustedClose is intentionally domain-neutral. Class-specific constraints
+# are expressed in SHACL for MarketObservation and MarketIndexObservation.
+wfkg:candidateScore a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockCandidate ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "candidateScore = confidenceScore × relationStrength; inference-time only."@en .
+
+wfkg:reactionWeight a owl:DatatypeProperty ;
+    rdfs:domain wfkg:EventStockReaction ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "reactionWeight = impactScore × Candidate.confidenceScore × Candidate.relationStrength; post-window only."@en .
+
+wfkg:sourceConfidence a owl:DatatypeProperty ; rdfs:domain wfkg:EventStockCandidate ; rdfs:range xsd:decimal .
+wfkg:extractionConfidence a owl:DatatypeProperty ; rdfs:domain wfkg:EventStockCandidate ; rdfs:range xsd:decimal .
+wfkg:linkingConfidence a owl:DatatypeProperty ; rdfs:domain wfkg:EventStockCandidate ; rdfs:range xsd:decimal .

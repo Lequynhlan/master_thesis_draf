@@ -1,0 +1,165 @@
+version: "1.0.1"
+namespace: "https://example.org/wfkg/v1#"
+cutoff_timezone: "Asia/Ho_Chi_Minh"
+identity_policy:
+  article_dates_in_key: false
+  missing_required: HOLD_FOR_REVIEW
+  missing_optional_key: MATCH_EXISTING_ELSE_HOLD
+  unresolved_sentinel_allowed: false
+  occurrence_id: "Original decision/filing/transaction/statement identifier, namespaced by issuer; otherwise adjudicated stable business-occurrence identifier from parties, action, subject and original occurrence time. Never article URL, publication date or availableAt. Reprints reuse it; substantive new assertions receive distinct IDs."
+  normalization: "Canonical entity URIs; Unicode NFC; trim/collapse whitespace; dates ISO-8601; escape percent then pipe as %25 and %7C before joining key fields."
+  matching: "Match an existing Event only with positive evidence of the same business occurrence and compatible known roles; missing is not a wildcard. Ambiguous/missing identity stays staging, without a curated canonicalKey."
+  enrichment: "When an optional key value is discovered, keep the canonical Event URI; retain old key as an external alias in the identity registry. Never split solely because a date/role became known."
+  non_merge_relations: [updates, clarifies, contradicts, supersedes]
+out_of_scope_confusables:
+  FORECAST: "Forecast-only claims: review/out of baseline dictionary, not an ontology class."
+  MACRO_INDICATOR: "Macro statistic release: review/out of baseline dictionary, not an ontology class."
+relation_confusables:
+  updates: "A new substantive assertion linked to an older Event; not an eventType and not a duplicate cluster."
+direction_policy:
+  unit: "Event-Stock at cutoff, not Event type alone"
+  fallback: UNKNOWN
+  conflict: UNKNOWN
+  neutral: "Only explicit evidence of no material directional change; never a missing-information default."
+  indirect: "Propagate a sign only with a supported sign-preserving economic channel for this Stock; otherwise UNKNOWN. No CAR, future price or candidateScore input."
+entries:
+  - eventType: M_AND_A_REPORTED_NEGOTIATION
+    description: "Tin được thuật lại về khả năng đàm phán mua/bán cổ phần; chưa đồng nghĩa giao dịch hoàn tất. Chỉ dùng nhãn này khi nguồn hỗ trợ khẳng định đã có đàm phán được báo cáo."
+    required_roles: [company, reported_action, occurrence_id]
+    optional_roles: [reported_counterparty, amount, status]
+    canonical_key: "eventType|company|reported_action|occurrence_id"
+    direction_rule: "UNKNOWN nếu chưa có điều khoản/beneficiary hỗ trợ tác động. Đánh giá riêng từng issuer chỉ khi có lợi ích/chi phí kinh tế được nêu rõ; không suy từ việc có đàm phán."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["nguồn nói đang đàm phán mua cổ phần với điều khoản có lợi rõ cho bên được đánh giá"]
+    negative_examples: ["tin chưa xác nhận, tin đồn đơn thuần hoặc giao dịch chỉ được suy từ bài viết"]
+    confusable_cases: [M_AND_A_RUMOR, M_AND_A_COMPLETION, M_AND_A_RUMOR_CLARIFICATION]
+  - eventType: EARNINGS
+    description: "Công bố hoặc cập nhật kết quả kinh doanh."
+    required_roles: [company, reporting_period, metric, occurrence_id]
+    optional_roles: [evidence, guidance]
+    canonical_key: "eventType|company|reporting_period|metric|occurrence_id"
+    direction_rule: "POSITIVE for improved comparable earnings/profitability; NEGATIVE for deterioration. Require a stated comparable base and a coherent material metric; revenue alone or conflicting metrics => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["doanh thu quý tăng", "lợi nhuận sau thuế giảm"]
+    negative_examples: ["bài tổng hợp không nêu kỳ báo cáo"]
+    confusable_cases: [DIVIDEND, FORECAST]
+  - eventType: DIVIDEND
+    description: "Thông báo cổ tức hoặc ngày chốt quyền."
+    required_roles: [company, dividend_action, occurrence_id]
+    optional_roles: [amount, ex_date, record_date]
+    canonical_key: "eventType|company|dividend_action|record_date|occurrence_id"
+    direction_rule: "POSITIVE for a documented increase vs comparable prior distribution; NEGATIVE for cut/cancellation. Mechanical ex-date adjustment, stock dividend or no comparison => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["chia cổ tức bằng tiền"]
+    negative_examples: ["tin đồn chưa có nguồn"]
+    confusable_cases: [CAPITAL_RAISE, EARNINGS]
+  - eventType: M_AND_A_RUMOR
+    description: "Tin đồn, đề xuất hoặc khả năng M&A chưa hoàn tất."
+    required_roles: [company, transaction_target, rumor_or_proposal, occurrence_id]
+    optional_roles: [transaction_type, amount]
+    canonical_key: "eventType|company|transaction_target|rumor_or_proposal|occurrence_id"
+    direction_rule: "POSITIVE/NEGATIVE only if proposal terms support a material benefit/cost for this Stock's issuer; unpriced rumor or unspecified beneficiary => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["đang xem xét mua lại"]
+    negative_examples: ["giao dịch đã hoàn tất"]
+    confusable_cases: [M_AND_A_COMPLETION, M_AND_A_RUMOR_CLARIFICATION]
+  - eventType: M_AND_A_RUMOR_CLARIFICATION
+    description: "Thông tin làm rõ, phủ nhận hoặc giới hạn một tin M&A."
+    required_roles: [company, clarification_target, clarification_action, occurrence_id]
+    optional_roles: [transaction_target, source_statement]
+    canonical_key: "eventType|company|clarification_target|clarification_action|occurrence_id"
+    direction_rule: "Removing a documented adverse risk => POSITIVE; withdrawing a documented benefit => NEGATIVE; explicit no material change => NEUTRAL; denial alone without a supported channel => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, NEUTRAL, UNKNOWN]
+    positive_examples: ["chưa có đàm phán cụ thể"]
+    negative_examples: ["bài chỉ lặp lại tin cũ không có thông tin mới"]
+    confusable_cases: [M_AND_A_RUMOR, updates]
+  - eventType: M_AND_A_COMPLETION
+    description: "M&A hoặc giao dịch mua bán đã được xác nhận hoàn tất."
+    required_roles: [buyer, target, completion_action, occurrence_id]
+    optional_roles: [amount, completion_date]
+    canonical_key: "eventType|buyer|target|completion_action|completion_date|occurrence_id"
+    direction_rule: "Confirmed favorable consideration/synergies for the evaluated issuer => POSITIVE; documented material overpayment/loss => NEGATIVE; completion status alone => UNKNOWN. Evaluate buyer and target separately."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["hoàn tất mua cổ phần"]
+    negative_examples: ["đang đàm phán"]
+    confusable_cases: [M_AND_A_RUMOR, PARTNERSHIP]
+  - eventType: GOVERNMENT_POLICY
+    description: "Chính sách hoặc quyết định của cơ quan nhà nước tác động tới thị trường/ngành."
+    required_roles: [government_organization, policy_action, occurrence_id]
+    optional_roles: [industry, affected_company, effective_date]
+    canonical_key: "eventType|government_organization|policy_action|effective_date|occurrence_id"
+    direction_rule: "Documented relief/access/subsidy for the issuer => POSITIVE; restriction/cost => NEGATIVE; ambiguous net effect => UNKNOWN. Does not enable a new policy-to-stock baseline path."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["ban hành quy định mới"]
+    negative_examples: ["bình luận không phải chính sách"]
+    confusable_cases: [REGULATORY_ACTION, MACRO_INDICATOR]
+  - eventType: REGULATORY_ACTION
+    description: "Thanh tra, xử phạt, chấp thuận hoặc hành động quản lý cụ thể."
+    required_roles: [regulator, company_or_industry, regulatory_action, occurrence_id]
+    optional_roles: [amount, effective_date]
+    canonical_key: "eventType|regulator|company_or_industry|regulatory_action|occurrence_id"
+    direction_rule: "Material fine/restriction => NEGATIVE; approval removing a documented operational barrier => POSITIVE; administrative action without material channel => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["bị xử phạt", "được chấp thuận"]
+    negative_examples: ["kiến nghị chưa có quyết định"]
+    confusable_cases: [LEGAL_INVESTIGATION, GOVERNMENT_POLICY]
+  - eventType: LEADERSHIP_CHANGE
+    description: "Bổ nhiệm, miễn nhiệm hoặc thay đổi chức vụ lãnh đạo."
+    required_roles: [company, leader, leadership_action, occurrence_id]
+    optional_roles: [position_title, effective_date]
+    canonical_key: "eventType|company|leader|leadership_action|position_title|effective_date|occurrence_id"
+    direction_rule: "Routine appointment/resignation => UNKNOWN; documented removal of material governance risk => POSITIVE; documented disruption/misconduct => NEGATIVE. No sign based on title alone."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["bổ nhiệm tổng giám đốc"]
+    negative_examples: ["tin đồn nhân sự không xác nhận"]
+    confusable_cases: [LEGAL_INVESTIGATION, updates]
+  - eventType: CAPITAL_RAISE
+    description: "Phát hành cổ phiếu, trái phiếu hoặc huy động vốn."
+    required_roles: [company, capital_action, occurrence_id]
+    optional_roles: [instrument, amount, purpose, approval_date]
+    canonical_key: "eventType|company|capital_action|instrument|approval_date|occurrence_id"
+    direction_rule: "Supported net funding/solvency benefit => POSITIVE; supported net dilution/distress cost => NEGATIVE; amount alone or unresolved trade-off => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["phát hành thêm cổ phiếu"]
+    negative_examples: ["kế hoạch chưa được thông qua"]
+    confusable_cases: [DIVIDEND, EARNINGS]
+  - eventType: CREDIT_RATING
+    description: "Thay đổi xếp hạng tín nhiệm hoặc triển vọng tín nhiệm."
+    required_roles: [company, rating_action, occurrence_id]
+    optional_roles: [rating_agency, old_rating, new_rating]
+    canonical_key: "eventType|company|rating_agency|rating_action|occurrence_id"
+    direction_rule: "Upgrade/positive outlook revision => POSITIVE; downgrade/negative outlook revision => NEGATIVE; reaffirmation without material change or ambiguous scale => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["nâng triển vọng tín nhiệm"]
+    negative_examples: ["bài giải thích chung về xếp hạng"]
+    confusable_cases: [EARNINGS, REGULATORY_ACTION]
+  - eventType: BUSINESS_EXPANSION
+    description: "Mở rộng công suất, dự án, thị trường hoặc hoạt động kinh doanh."
+    required_roles: [company, expansion_action, occurrence_id]
+    optional_roles: [industry, location, project, amount, expected_date]
+    canonical_key: "eventType|company|expansion_action|project|location|occurrence_id"
+    direction_rule: "Documented commercially supported profitable capacity/access => POSITIVE; documented material burden/loss => NEGATIVE; capacity announcement without economics => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["mở rộng nhà máy"]
+    negative_examples: ["ý tưởng chưa có kế hoạch"]
+    confusable_cases: [PARTNERSHIP, CAPITAL_RAISE]
+  - eventType: LEGAL_INVESTIGATION
+    description: "Điều tra, kiện tụng hoặc tranh chấp pháp lý."
+    required_roles: [company_or_person, legal_action, occurrence_id]
+    optional_roles: [authority, case, amount]
+    canonical_key: "eventType|company_or_person|legal_action|case|occurrence_id"
+    direction_rule: "Credible material liability/investigation affecting issuer => NEGATIVE; dismissal clearing documented material liability => POSITIVE; allegation with no supported issuer channel => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["cơ quan điều tra khởi tố"]
+    negative_examples: ["cáo buộc không có nguồn xác nhận"]
+    confusable_cases: [REGULATORY_ACTION, LEADERSHIP_CHANGE]
+  - eventType: PARTNERSHIP
+    description: "Hợp tác chiến lược, liên doanh hoặc thỏa thuận thương mại."
+    required_roles: [company, partner, partnership_action, occurrence_id]
+    optional_roles: [industry, amount, effective_date]
+    canonical_key: "eventType|company|partner|partnership_action|occurrence_id"
+    direction_rule: "Binding terms with supported material net benefit => POSITIVE; documented material burden => NEGATIVE; generic memorandum or unspecified economics => UNKNOWN."
+    expected_direction: [POSITIVE, NEGATIVE, UNKNOWN]
+    positive_examples: ["ký thỏa thuận hợp tác"]
+    negative_examples: ["đàm phán chưa có thỏa thuận"]
+    confusable_cases: [M_AND_A_RUMOR, BUSINESS_EXPANSION]

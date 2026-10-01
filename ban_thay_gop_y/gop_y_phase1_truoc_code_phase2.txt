@@ -1,0 +1,171 @@
+GÓP Ý TIẾP CHO PHASE 1 TRƯỚC KHI BẮT ĐẦU CODE PHASE 2
+
+Mình đã xem lại bản báo cáo Phase 1 và sơ đồ Draw.io sau khi em chỉnh sửa theo các góp ý trước. Nhìn chung bản này ổn. Tách EventStockCandidate và EventStockReaction là hợp lý, phần temporal relation, provenance, inferenceCutoff, canonical Event, lifecycle và kiểm thử cũng đã rõ ràng hơn. Mình nghĩ không cần mở rộng thêm ontology nữa ở thời điểm này.
+
+Tuy nhiên, trước khi bắt đầu code Phase 2, em tinh chỉnh 1 chút thêm. Mục tiêu là làm ổn mô hình, scoring và protocol đánh giá để sau này không rơi vào tình trạng vừa code vừa sửa schema.
+
+1. Đồng bộ lại toàn bộ PDF – Draw.io – TTL
+
+Hiện tại vẫn còn một số chỗ chưa thống nhất giữa báo cáo và Draw.io. Ví dụ namespace trong báo cáo và Draw.io đang khác nhau, tên WFKG/VFinKG cũng chưa hoàn toàn thống nhất.
+
+Ngoài ra, trong sơ đồ tổng quan vẫn còn một số đường suy luận rộng hơn baseline đã chốt trong báo cáo, ví dụ:
+- ảnh hưởng từ công ty mẹ sang công ty con theo chiều ngược lại;
+- Event → Industry → các cổ phiếu cùng ngành;
+- policy event → ngành/ngân hàng → cổ phiếu.
+
+Trong khi baseline Phase 2 hiện tại chỉ có 4 impactType:
+DIRECT,
+INDIRECT_INDUSTRY,
+INDIRECT_SUBSIDIARY,
+INDIRECT_LEADERSHIP.
+
+Em nên theo đúng 4 đường này cho baseline. Những hướng khác nếu muốn giữ thì ghi rõ là “Future extension – not implemented in Phase 2 baseline”.
+
+Từ bước này trở đi nên coi TTL/SHACL là source of truth. Draw.io chỉ là sơ đồ minh họa, không nên trở thành một đặc tả thứ hai phải cập nhật thủ công.
+
+2. Xem lại effectiveTradingDate khi dùng dữ liệu daily
+
+Đây là chỗ mình thấy quan trọng nhất trước khi code.
+
+Hiện demo có bài đăng lúc 14:16 nhưng lại dùng luôn ngày 26/08 làm event day, trong khi return được tính từ adjustedClose(t-1) đến adjustedClose(t). Như vậy biến động giá từ đầu phiên đến trước 14:16 vẫn bị tính vào phản ứng sau sự kiện.
+
+Nếu Phase 2 chỉ dùng daily data, mình đề nghị chốt rule đơn giản như sau:
+- tin xuất hiện trước khi thị trường mở cửa: day 0 là phiên hiện tại;
+- tin xuất hiện sau khi thị trường đã mở cửa: day 0 là phiên giao dịch kế tiếp.
+
+Nếu muốn giữ ngày 26/08 cho tin lúc 14:16 thì phải chuyển sang intraday data. Với scope luận văn hiện tại, mình nghĩ không cần làm intraday, cứ dùng rule daily rõ ràng là hợp lý hơn.
+
+3. ConfidenceScore cần tách rõ các thành phần
+
+Hiện công thức confidenceScore có các thành phần:
+source confidence,
+extraction confidence,
+linking confidence,
+relation confidence.
+
+Nhưng trong ontology chưa có chỗ lưu đầy đủ các component này, đặc biệt linkingConfidence.
+
+Em nên không chỉ lưu confidenceScore tổng mà phải lưu luôn các thành phần đã dùng để tính nó. Có thể lưu trực tiếp trên Candidate hoặc lưu dưới dạng score breakdown có version.
+
+Cũng cần làm rõ:
+- source confidence lấy thế nào nếu Event có nhiều Evidence từ nhiều nguồn;
+- linking confidence được sinh từ bước entity linking như thế nào;
+- relation confidence của DIRECT path là gì;
+- các giá trị này phải được freeze tại inferenceCutoff, không được thay đổi ngược khi sau này có thêm Evidence.
+
+Nếu không làm rõ chỗ này thì sau này rất khó làm ablation và rất khó tái lập kết quả.
+
+4. Tách candidateScore và reactionWeight
+
+Hiện phần weighting đang trộn hai mục đích hơi khác nhau.
+
+Nên tách:
+
+candidateScore = confidenceScore × relationStrength
+
+Score này dùng tại inference time để xếp hạng các Event–Stock candidate.
+
+Còn:
+
+reactionWeight = impactScore × confidenceScore × relationStrength
+
+Weight này chỉ dùng sau khi event window đã đóng, tức là để phân tích hậu nghiệm phản ứng thị trường.
+
+Điểm này khá quan trọng vì nếu đưa market reaction vào ranking thì đó không còn là ranking tại inferenceCutoff nữa. Tách hai score như trên sẽ làm RQ3 rõ hơn và tránh bị reviewer hỏi về data leakage hay đánh giá vòng tròn.
+
+5. Provenance của market return cần đủ để tính lại được
+
+Hiện MarketObservation có adjustedClose, nhưng MarketIndexObservation mới chủ yếu lưu returnValue.
+
+Nếu mục tiêu là reproducibility thì mình muốn Reaction có thể truy ngược đủ dữ liệu để tính lại AR/CAR.
+
+Tức là với một AR tại ngày t, tối thiểu phải truy được:
+StockClose(t-1),
+StockClose(t),
+IndexClose(t-1),
+IndexClose(t).
+
+Do đó nên bổ sung close/adjustedClose cho MarketIndexObservation. Với CAR trên nhiều ngày thì provenance phải giữ đủ observation của toàn bộ event window.
+
+Không nên chỉ lưu return đã tính sẵn nếu sau này không kiểm chứng lại được phép tính.
+
+6. Tạo Event Dictionary trước khi code NLP
+
+Phần canonicalization hiện đã tốt hơn: duplicate, updates, clarifies, contradicts, supersedes đã có nguyên tắc ok.
+
+Nhưng trước khi code extraction, mình muốn em tạo một bảng Event Dictionary machine-readable hoặc ít nhất là một file đặc tả rõ ràng.
+
+Mỗi eventType nên có:
+- tên eventType;
+- mô tả;
+- required roles;
+- optional roles;
+- quy tắc tạo canonicalKey;
+- expectedDirection nếu có thể xác định trước;
+- ví dụ positive/negative;
+- trường hợp dễ nhầm.
+
+Scope hiện tại không cần taxonomy quá lớn. Khoảng 10–15 eventType làm chắc sẽ tốt hơn việc mở rộng quá nhiều rồi khó gán nhãn.
+
+7. Làm lại một số rule dữ liệu
+
+Có ba điểm:
+
+Thứ nhất, NewsArticle reports Event hiện đang để 1..*. Trong thực tế crawler có thể lấy được bài liên quan nhưng extractor chưa tìm được Event đủ confidence. Nếu giữ 1..* thì phải định nghĩa rõ NewsArticle chỉ được đưa vào KG sau khi đã pass relevance/extraction. Nếu không thì nên cân nhắc 0..*.
+
+Thứ hai, IndustryExposure về bản chất là dữ liệu theo reporting period. Khi inference, nên dùng bản báo cáo mới nhất đã available tại cutoff và phải có rule về staleness. Không nên dùng validFrom/validTo giống hệt LeadershipPosition nếu nguồn thực tế không cung cấp ý nghĩa đó.
+
+Thứ ba, relationStrength của INDIRECT_INDUSTRY hiện đang dùng hằng số 0.5 trong baseline, trong khi ontology đã có exposureRatio/exposureStrength. Có thể giữ 0.5 làm baseline, nhưng Phase 2 nên có ít nhất một biến thể dùng exposureStrength thật để so sánh.
+
+8. Freeze protocol đánh giá trước khi chạy dữ liệu thật
+
+Kế hoạch 100–300 bài để làm vertical slice là hợp lý. Nhưng mình muốn tách rõ “vertical slice dataset” và “final evaluation dataset”.
+
+100–300 bài đủ để kiểm tra pipeline end-to-end, nhưng chưa chắc đủ để kết luận RQ2/RQ3, nhất là khi chia ra 4 impactType thì mỗi loại có thể có rất ít positive cases.
+
+Trước khi code phần evaluation, em nên viết ANNOTATION_GUIDELINE.md, trong đó chốt:
+- cách gán Evidence;
+- event type;
+- entity link;
+- duplicate/update/clarifies;
+- Event–Stock relevance;
+- expectedDirection;
+- thang nhãn 0/1/2 nếu dùng cho nDCG.
+
+Theo mình ít nhất 20–30% gold set được hai người gán độc lập, sau đó đo agreement và xử lý bất đồng.
+
+Ngoài aggregate metric, RQ2 nên báo riêng theo từng impactType và nên có macro theo Event, tránh việc một vài Event sinh quá nhiều Candidate làm lệch kết quả.
+
+9. Đồng bộ lại phụ lục property trong Draw.io
+
+Trong Draw.io hiện vẫn còn thiếu một số property so với PDF/ontology, ví dụ các property kiểu:
+subsidiaryCompany,
+memberStock,
+exposureBank,
+exposureIndustry,
+forEvent,
+và một số datatype property khác.
+
+Nếu nhìn Draw.io để code thì rất dễ lệch TTL.
+
+Mình đề nghị:
+- TTL/SHACL là bản đặc tả chính;
+- Draw.io chỉ lấy thông tin từ TTL hoặc ít nhất phải có script audit so sánh tự động;
+- không nên duy trì hai bản property list thủ công.
+
+KẾT LUẬN
+
+Mình đánh giá ontology hiện tại đã đủ để đi tiếp, không cần mở rộng thêm lớp mới.
+
+Trước khi bắt đầu code Phase 2, em xử lý giúp mình các mục 1, 2, 3, 4, 5 và 9 trước. Sau đó gửi lại mình check 1 lần nữa gói specification gồm tối thiểu:
+
+ontology_v1.0.ttl
+shapes_v1.0.ttl
+EVENT_SCHEMA.md
+SCORING_SPEC.md
+EVALUATION_PROTOCOL.md
+Draw.io đã đồng bộ
+
+Sau khi bộ này ổn thì bắt đầu code vertical slice theo đúng pipeline 100–300 bài như kế hoạch hiện tại.
+
+Mục tiêu giai đoạn tiếp theo không phải mở rộng ontology thêm nữa, mà là chứng minh pipeline chạy đúng end-to-end, tái lập được, không dùng thông tin tương lai và đủ chặt để sau đó mới mở rộng dữ liệu và chạy thực nghiệm RQ1–RQ3.
