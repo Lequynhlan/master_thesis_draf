@@ -58,7 +58,7 @@ impactScore = min(1, abs(CAR) / tau)
 reactionWeight = impactScore * confidenceScore * relationStrength
 ```
 
-`adjustedClose` is the source of truth for both the stock and benchmark. `returnValue` may be stored as a cache, but it must be recomputed from consecutive adjusted closes and must agree within absolute tolerance `1e-9`; it is not sufficient provenance by itself. For offsets `[a,b]`, the Reaction links the selected observations for sessions `t_(a-1), t_a, ..., t_b`, one per asset per session, and the stock/index date sets must match. Each linked observation must belong to the Candidate's stock or the Reaction's benchmark, respectively.
+`adjustedClose` is the source of truth for both the stock and benchmark. `returnValue` is required in the baseline as a derived/cache field, but it must be recomputed from consecutive adjusted closes and must agree within absolute tolerance `1e-9`; it is not sufficient provenance by itself. For offsets `[a,b]`, the Reaction links the selected observations for sessions `t_(a-1), t_a, ..., t_b`, one per asset per session, and the stock/index date sets must match. Each linked observation must belong to the Candidate's stock or the Reaction's benchmark, respectively.
 
 Every supported baseline window includes offset `0`. The single `abnormalReturn` field on `EventStockReaction` means `AR(i,0)`; `cumulativeAbnormalReturn` means the sum of daily AR values over the entire inclusive window `[a,b]`. Thus multi-day CAR is independently reproducible even though daily ARs are not separately materialized as RDF nodes. SHACL checks the daily return arithmetic for the window sessions and the CAR sum; a calendar-aware validator checks that the linked dates are precisely the sessions required by the frozen exchange calendar.
 
@@ -81,8 +81,10 @@ Phase 2 compares:
 
 - unweighted baseline: score `1`;
 - weighted candidate ranking: `candidateScore`;
-- component ablations: each confidence component replaced by `1`;
+- three separate component-neutralization ablations: replace only `extractionConfidence`, only `linkingConfidence`, or only `relationConfidence` by `1`; keep `sourceConfidence = 0.5` in all baseline variants;
 - IndustryExposure constant `0.5` versus measured `exposureStrength` on the same eligible curated exposure population;
 - event windows `[0,0]`, `[0,+1]`, `[-1,+1]`, `[0,+3]`.
+
+A component-neutralization ablation removes that component's score variation by setting it to `1`; it does not assert perfect extraction/linking/relation confidence and does not remove the underlying extraction, entity-linking or route-eligibility checks. Recompute `confidenceScore` and `candidateScore` using the unchanged formulas for each variant. Store each variant as a separate immutable Candidate snapshot with its own `methodVersion` and Candidate URI; never overwrite the baseline snapshot. Use the same Event/Stock universe, cutoff, eligible paths, relationStrength and tie-break rules for these three comparisons. Preserve original component values and neutralization settings in the inference audit record. Source-confidence ablation is outside this baseline and requires a separately specified future protocol.
 
 All choices are frozen before the final test set is read.

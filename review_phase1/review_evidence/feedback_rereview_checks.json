@@ -1,0 +1,53 @@
+{
+  "review_status": "ISSUES_FOUND",
+  "ontology_triples": 455,
+  "shacl_triples": 1064,
+  "shacl_select_syntax_pass": 38,
+  "docx_query_syntax": {
+    "1": {
+      "syntax": "PASS"
+    },
+    "2": {
+      "syntax": "PASS"
+    },
+    "3": {
+      "syntax": "PASS"
+    },
+    "4": {
+      "syntax": "FAIL",
+      "error": "Expected {SelectQuery | ConstructQuery | DescribeQuery | AskQuery}, found '}'  (at char 0), (line:1, col:1)"
+    },
+    "5": {
+      "syntax": "PASS"
+    },
+    "6": {
+      "syntax": "PASS"
+    },
+    "7": {
+      "syntax": "PASS"
+    },
+    "8": {
+      "syntax": "PASS"
+    },
+    "9": {
+      "syntax": "PASS"
+    },
+    "10": {
+      "syntax": "PASS"
+    }
+  },
+  "docx_stale_cells": [
+    {
+      "locator": "T30R2",
+      "text": "Báo cáo hiệu đính đã thống nhất relationPath theo schema/SHACL. Draw.io hiện vẫn có câu trái ngược ở tab 05-4; file sơ đồ cần được sửa riêng."
+    },
+    {
+      "locator": "T30R10",
+      "text": "Báo cáo này mô tả contract; Draw.io chưa được sửa trong lượt này và vẫn còn câu mâu thuẫn về relationPath. Không kết luận artifact đã đồng bộ hoàn toàn."
+    }
+  ],
+  "contradicts_symmetric": true,
+  "submission_files_unchanged": 11,
+  "matrix_numbered_comments": 9,
+  "scope": "focused ad-hoc review; not full behavioral or visual acceptance"
+}

@@ -1,0 +1,91 @@
+{
+  "status": "D03_FOCUSED_CONTRACT_VERIFICATION_PASS",
+  "synthetic_only": true,
+  "backup": "D:\\project\\master_thesis\\01-10-2026\\review_phase1\\backups\\before_D03_20261003_195336",
+  "ontology_triples": 455,
+  "shapes_triples": 1064,
+  "shacl_select_syntax_pass": 38,
+  "docx_queries": {
+    "1": "PASS",
+    "2": "PASS",
+    "3": "PASS",
+    "4": "PASS",
+    "5": "PASS",
+    "6": "PASS",
+    "7": "PASS",
+    "8": "PASS",
+    "9": "PASS",
+    "10": "PASS"
+  },
+  "docx_paragraphs_changed": [
+    13,
+    111,
+    124
+  ],
+  "docx_cells_changed": [
+    [
+      7,
+      19,
+      4
+    ],
+    [
+      27,
+      5,
+      2
+    ]
+  ],
+  "docx_zip_parts_changed": [
+    "word/document.xml"
+  ],
+  "protected_inputs_hash_unchanged": [
+    "ontology_v1.0.ttl",
+    "shapes_v1.0.ttl",
+    "master_thesis_v1_synced_01-10.drawio.xml",
+    "EVENT_DICTIONARY.yaml",
+    "tools/audit_schema_diagram.py",
+    "tools/README.md",
+    "SCORING_SPEC.md"
+  ],
+  "RQ2_RQ3_unchanged": true,
+  "E02_section_unchanged": true,
+  "tests": {
+    "review_phase1/test_contradicts_contract.py": {
+      "exit_code": 0,
+      "output": "test_chronology_orientation_tie_owner_is_deterministic (__main__.ContradictsContractTest.test_chronology_orientation_tie_owner_is_deterministic) ... ok\ntest_correct_reasoning_from_wrong_input_is_still_wrong_final_graph (__main__.ContradictsContractTest.test_correct_reasoning_from_wrong_input_is_still_wrong_final_graph) ... ok\ntest_cutoff_blocks_late_relation_evidence_and_endpoint (__main__.ContradictsContractTest.test_cutoff_blocks_late_relation_evidence_and_endpoint) ... ok\ntest_not_transitive_no_self_and_no_reverse_directed (__main__.ContradictsContractTest.test_not_transitive_no_self_and_no_reverse_directed) ... ok\ntest_self_outside_universe_and_unjudged_not_silent_negatives (__main__.ContradictsContractTest.test_self_outside_universe_and_unjudged_not_silent_negatives) ... ok\ntest_symmetry_and_asserted_derived_provenance (__main__.ContradictsContractTest.test_symmetry_and_asserted_derived_provenance) ... ok\ntest_two_directions_count_once_and_reverse_not_none (__main__.ContradictsContractTest.test_two_directions_count_once_and_reverse_not_none) ... ok\ntest_wrong_assertion_orientation_not_hidden_by_semantic_projection (__main__.ContradictsContractTest.test_wrong_assertion_orientation_not_hidden_by_semantic_projection) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 1.130s\n\nOK"
+    },
+    "review_phase1/test_audit_schema_diagram.py": {
+      "exit_code": 0,
+      "output": ".......\n----------------------------------------------------------------------\nRan 7 tests in 5.271s\n\nOK"
+    }
+  },
+  "audit": {
+    "PASS": 336,
+    "FAIL": 0,
+    "NOT CHECKED": 57,
+    "exit_code": 0
+  },
+  "reasoner_diagnostic": {
+    "implementation": "owlrl OWLRL_Semantics",
+    "version": "7.6.2",
+    "inference_profile": "OWL-RL"
+  },
+  "visual_verification": "NOT CHECKED",
+  "render_tools_in_PATH": {
+    "soffice": null,
+    "pdftoppm": null
+  },
+  "runtime_RQ_performance": "NOT CHECKED; no factual gold/pipeline run",
+  "final_package_hashes": {
+    "ANNOTATION_GUIDELINE.md": "2c17fe20d6902fb64600940026a53cd2db47cf415ba2085de5ae62b6e9c6d357",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx": "535108768a20d27ee37e87d16e5d97a6584e7a8388adb525afca11a531b53371",
+    "EVALUATION_PROTOCOL.md": "d33aa32bf50ccbee0c4a38664c3bedbf1019ad27cc728d8d07dd6398211fd335",
+    "EVENT_DICTIONARY.yaml": "276fb3c45f56ba9653bf2ec9e476c8c4cb609ff47aa33204f7a55710ca76e355",
+    "EVENT_SCHEMA.md": "21830f29c4ec602f6e95a97154b249875051154dcfd26427c36109082c7762d1",
+    "master_thesis_v1_synced_01-10.drawio.xml": "3ffef526ac21e57b08997f08e0d4a737161965937b672da8c7f269ec16b93cd5",
+    "ontology_v1.0.ttl": "e457758ebc3a2b79cd423fc3afaa813fdf66d60c20cf7c214051094d7751218c",
+    "SCORING_SPEC.md": "51d985147e3a9d5fddc77c21cc9d584e2b1ee35723f521fd1ab463d7369199d9",
+    "shapes_v1.0.ttl": "ac602882aad3887d170ae397626702398a034828431d0a8be8dceaa5f8a415d6",
+    "tools\\audit_schema_diagram.py": "035c4ec80eba09f1576487092269c700be63e47ac7265ac8e68e4288f44322d4",
+    "tools\\README.md": "2195088734f9fa42b3c46ac256f763acdd0bd04c999bc98627b4d337cec0c7ba"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "status": "FOCUSED_VERIFICATION_PASS",
+  "approved_scope": ["D01", "D02", "D04", "D05"],
+  "docx_queries_syntax": {"1": "PASS", "2": "PASS", "3": "PASS", "4": "PASS", "5": "PASS", "6": "PASS", "7": "PASS", "8": "PASS", "9": "PASS", "10": "PASS"},
+  "query4_exact_paragraph_reversal_matches_backup": true,
+  "out_of_scope_paragraphs_and_table_cells_unchanged": true,
+  "docx_changed_zip_parts": ["word/document.xml"],
+  "scoring_spec_single_approved_phrase_change_verified": true,
+  "submission_changed_files": ["Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx", "SCORING_SPEC.md"],
+  "audit": {"PASS": 336, "FAIL": 0, "NOT CHECKED": 57, "exit_code": 0},
+  "audit_tool_tests": {"run": 7, "result": "OK", "exit_code": 0},
+  "backup": "D:\\project\\master_thesis\\01-10-2026\\review_phase1\\backups\\before_D01_D02_D04_D05_20261003_191448",
+  "remaining_open": ["D03", "E02", "visual verification"],
+  "visual_verification": "NOT CHECKED: soffice and pdftoppm unavailable in PATH",
+  "limits": "Syntax/audit and focused edit-scope verification, not demo query execution or canonical behavioral acceptance. Pre-review hash manifest intentionally retained as historical evidence."
+}
