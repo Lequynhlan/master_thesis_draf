@@ -58,6 +58,7 @@ Draw.io phải là XML không nén có `mxGraphModel` trong từng tab và có t
    - Owner tương thích domain TTL nếu domain được khai báo.
 6. Parse cú pháp mọi SHACL SELECT constraint; không thực thi validation graph.
 7. So sánh SHA256 của ba file đầu vào trước/sau; script không có đường ghi lại các artifact.
+8. Tab `00-`: với từng cạnh `hasSubsidiaryRelation`, source phải là đúng target của `parentCompany` trên cùng relation node. Kiểm tra vai trò mẹ/con bằng identity của endpoint, không chỉ dựa vào việc cả hai endpoint đều là Company.
 
 FAIL có vị trí tab, cell ID và số dòng text trong label, không phải số dòng XML. Dòng FAIL nêu giá trị Draw.io và giá trị kỳ vọng khi có thể đối chiếu.
 
@@ -82,13 +83,35 @@ Các con số PASS/NOT CHECKED là số assertion, không phải số reviewer c
 - Appendix hiện liệt kê tên datatype property nhưng không ghi datatype range; tool không tuyên bố đã so sánh xsd:string/decimal/dateTime nếu diagram không biểu diễn chúng.
 - Properties chỉ xuất hiện trong shared/narrative text, chẳng hạn involves/sourceReference/validFrom/validTo/dataQualityFlag, chỉ được kiểm tra name coverage; endpoint/ownership của chúng được báo NOT CHECKED nếu không có structured entry.
 - Chỉ cardinality được in trực tiếp trong object-arrow labels được đối chiếu. Không bao phủ qualified constraints, sh:or/sh:and hoặc cardinality ẩn trong SPARQL.
-- Tab khác appendix chỉ kiểm tra XML structure. Free-form route labels, endpoint ngữ nghĩa của connectors, namespace narrative, layout/readability vẫn cần review thủ công.
+- Ngoài appendix, audit kiểm tra XML structure và invariant owner mẹ/con vừa nêu ở tab `00-`. Những free-form route labels, connector semantics khác, namespace narrative và layout/readability vẫn cần review thủ công; một invariant không chứng minh toàn bộ semantics.
 - Không audit DOCX, scoring/evaluation, market calendar, dữ liệu thật, inference pipeline hoặc RQ1–RQ3.
 - Không chạy SHACL conformance/behavioral tests. SELECT parse thành công không chứng minh constraint phát hiện đúng dữ liệu sai.
 - Nếu thay đổi định dạng appendix đáng kể, cần cập nhật parser/tests; không dùng tool như công cụ audit Draw.io tổng quát.
 
 ## Kiểm thử công cụ
 
-Bộ test nội bộ nằm ngoài folder gửi thầy, tại `review_phase1/test_audit_schema_diagram.py` trong workspace phát triển. Test tạo các bản sao tạm có lỗi cố ý, không sửa artifact chuẩn. Các trường hợp gồm real-bundle read-only, range/owner/cardinality sai, cardinality sai cú pháp, datatype property bị typo/missing và chạy từ working directory khác.
+Trong gói có `tools/test_schema_diagram_audit.py`: 8 unittest với XML mutation trong bộ nhớ để bắt owner mẹ/con sai, thiếu parent connector, parent thuộc relation khác, và kiểm tra các nhãn/schema đã hiệu đính. Chạy `py -3.13 -B tools/test_schema_diagram_audit.py`; không sửa artifact chuẩn.
+
+Bộ test legacy tại `review_phase1/test_audit_schema_diagram.py` trong workspace phát triển không thuộc acceptance set của gói này. Bộ đó kiểm tra range/owner/cardinality, typo/missing và working directory; không phải dependency để chạy các test được bàn giao.
 
 Khi phát hiện FAIL, đọc vị trí và nội dung rồi sửa thủ công artifact được duyệt. Tool không có chế độ auto-fix.
+
+## Kiểm thử hành vi SHACL baseline 1.0.4
+
+`test_baseline_shacl.py` là bộ regression test riêng, không thay đổi chức năng của audit ở trên. Test dùng fixture tổng hợp trong bộ nhớ; không tạo lại demo, CSV hoặc hình lịch sử trong báo cáo và không phải kết quả RQ.
+
+Dependency bổ sung: `pyshacl`. Trong môi trường Windows đã kiểm tra, Python 3.13 có RDFLib 7.6.0 và pySHACL 0.40.0; lệnh chạy từ thư mục chứa TTL/SHACL:
+
+```text
+py -3.13 -B tools/test_baseline_shacl.py
+py -3.13 -B tools/test_schema_diagram_audit.py
+py -3.13 -B tools/audit_schema_diagram.py
+```
+
+Ở môi trường khác, dùng đúng interpreter có `rdflib` và `pyshacl`; không dùng `pip` của một Python khác. Cờ `-B` tránh tạo `__pycache__` trong bộ bàn giao. Không cần cài thêm gói trong môi trường hiện tại.
+
+Bộ hiện tại có 31 unittest (một số test có subtest cho nhiều trạng thái). Giữ 19 regression ban đầu về confidence/score, giá benchmark, daily return/CAR, impactScore, direction, inverse, self-link và thời điểm Reaction; bổ sung REACTION_READY không có Reaction với cả plain/typed string, status ngoài enum, các trạng thái non-ready có/không Reaction, cutoff sớm/muộn hơn Event và thứ tự generatedAt/availableAt. Positive control xác nhận replay chạy muộn vẫn dùng cutoff gốc. Inference bị tắt khi validate để không che lỗi thiếu inverse. Đây là dữ liệu synthetic, không phải pipeline thật.
+
+SHACL baseline khóa `inferenceCutoff = Event.availableAt`, tau=0.10 và epsilon=0. Lifecycle chấp nhận plain hoặc typed xsd:string với cùng giá trị enum, không chấp nhận status ngoài enum. Thay cutoff regime/tau/epsilon phải dùng specification/shape/configuration được định phiên bản riêng. Calendar, daily effectiveTradingDate, dictionary membership/vocabulary, Evidence selection, strength assignment và snapshot immutability vẫn cần curated gate/validator Phase 2; 31 test không chứng minh các phần đó đã triển khai. Mã thoát 0 nghĩa là tất cả test đã qua; mã khác 0 là thất bại hoặc lỗi môi trường.
+
+Kết quả kiểm tra contract 1.0.4: 31/31 SHACL unittest, 8/8 diagram-audit unittest; audit 337 PASS, 0 FAIL, 57 NOT CHECKED và 44 SELECT parse được. Ma trận 9 góp ý, PDF hiện hành và giới hạn xác minh được ghi ở `../PHASE1_ACCEPTANCE.md`. Không diễn giải các con số này thành coverage percentage hoặc kết quả RQ.

@@ -1,6 +1,6 @@
 # EVENT_SCHEMA.md
 
-Version: 1.0.2
+Version: 1.0.4
 
 ## Canonical namespace
 
@@ -33,10 +33,10 @@ NewsArticle -> Evidence -> Event -> EventStockCandidate -> Market observations -
 
 - `DIRECT`: `Event → Company → Stock`.
 - `INDIRECT_INDUSTRY`: `Event → Industry ← IndustryExposure ← Bank → Stock`; this path creates candidates only for a Bank with a selected eligible exposure, not every stock in the industry.
-- `INDIRECT_SUBSIDIARY`: `Event → subsidiary Company`; a `SubsidiaryRelation` must identify that subsidiary and a parent Company, and the parent must own the Candidate Stock.
+- `INDIRECT_SUBSIDIARY`: `Event → subsidiary Company`; a `SubsidiaryRelation` must identify that subsidiary and a parent Company, and the parent must own the Candidate Stock. Canonical RDF ownership is `parent Company —hasSubsidiaryRelation→ SubsidiaryRelation`; the relation node links back with `parentCompany` and identifies the child with `subsidiaryCompany`. The child does not own `hasSubsidiaryRelation` in this baseline.
 - `INDIRECT_LEADERSHIP`: `Event → CorporateLeader → LeadershipPosition → Company → Stock`.
 
-SHACL 1.0.2 checks the route code and required graph links. The curated inference gate must additionally apply cutoff availability and validity rules to route facts; for `IndustryExposure`, it must use the frozen reporting-period selection below. Phase 1 `sourceConfidence` remains fixed at `0.5`; changing that baseline requires a new method/shape version.
+SHACL checks the route code and required graph links; conformance alone does not establish historical eligibility. The curated inference gate must additionally apply cutoff availability and validity rules to route facts; for `IndustryExposure`, it must use the frozen reporting-period selection below. Phase 1 `sourceConfidence` remains fixed at `0.5`; changing that baseline requires a new method/shape version. Strength is locked at DIRECT=1.0 and all three indirect routes=0.5; the industry-strength variant alone uses exposureStrength=exposureRatio. Evidence selection and score aggregation follow SCORING_SPEC.md, including its four-route entity/link confidence input table. All required Event entities and route-entry entities use the same selected complete Evidence assignment; propagated parent/Bank/position-company targets use eligible route registry/fact mappings, not fabricated direct mentions in that Evidence. Absent required links suppress the path.
 
 ## Scoring timing
 
@@ -45,9 +45,15 @@ candidateScore = confidenceScore * relationStrength
 reactionWeight = impactScore * confidenceScore * relationStrength
 ```
 
-`candidateScore` is allowed at `inferenceCutoff`. `reactionWeight` is allowed only after the complete event window and all required observations are available. The canonical property is `reactionWeight`; the legacy bare property `weight` is not part of the 1.0.2 contract.
+`candidateScore` is allowed at `inferenceCutoff = Event.availableAt` for baseline prospective-information ranking. `reactionWeight` is allowed only after the complete event window and all required observations are available. Candidate inputs satisfy input.availableAt <= inferenceCutoff; Reaction observations satisfy observation.availableAt <= Reaction.availableAt, not <= inferenceCutoff. The canonical property is `reactionWeight`; the legacy bare property `weight` is not part of the 1.0.4 contract.
 
-## AR/CAR source and provenance contract (1.0.2)
+## Baseline validation boundary (1.0.4)
+
+The graph submitted for baseline validation must contain both directions of hasEventStockCandidate/forEvent and hasReaction/onCandidate, either explicitly materialized by the writer or already derived before submission with recorded inference provenance. SHACL does not repair missing inverse links; tests run with inference=none. Every linked Reaction requires REACTION_READY on its exact Candidate, including a Reaction discoverable only through onCandidate. A REJECTED Candidate cannot have a Reaction. Incomplete/mismatched inverse assertions fail validation rather than disappearing from lifecycle queries.
+
+SHACL validates impactScore=min(1,abs(CAR)/0.10), marketReactionDirection from the exact sign of CAR with epsilon=0, and the existing weight equations. Calendar/session coverage, daily effectiveTradingDate, dictionary membership, calibrated model/role provenance, frozen Evidence aggregation, strength assignment and immutable snapshots still require curated pipeline gates. Synthetic regression tests in tools/test_baseline_shacl.py exercise structural rules only; they do not recreate historical report figures or demonstrate NLP/RQ performance.
+
+## AR/CAR source and provenance contract (1.0.4)
 
 - `adjustedClose` is the authoritative input for both `MarketObservation` and `MarketIndexObservation`; each value must be positive and retain its `sourceReference`. `returnValue` is a derived/cache field, never the sole source for recomputing a reaction.
 - Window offsets are exchange-session offsets relative to `Event.effectiveTradingDate` (`t0`). For a window `[a,b]`, the Reaction must link one Stock observation and one benchmark observation for every session `t_(a-1), t_a, ..., t_b`. The predecessor `t_(a-1)` supplies the denominator for the first in-window return.
@@ -77,15 +83,16 @@ evaluation retrospectively.
 - `LeadershipPosition`, `SubsidiaryRelation`, `IndexMembership`: `validFrom` required, `validTo` optional. Eligibility is `availableAt <= cutoff AND validFrom <= date(cutoff) AND (validTo absent OR date(cutoff) <= validTo)`; dates are inclusive. Missing start is ineligible, not an unbounded tenure.
 - `IndustryExposure` uses reporting-period selection below; `validFrom`/`validTo` are optional metadata, not the baseline eligibility filter.
 
-## Frozen cutoff and daily calendar contract (1.0.2)
+## Frozen cutoff and daily calendar contract (1.0.4)
 
 - Use timezone-aware instants; compare instants in UTC and derive dates in `Asia/Ho_Chi_Minh`. A naive timestamp is rejected. Equality at cutoff is eligible (`<=`).
 - Event availability is the earliest supporting Evidence availability; Evidence availability must be no earlier than both its Article's `publishedAt` and actual first system availability. Do not invent crawler latency. Missing acquisition timestamps require a declared publication-time proxy dataset, not a claim of observed historical availability.
 - For a frozen Event snapshot let `a = Event.availableAt`. Select the first exchange session whose opening instant is **strictly later** than `a`: `a < session.open`. Thus before open uses that session; exactly at open, intraday or after close uses the next session; weekends/holidays use the next scheduled opening. Calendar/version, exchange and session opening times belong in the run manifest; do not use weekday arithmetic. Missing calendar coverage blocks calculation.
 - Example with a declared 09:00 +07 opening: 26/08/2026 08:59 uses 26/08; 09:00 and 14:16 use 27/08 when that is the next calendar session. Both demo Events available after open on 26/08 use 27/08.
-- `inferenceCutoff >= Event.availableAt`; every Evidence, reference mapping and temporal fact used is available no later than cutoff. Newly learned earlier evidence may produce a new version, never rewrite the frozen Candidate or calendar decision.
+- Baseline locks `inferenceCutoff = Event.availableAt` exactly, not an arbitrary later run time. Every Evidence, reference mapping and temporal fact used is available no later than that instant. `generatedAt` may be later for an offline replay; it is the existing Candidate execution/audit field, not permission to use later information. Describe this as replayed prospective-information ranking, not verified live prediction. Freeze input IDs/versions, the selected complete Evidence assignment, entity/route decisions, calendar decision and all original scores in the immutable cutoff snapshot.
+- If the earliest availability has no complete eligible Evidence assignment, retain the extraction record in staging/coverage with `NO_COMPLETE_EVIDENCE_AT_CUTOFF` and produce no baseline Candidate. This algorithmic miss is not an evaluation exclusion: independently resolved gold Events remain in the common RQ2/RQ3 universe with an empty ranking, so missed gold positives count as false negatives. Only independently adjudicated unresolved identity/relevance or predeclared source-frame exclusions may remove a gold item, identically for all methods. Do not silently delay cutoff until a complete assignment arrives, combine incomplete assignments, or change earliest Event availability. Late Evidence/reprints may add current provenance but cannot enrich the historical snapshot. A later-evidence reconstruction for the same assertion is a separately versioned retrospective analysis outside baseline, explicitly retaining the original Event availability; it is not a new baseline Event or a delayed prediction. A genuinely new substantive assertion receives a distinct Event URI, its own earliest supporting availability and recomputed effectiveTradingDate. Newly discovered earlier Evidence likewise requires separately versioned correction/reconstruction outside the frozen baseline, never mutation of its cutoff or day 0.
 - Historical lifecycle queries read an immutable graph snapshot or timestamped status log. Filtering a current mutable `candidateStatus` by observation dates is not historical reconstruction.
-- A Reaction requires completed window and complete Stock + benchmark prices for each session including the predecessor. Negative-offset windows are retrospective robustness analyses, not wholly post-event responses.
+- A Reaction requires completed window and complete Stock + benchmark prices for each session including the predecessor. Windows `[0,0]`, `[0,+1]`, `[0,+3]` are post-availability daily windows under the strict-opening rule; `[-1,+1]` is a retrospective robustness window, not wholly post-event. Its negative session prices never enter Candidate ranking. Temporal facts are selected at `date(inferenceCutoff)`, not at day 0, generation time or the window end: a future-effective `validFrom` remains ineligible even if it begins before day 0. All dates here use Asia/Ho_Chi_Minh.
 
 ## IndustryExposure selection (separate from validity)
 
@@ -96,7 +103,7 @@ evaluation retrospectively.
 
 ## Canonical identity and dictionary roles
 
-The dictionary's roles (including `occurrence_id`) are extraction/identity-registry fields, not new RDF properties or classes. Preserve the 22 ontology classes. Normalize roles before constructing `canonicalKey`; follow `identity_policy` for every entry.
+The dictionary's roles (including `occurrence_id`) and versioned normalization vocabulary are extraction/identity-registry fields, not new RDF properties or classes. Preserve the 22 ontology classes, eventType names, taxonomy and namespace. Normalize every key field using `key_normalization` and `normalization_vocabulary` before constructing `canonicalKey`; follow `identity_policy` for every entry. Controlled actions/metrics/instruments/titles require an explicit role-specific token/synonym match; periods use the deterministic grammar and preserve stated qualifiers. Entity/context/reference values require typed registry resolution, dates require evidenced ISO dates, and occurrence IDs retain original business-assertion identity. Unmapped/ambiguous values remain HOLD_FOR_REVIEW without a curated key; normalization never guesses or turns missing into a wildcard.
 
 Article publication/availability dates never distinguish business occurrences. A duplicate reprint attaches new Article/Evidence provenance to the same Event URI, including when posted on another day. `occurrence_id` identifies the original business assertion, not each article. Required identity missing => HOLD_FOR_REVIEW. Optional key field missing => MATCH_EXISTING_ELSE_HOLD: reuse an existing key only when positive same-occurrence evidence and all known roles agree; otherwise keep staging without minting a curated key. Never fill missing dates with publication/availability, empty strings or shared UNKNOWN sentinels. Missing non-key optional roles may simply be omitted.
 

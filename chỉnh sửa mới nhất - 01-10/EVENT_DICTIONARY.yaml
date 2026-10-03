@@ -1,4 +1,4 @@
-version: "1.0.2"
+version: "1.0.4"
 namespace: "https://example.org/wfkg/v1#"
 cutoff_timezone: "Asia/Ho_Chi_Minh"
 identity_policy:
@@ -7,7 +7,7 @@ identity_policy:
   missing_optional_key: MATCH_EXISTING_ELSE_HOLD
   unresolved_sentinel_allowed: false
   occurrence_id: "Original decision/filing/transaction/statement identifier, namespaced by issuer; otherwise adjudicated stable business-occurrence identifier from parties, action, subject and original occurrence time. Never article URL, publication date or availableAt. Reprints reuse it; substantive new assertions receive distinct IDs."
-  normalization: "Canonical entity URIs; Unicode NFC; trim/collapse whitespace; dates ISO-8601; escape percent then pipe as %25 and %7C before joining key fields."
+  normalization: "Apply versioned key_normalization and normalization_vocabulary to every canonical-key role; canonical typed registry IDs; Unicode NFC; trim/collapse whitespace; evidenced dates ISO-8601; escape percent then pipe as %25 and %7C before joining normalized fields. Unknown/unmapped/ambiguous values stay HOLD_FOR_REVIEW."
   matching: "Match an existing Event only with positive evidence of the same business occurrence and compatible known roles; missing is not a wildcard. Ambiguous/missing identity stays staging, without a curated canonicalKey."
   enrichment: "When an optional key value is discovered, keep the canonical Event URI; retain old key as an external alias in the identity registry. Never split solely because a date/role became known."
   non_merge_relations: [updates, clarifies, contradicts, supersedes]
@@ -22,6 +22,178 @@ direction_policy:
   conflict: UNKNOWN
   neutral: "Only explicit evidence of no material directional change; never a missing-information default."
   indirect: "Propagate a sign only with a supported sign-preserving economic channel for this Stock; otherwise UNKNOWN. No CAR, future price or candidateScore input."
+baseline_information_policy:
+  inference_cutoff: "EXACT_EVENT_AVAILABLE_AT"
+  event_availability: "Earliest supporting Evidence availability; reprints do not reset it."
+  day_zero: "First exchange session with Event.availableAt strictly less than session.open; equality moves to next session."
+  generated_at: "Later offline replay permitted; immutable cutoff inputs only, not a live-prediction claim."
+  no_complete_assignment: "NO_COMPLETE_EVIDENCE_AT_CUTOFF: no baseline Candidate; staging/coverage miss, never delay cutoff. Independently resolved gold Events remain in the common evaluation universe with empty method rankings and missed positives; not an algorithm-dependent gold exclusion."
+  late_evidence: "Same assertion: separately versioned retrospective reconstruction outside baseline, no mutation. New substantive assertion: distinct Event URI and own earliest availability/day 0."
+key_normalization:
+  version: "1.0.4"
+  ontology_expansion: false
+  unknown_or_ambiguous: HOLD_FOR_REVIEW
+  present_unmapped_optional_key: HOLD_FOR_REVIEW
+  synonym_matching: "Role-specific exact token or alias after NFC, trim/collapse whitespace and Unicode casefold; no stemming, fuzzy matching or guessed translation. Do not casefold URI/registry IDs."
+  context_preservation: "Never discard a stated action/metric/instrument/title/period qualifier that changes meaning. If not representable by the declared vocabulary/typed registry, HOLD_FOR_REVIEW. Raw span, role, qualifiers and mapping version are audit metadata."
+  key_assembly: "Follow each entry's canonical_key field order; escape percent then pipe once after normalization. Do not mint keys with missing required or optional-key values; apply identity_policy missing_optional_key to match an existing key only."
+  categories:
+    event_type:
+      roles: [eventType]
+      method: "Exact unchanged eventType from entries; no synonyms or taxonomy changes."
+    entity:
+      role_types:
+        company: [Company]
+        buyer: [Company]
+        target: [Company]
+        leader: [CorporateLeader]
+        partner: [Company]
+        government_organization: [GovernmentOrganization]
+        regulator: [GovernmentOrganization]
+        company_or_industry: [Company, Industry]
+        company_or_person: [Company, CorporateLeader]
+        rating_agency: [Company, GovernmentOrganization]
+        industry: [Industry]
+        affected_company: [Company]
+        reported_counterparty: [Company]
+      method: "Evidence-backed typed entity-registry resolution to canonical URI; unions require an explicit supported type, never a name-only match. No new RDF classes; unresolved/out-of-scope types remain staging."
+    reference:
+      role_kinds:
+        transaction_target: [Company, ASSET_REFERENCE]
+        clarification_target: [EVENT_ASSERTION_REFERENCE, TRANSACTION_REFERENCE]
+        project: [PROJECT_REFERENCE]
+        location: [LOCATION_REFERENCE]
+        case: [CASE_REFERENCE]
+      method: "Resolve to typed canonical URI or namespaced stable registry ID using evidenced issuer/party/context; exact aliases only, ambiguous names HOLD. External reference kinds are identity metadata, not ontology classes. Entity-valued references also retain entity-link decisions."
+    occurrence:
+      roles: [occurrence_id]
+      method: "Original issuer-namespaced assertion/document/decision identity, or adjudicated stable business-occurrence ID under identity_policy; reprints reuse, substantive assertions differ."
+    date:
+      roles: [record_date, completion_date, effective_date, approval_date]
+      method: "Evidenced full ISO-8601 YYYY-MM-DD validated as a real calendar date; locale parsing declared in audit, ambiguous/partial dates HOLD; never article-date imputation."
+    controlled:
+      roles: [reported_action, dividend_action, rumor_or_proposal, clarification_action, completion_action, policy_action, regulatory_action, leadership_action, capital_action, rating_action, expansion_action, legal_action, partnership_action, metric, instrument, position_title]
+      method: "Exact role-specific token/alias in normalization_vocabulary.values; tokens scoped by role, never equate actions across roles."
+    reporting_period:
+      roles: [reporting_period]
+      method: "Use normalization_vocabulary.reporting_period grammar and exact type/qualifier aliases; all period coordinates must be evidenced."
+normalization_vocabulary:
+  version: "1.0.4"
+  scope: "Small extraction/identity vocabulary covering all 14 entries; not an ontology extension or runtime implementation. New synonyms require a new frozen mapping version and review, never retroactive key rewriting."
+  values:
+    reported_action:
+      NEGOTIATE_BUY_EQUITY: ["đang đàm phán mua cổ phần", "đàm phán mua cổ phần", "negotiate equity purchase"]
+      NEGOTIATE_SELL_EQUITY: ["đàm phán bán cổ phần", "negotiate equity sale"]
+      NEGOTIATE_MERGER: ["đàm phán sáp nhập", "negotiate merger"]
+    dividend_action:
+      DECLARE_CASH: ["chia cổ tức bằng tiền", "cổ tức tiền mặt", "declare cash dividend"]
+      DECLARE_STOCK: ["chia cổ tức bằng cổ phiếu", "declare stock dividend"]
+      SET_RECORD_DATE: ["chốt ngày đăng ký cuối cùng", "set dividend record date"]
+      CANCEL_DIVIDEND: ["hủy cổ tức", "cancel dividend"]
+    rumor_or_proposal:
+      RUMORED_ACQUISITION: ["tin đồn mua lại", "rumored acquisition"]
+      PROPOSED_ACQUISITION: ["đang xem xét mua lại", "đề xuất mua lại", "proposed acquisition"]
+      PROPOSED_MERGER: ["đề xuất sáp nhập", "proposed merger"]
+    clarification_action:
+      DENY_NEGOTIATION: ["chưa có đàm phán cụ thể", "phủ nhận đàm phán", "deny negotiation"]
+      CONFIRM_NEGOTIATION: ["xác nhận đàm phán", "confirm negotiation"]
+      LIMIT_CLAIM: ["giới hạn phạm vi thông tin", "limit claim"]
+    completion_action:
+      COMPLETE_EQUITY_PURCHASE: ["hoàn tất mua cổ phần", "complete equity purchase"]
+      COMPLETE_MERGER: ["hoàn tất sáp nhập", "complete merger"]
+      COMPLETE_ASSET_PURCHASE: ["hoàn tất mua tài sản", "complete asset purchase"]
+    policy_action:
+      ENACT: ["ban hành quy định mới", "ban hành", "enact"]
+      AMEND: ["sửa đổi quy định", "amend"]
+      REPEAL: ["bãi bỏ quy định", "repeal"]
+    regulatory_action:
+      FINE: ["bị xử phạt", "xử phạt", "fine"]
+      APPROVE: ["được chấp thuận", "chấp thuận", "approve"]
+      INSPECT: ["thanh tra", "inspect"]
+      RESTRICT: ["hạn chế hoạt động", "restrict operations"]
+    leadership_action:
+      APPOINT: ["bổ nhiệm", "được bổ nhiệm", "appoint"]
+      REMOVE: ["miễn nhiệm", "remove"]
+      RESIGN: ["từ nhiệm", "resign"]
+    capital_action:
+      ISSUE_EQUITY: ["phát hành thêm cổ phiếu", "phát hành cổ phiếu", "issue equity"]
+      ISSUE_BOND: ["phát hành trái phiếu", "issue bond"]
+      RAISE_CAPITAL: ["huy động vốn", "raise capital"]
+    rating_action:
+      UPGRADE: ["nâng xếp hạng tín nhiệm", "upgrade"]
+      DOWNGRADE: ["hạ xếp hạng tín nhiệm", "downgrade"]
+      OUTLOOK_UP: ["nâng triển vọng tín nhiệm", "positive outlook revision"]
+      OUTLOOK_DOWN: ["hạ triển vọng tín nhiệm", "negative outlook revision"]
+      REAFFIRM: ["giữ nguyên xếp hạng tín nhiệm", "reaffirm"]
+    expansion_action:
+      EXPAND_CAPACITY: ["mở rộng nhà máy", "mở rộng công suất", "expand capacity"]
+      LAUNCH_PROJECT: ["triển khai dự án", "launch project"]
+      ENTER_MARKET: ["mở rộng thị trường", "enter market"]
+    legal_action:
+      INVESTIGATE: ["điều tra", "investigate"]
+      PROSECUTE: ["cơ quan điều tra khởi tố", "khởi tố", "prosecute"]
+      LITIGATE: ["khởi kiện", "litigate"]
+      DISMISS_CASE: ["đình chỉ vụ án", "dismiss case"]
+    partnership_action:
+      SIGN_AGREEMENT: ["ký thỏa thuận hợp tác", "sign cooperation agreement"]
+      FORM_JOINT_VENTURE: ["thành lập liên doanh", "form joint venture"]
+    metric:
+      REVENUE: ["doanh thu", "revenue"]
+      NET_PROFIT: ["lợi nhuận sau thuế", "net profit"]
+      PRETAX_PROFIT: ["lợi nhuận trước thuế", "pretax profit"]
+      OPERATING_PROFIT: ["lợi nhuận hoạt động", "operating profit"]
+      EPS: ["lãi cơ bản trên cổ phiếu", "basic earnings per share"]
+    instrument:
+      COMMON_STOCK: ["cổ phiếu phổ thông", "common stock"]
+      PREFERRED_STOCK: ["cổ phiếu ưu đãi", "preferred stock"]
+      BOND: ["trái phiếu", "bond"]
+      CONVERTIBLE_BOND: ["trái phiếu chuyển đổi", "convertible bond"]
+      LOAN: ["khoản vay", "loan"]
+    position_title:
+      CEO: ["tổng giám đốc", "chief executive officer"]
+      CHAIR: ["chủ tịch hội đồng quản trị", "board chair"]
+      CFO: ["giám đốc tài chính", "chief financial officer"]
+      BOARD_MEMBER: ["thành viên hội đồng quản trị", "board member"]
+  reporting_period:
+    type_aliases:
+      YEAR: ["năm", "year", "annual"]
+      QUARTER: ["quý", "quarter"]
+      HALF: ["bán niên", "half-year"]
+      MONTH: ["tháng", "month"]
+      RANGE: ["kỳ từ ngày đến ngày", "date interval"]
+    formats:
+      YEAR: "YEAR{YYYY}"
+      QUARTER: "QUARTER{YYYY}-Q{n}"
+      HALF: "HALF{YYYY}-H{n}"
+      MONTH: "MONTH{YYYY}-{MM}"
+      RANGE: "RANGE{YYYY-MM-DD}/{YYYY-MM-DD}"
+    constraints:
+      year: "Four-digit evidenced year, never publication-date imputation."
+      quarter: "n in 1..4; normalize roman I/II/III/IV only with explicit quarter context."
+      half: "n in 1..2; 6 months cumulative is HALF only when the evidenced boundaries equal that half-year."
+      month: "MM in 01..12 with zero padding."
+      range: "Real evidenced inclusive start/end dates, start <= end; non-calendar/YTD/fiscal spans use RANGE unless explicitly equivalent to YEAR/QUARTER/HALF/MONTH. Never infer fiscal boundaries."
+    qualifier_order: [scope, basis]
+    qualifier_aliases:
+      scope:
+        CONSOLIDATED: ["hợp nhất", "consolidated"]
+        STANDALONE: ["riêng lẻ", "standalone"]
+      basis:
+        ORIGINAL: ["công bố gốc", "original"]
+        RESTATED: ["điều chỉnh lại", "restated"]
+    qualifier_format: ";{qualifier}={TOKEN}"
+    qualifier_policy: "Append only evidenced qualifiers in qualifier_order; absence is not an alias of a stated qualifier. Unknown/conflicting or unrepresented qualifiers HOLD. Preserve original span/context. Do not strip qualifiers to force a duplicate; new restated assertion also receives its own occurrence_id."
+    examples:
+      - raw: "năm 2026"
+        canonical: "YEAR2026"
+      - raw: "quý I năm 2026 hợp nhất"
+        canonical: "QUARTER2026-Q1;scope=CONSOLIDATED"
+      - raw: "bán niên 1 năm 2026 riêng lẻ điều chỉnh lại"
+        canonical: "HALF2026-H1;scope=STANDALONE;basis=RESTATED"
+      - raw: "tháng 1 năm 2026"
+        canonical: "MONTH2026-01"
+      - raw: "lũy kế từ 2026-01-01 đến 2026-09-30"
+        canonical: "RANGE2026-01-01/2026-09-30"
 entries:
   - eventType: M_AND_A_REPORTED_NEGOTIATION
     description: "Tin được thuật lại về khả năng đàm phán mua/bán cổ phần; chưa đồng nghĩa giao dịch hoàn tất. Chỉ dùng nhãn này khi nguồn hỗ trợ khẳng định đã có đàm phán được báo cáo."

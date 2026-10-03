@@ -4,9 +4,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.org/wfkg/v1> a owl:Ontology ;
-    rdfs:label "Vietnamese Weighted Financial Knowledge Graph Ontology v1.0.2"@en ;
+    rdfs:label "Vietnamese Weighted Financial Knowledge Graph Ontology v1.0.4"@en ;
     rdfs:comment "Ontology cho sự kiện tài chính tiếng Việt, sinh ứng viên Event–Stock và đo phản ứng thị trường. Candidate là quan hệ suy ra; Reaction là kết quả chỉ được tạo khi đủ dữ liệu thị trường và benchmark. Không khẳng định quan hệ nhân quả."@vi ;
-    owl:versionInfo "1.0.2" .
+    owl:versionInfo "1.0.4" .
 
 wfkg:abnormalReturn a owl:DatatypeProperty ;
     rdfs:domain wfkg:EventStockReaction ;
@@ -32,7 +32,7 @@ wfkg:articleId a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 wfkg:availableAt a owl:DatatypeProperty ;
-    rdfs:comment "Thời điểm fact/data trở nên khả dụng cho pipeline; chỉ được dùng khi availableAt không lớn hơn cutoff suy luận."@vi ;
+    rdfs:comment "Thời điểm fact/data trở nên khả dụng. Đầu vào sinh Candidate chỉ được dùng khi availableAt <= Candidate.inferenceCutoff; baseline 1.0.4 cố định cutoff = Event.availableAt. Observation dùng để tính Reaction được kiểm tra tại cutoff quan sát hậu nghiệm Reaction.availableAt, không phải Candidate.inferenceCutoff; Reaction.availableAt phải >= Candidate.availableAt và availableAt của mọi observation đầu vào. Candidate có thể được tạo/replay muộn hơn cutoff nhưng không được dùng đầu vào đến muộn."@vi ;
     rdfs:range xsd:dateTime .
 
 wfkg:belongsToGroup a owl:ObjectProperty ;
@@ -175,6 +175,7 @@ wfkg:fullName a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 wfkg:generatedAt a owl:DatatypeProperty ;
+    rdfs:comment "Thời điểm tạo/replay Candidate; generatedAt >= inferenceCutoff, không làm dịch chuyển cutoff hoặc mở rộng tập đầu vào đã freeze."@vi ;
     rdfs:domain wfkg:EventStockCandidate ;
     rdfs:range xsd:dateTime .
 
@@ -212,6 +213,7 @@ wfkg:hasStock a owl:ObjectProperty ;
 
 wfkg:hasSubsidiaryRelation a owl:ObjectProperty ;
     rdfs:domain wfkg:Company ;
+    rdfs:comment "Baseline: parent Company owns this link to a SubsidiaryRelation whose parentCompany points back to that Company; subsidiaryCompany identifies the child."@en ;
     rdfs:range wfkg:SubsidiaryRelation .
 
 wfkg:impactScore a owl:DatatypeProperty ;
@@ -255,7 +257,7 @@ wfkg:industryName a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 wfkg:inferenceCutoff a owl:DatatypeProperty ;
-    rdfs:comment "Mốc thông tin dùng để sinh Candidate; chỉ dùng fact có availableAt không lớn hơn mốc này."@vi ;
+    rdfs:comment "Baseline 1.0.4: inferenceCutoff = Event.availableAt cho mọi method/ablation; chỉ dùng fact có availableAt <= mốc này. Event.availableAt được freeze theo phiên bản Evidence đầy đủ, đủ điều kiện sớm nhất; Evidence đến sau không sửa ngược cutoff hay score components. Chế độ cutoff khác nằm ngoài baseline 1.0.4."@vi ;
     rdfs:domain wfkg:EventStockCandidate ;
     rdfs:range xsd:dateTime .
 

@@ -1,0 +1,121 @@
+{
+  "contract": "1.0.4",
+  "scope": "Phase 1 specification/synthetic regression, not real-data pipeline or RQ evidence",
+  "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",
+  "dependencies": {
+    "rdflib": "7.6.0",
+    "pyshacl": "0.40.0",
+    "python-docx": "1.2.0",
+    "PyYAML": "6.0.2",
+    "PyMuPDF": "1.26.5"
+  },
+  "shacl_tests": {
+    "command": [
+      "C:\\Users\\QuangHa\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "-B",
+      "D:\\Thạc sỹ\\lanlq\\master_thesis_draf\\chỉnh sửa mới nhất - 01-10\\tools\\test_baseline_shacl.py"
+    ],
+    "exit_code": 0,
+    "count": 31,
+    "success": true,
+    "output": "test_candidate_available_before_generation_is_rejected (__main__.BaselineShapeTests.test_candidate_available_before_generation_is_rejected) ... ok\ntest_cutoff_earlier_than_event_is_rejected (__main__.BaselineShapeTests.test_cutoff_earlier_than_event_is_rejected) ... ok\ntest_cutoff_later_than_event_is_rejected (__main__.BaselineShapeTests.test_cutoff_later_than_event_is_rejected) ... ok\ntest_early_reaction (__main__.BaselineShapeTests.test_early_reaction) ... ok\ntest_event_self_link (__main__.BaselineShapeTests.test_event_self_link) ... ok\ntest_generated_at_before_cutoff_is_rejected (__main__.BaselineShapeTests.test_generated_at_before_cutoff_is_rejected) ... ok\ntest_generated_at_equal_cutoff_is_valid (__main__.BaselineShapeTests.test_generated_at_equal_cutoff_is_valid) ... ok\ntest_later_replay_generation_keeps_original_cutoff (__main__.BaselineShapeTests.test_later_replay_generation_keeps_original_cutoff) ... ok\ntest_missing_benchmark_close (__main__.BaselineShapeTests.test_missing_benchmark_close) ... ok\ntest_missing_candidate_event_inverse (__main__.BaselineShapeTests.test_missing_candidate_event_inverse) ... ok\ntest_missing_candidate_reaction_inverse (__main__.BaselineShapeTests.test_missing_candidate_reaction_inverse) ... ok\ntest_missing_event_candidate_inverse (__main__.BaselineShapeTests.test_missing_event_candidate_inverse) ... ok\ntest_missing_linking_confidence (__main__.BaselineShapeTests.test_missing_linking_confidence) ... ok\ntest_missing_reaction_candidate_inverse (__main__.BaselineShapeTests.test_missing_reaction_candidate_inverse) ... ok\ntest_nonready_statuses_with_reaction_are_rejected (__main__.BaselineShapeTests.test_nonready_statuses_with_reaction_are_rejected) ... ok\ntest_plain_reaction_ready_with_reaction (__main__.BaselineShapeTests.test_plain_reaction_ready_with_reaction) ... ok\ntest_plain_reaction_ready_without_reaction (__main__.BaselineShapeTests.test_plain_reaction_ready_without_reaction) ... ok\ntest_rejected_candidate_with_reverse_only_reaction (__main__.BaselineShapeTests.test_rejected_candidate_with_reverse_only_reaction) ... ok\ntest_typed_reaction_ready_without_reaction (__main__.BaselineShapeTests.test_typed_reaction_ready_without_reaction) ... ok\ntest_unknown_lifecycle_status_is_rejected (__main__.BaselineShapeTests.test_unknown_lifecycle_status_is_rejected) ... ok\ntest_valid_control (__main__.BaselineShapeTests.test_valid_control) ... ok\ntest_valid_impact_saturation (__main__.BaselineShapeTests.test_valid_impact_saturation) ... ok\ntest_valid_negative_car (__main__.BaselineShapeTests.test_valid_negative_car) ... ok\ntest_valid_nonready_statuses_without_reaction (__main__.BaselineShapeTests.test_valid_nonready_statuses_without_reaction) ... ok\ntest_valid_zero_car (__main__.BaselineShapeTests.test_valid_zero_car) ... ok\ntest_wrong_candidate_score (__main__.BaselineShapeTests.test_wrong_candidate_score) ... ok\ntest_wrong_car (__main__.BaselineShapeTests.test_wrong_car) ... ok\ntest_wrong_confidence (__main__.BaselineShapeTests.test_wrong_confidence) ... ok\ntest_wrong_daily_return (__main__.BaselineShapeTests.test_wrong_daily_return) ... ok\ntest_wrong_direction (__main__.BaselineShapeTests.test_wrong_direction) ... ok\ntest_wrong_impact_even_when_weights_agree (__main__.BaselineShapeTests.test_wrong_impact_even_when_weights_agree) ... ok\n\n----------------------------------------------------------------------\nRan 31 tests in 74.213s\n\nOK\n"
+  },
+  "diagram_tests": {
+    "command": [
+      "C:\\Users\\QuangHa\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "-B",
+      "D:\\Thạc sỹ\\lanlq\\master_thesis_draf\\chỉnh sửa mới nhất - 01-10\\tools\\test_schema_diagram_audit.py"
+    ],
+    "exit_code": 0,
+    "count": 8,
+    "success": true,
+    "output": "........\n----------------------------------------------------------------------\nRan 8 tests in 5.213s\n\nOK\n"
+  },
+  "audit": {
+    "command": "py -3.13 -B tools/audit_schema_diagram.py --json",
+    "counts": {
+      "PASS": 337,
+      "FAIL": 0,
+      "NOT CHECKED": 57
+    },
+    "inputs_sha256": {
+      "D:\\Thạc sỹ\\lanlq\\master_thesis_draf\\chỉnh sửa mới nhất - 01-10\\ontology_v1.0.ttl": "69e8b235d833c5c95483543416ede0890cd2a12d7dbd60d6571714a6693a4611",
+      "D:\\Thạc sỹ\\lanlq\\master_thesis_draf\\chỉnh sửa mới nhất - 01-10\\shapes_v1.0.ttl": "0353e15a101bb1c127093ee58d231fe13dbe779357709fad80a37f4bee70d3f7",
+      "D:\\Thạc sỹ\\lanlq\\master_thesis_draf\\chỉnh sửa mới nhất - 01-10\\master_thesis_v1_synced_01-10.drawio.xml": "6bcf799156144af6f5724206f51025922b37d99e9c8cd5f527b91abd2bcfb963"
+    },
+    "select_parse_and_read_only": [
+      {
+        "status": "PASS",
+        "where": "SHACL",
+        "message": "44 SELECT constraints parse (not behavioral execution)"
+      },
+      {
+        "status": "PASS",
+        "where": "read-only",
+        "message": "SHA256 before/after unchanged"
+      }
+    ]
+  },
+  "formats": {
+    "owl_classes": 22,
+    "ontology_triples": 457,
+    "shapes_triples": 1092,
+    "dictionary_entries": 14,
+    "drawio_tabs": [
+      "00-WFKG Ontology",
+      "01-Tổng quan đề tài",
+      "02-Tin tức đến sự kiện",
+      "03-Chuẩn hóa thực thể",
+      "04-Event-Stock trực tiếp",
+      "05-4 Đường liên hệ chính",
+      "06-Phụ lục Entity Property"
+    ],
+    "unique_ids_and_references": true
+  },
+  "docx_health": {
+    "ok": true,
+    "issues": []
+  },
+  "pdf": {
+    "file": "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.pdf",
+    "pages": 46,
+    "caption_image_pages": [
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      37,
+      38,
+      39
+    ],
+    "null_characters": 0,
+    "replacement_glyphs": 0
+  },
+  "markdown_checks": {
+    "utf8_replacement_and_line_prefix_absent": true,
+    "balanced_fences_and_relative_links": true
+  },
+  "git_diff_check": {
+    "exit_code": 0,
+    "output": ""
+  },
+  "artifact_sha256": {
+    "ANNOTATION_GUIDELINE.md": "1e3c78ec433ad2b8cb94f82c0a6bfed7dbaf628722e5274d3c1380d980b21cbe",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx": "840921cd79a8cddb84dd61f8e586bce19760b0c78ebbd9f0c8ce45e4558f68e4",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.pdf": "3418869321faab73e6b664b14c581901a0384a36d75ede2b8c2abb3dd295a811",
+    "EVALUATION_PROTOCOL.md": "102bbe24e545875da85bcc4d4d45faaae44727fed1957cd17fbf6aa31973dca8",
+    "EVENT_DICTIONARY.yaml": "b01e6cfda780360061f5efd29c83a7369584ce766ad880d32bf64516d080e91d",
+    "EVENT_SCHEMA.md": "06f71f40f903da747897774b96514eed386763fa7e9daecdaacdad15c27e2978",
+    "master_thesis_v1_synced_01-10.drawio.xml": "6bcf799156144af6f5724206f51025922b37d99e9c8cd5f527b91abd2bcfb963",
+    "ontology_v1.0.ttl": "69e8b235d833c5c95483543416ede0890cd2a12d7dbd60d6571714a6693a4611",
+    "PHASE1_ACCEPTANCE.md": "096ea69a5578ef22f2e9c7bd84d4349486e33886552d9c2ae7bf1085ee8579d7",
+    "SCORING_SPEC.md": "cf5888ea4ba1fac09234c43f01041f78f4c7c1a7c55b8fe82f4b73e864ec8373",
+    "shapes_v1.0.ttl": "0353e15a101bb1c127093ee58d231fe13dbe779357709fad80a37f4bee70d3f7",
+    "tools/audit_schema_diagram.py": "1b9cbef4efbc31fd74d4b20ce6a9a0a834584e14f0f20af4daca13d596577a41",
+    "tools/README.md": "d483df5377ee2674c568e918106fe9b89fb887edaa4ff987679f733781ecb6da",
+    "tools/test_baseline_shacl.py": "c85f9cb551c7a2874ba7bce83f914f6e8a146f14f5f18d2579208cc4ecd6b3a5",
+    "tools/test_schema_diagram_audit.py": "e1d11219c4eb8e651121f794ada47a334bfb3815065a5d6505d4b47837247f21"
+  }
+}

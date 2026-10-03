@@ -1,4 +1,4 @@
-# SHACL contract version: 1.0.2
+# SHACL contract version: 1.0.4
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix wfkg: <https://example.org/wfkg/v1#> .
@@ -137,6 +137,13 @@ wfkg:EventShape a sh:NodeShape ;
             sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { $this wfkg:availableAt ?t . { SELECT $this (MIN(?v) AS ?earliest) WHERE { ?e wfkg:supports $this ; wfkg:availableAt ?v . } GROUP BY $this } FILTER(?t != ?earliest) }" ],
         [ sh:message "Event requires reporting Article." ;
             sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { FILTER NOT EXISTS { ?a wfkg:reports $this . } }" ],
+        [ sh:message "hasEventStockCandidate requires the matching forEvent inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:hasEventStockCandidate ?candidate .
+              FILTER NOT EXISTS { ?candidate wfkg:forEvent $this . }
+            }
+        """ ],
         [ sh:message "Event–Event relations must not self-reference."@en ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE { $this ?relation $this .
@@ -197,7 +204,8 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
         [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:relationConfidence ],
         [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:candidateScore ],
         [ sh:datatype xsd:string ;
-            sh:in ( "GENERATED"^^xsd:string "VALIDATED"^^xsd:string "REJECTED"^^xsd:string "PENDING_MARKET_WINDOW"^^xsd:string "REACTION_READY"^^xsd:string ) ;
+            # RDF 1.1 string forms are equivalent; accept both rdflib representations.
+            sh:in ( "GENERATED" "GENERATED"^^xsd:string "VALIDATED" "VALIDATED"^^xsd:string "REJECTED" "REJECTED"^^xsd:string "PENDING_MARKET_WINDOW" "PENDING_MARKET_WINDOW"^^xsd:string "REACTION_READY" "REACTION_READY"^^xsd:string ) ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:candidateStatus ],
@@ -217,12 +225,26 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:methodVersion ] ;
-    sh:sparql [ sh:message "Candidate cutoff must be no earlier than its Event; generatedAt/availableAt must be ordered."@en ;
+    sh:sparql [ sh:message "Baseline inferenceCutoff must equal Event.availableAt; generatedAt/availableAt must be ordered."@en ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE {
               $this wfkg:forEvent ?event ; wfkg:inferenceCutoff ?cutoff ; wfkg:generatedAt ?generated ; wfkg:availableAt ?available .
               ?event wfkg:availableAt ?eventAvailable .
-              FILTER (?cutoff < ?eventAvailable || ?generated < ?cutoff || ?available < ?generated)
+              FILTER (?cutoff != ?eventAvailable || ?generated < ?cutoff || ?available < ?generated)
+            }
+        """ ],
+        [ sh:message "forEvent requires the matching hasEventStockCandidate inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:forEvent ?event .
+              FILTER NOT EXISTS { ?event wfkg:hasEventStockCandidate $this . }
+            }
+        """ ],
+        [ sh:message "hasReaction requires the matching onCandidate inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:hasReaction ?reaction .
+              FILTER NOT EXISTS { ?reaction wfkg:onCandidate $this . }
             }
         """ ],
         [ sh:message "candidateScore must equal confidenceScore × relationStrength."@en ;
@@ -242,14 +264,14 @@ wfkg:EventStockCandidateShape a sh:NodeShape ;
             }
         """ ],
         [ sh:message "REACTION_READY requires an inverse-linked Reaction." ;
-            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { $this wfkg:candidateStatus \"REACTION_READY\" . FILTER NOT EXISTS { $this wfkg:hasReaction ?r . ?r wfkg:onCandidate $this . } }" ],
+            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { $this wfkg:candidateStatus ?status . FILTER (STR(?status) = \"REACTION_READY\") FILTER NOT EXISTS { $this wfkg:hasReaction ?r . ?r wfkg:onCandidate $this . } }" ],
 
         [ sh:message "Candidate có Reaction phải ở trạng thái REACTION_READY."@vi ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
 \r
             SELECT $this WHERE {\r
               $this wfkg:hasReaction ?reaction ; wfkg:candidateStatus ?status .\r
-              FILTER (?status != "REACTION_READY")\r
+              FILTER (STR(?status) != "REACTION_READY")\r
             }\r
         """ ] ;
     sh:sparql [ sh:message "relationPath phải trùng với impactType trong baseline."@vi ;
@@ -382,7 +404,35 @@ wfkg:EventStockReactionShape a sh:NodeShape ;
             sh:maxCount 1 ;
             sh:minCount 1 ;
             sh:path wfkg:availableAt ] ;
-    sh:sparql [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho cổ phiếu (gồm predecessor)."@vi ;
+    sh:sparql [ sh:message "onCandidate requires hasReaction and REACTION_READY on the same Candidate."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate .
+              FILTER NOT EXISTS {
+                ?candidate wfkg:hasReaction $this ; wfkg:candidateStatus ?status .
+                FILTER (STR(?status) = "REACTION_READY")
+              }
+            }
+        """ ],
+        [ sh:message "impactScore must equal min(1, abs(CAR) / 0.10) in the baseline."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ; wfkg:impactScore ?impact .
+              BIND (ABS(?car) / 0.10 AS ?rawImpact)
+              BIND (IF(?rawImpact > 1, 1, ?rawImpact) AS ?expectedImpact)
+              FILTER (ABS(?impact - ?expectedImpact) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "marketReactionDirection must follow CAR with epsilon=0 in the baseline."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ; wfkg:marketReactionDirection ?direction .
+              FILTER ((?car > 0 && ?direction != "POSITIVE")
+                   || (?car < 0 && ?direction != "NEGATIVE")
+                   || (?car = 0 && ?direction != "NEUTRAL"))
+            }
+        """ ],
+        [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho cổ phiếu (gồm predecessor)."@vi ;
             sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
             SELECT $this WHERE {
               $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end ;

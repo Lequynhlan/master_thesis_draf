@@ -104,6 +104,32 @@ def audit(ontology, shapes, drawio):
                   for attr in ('parent', 'source', 'target')
                   if c.get(attr) is not None and c.get(attr) not in known]
         add('FAIL' if broken else 'PASS', tab, f'Broken references: {broken}')
+        if tab.startswith('00-'):
+            # Compare role endpoints, not generic Company class labels. Both
+            # parent and child are Company, so domain/range cannot catch this.
+            edge_labels = {c.get('id'): [label_text(c.get('value', ''))]
+                           for c in cells if c.get('edge') == '1'}
+            for c in cells:
+                if c.get('parent') in edge_labels and c.get('edge') != '1':
+                    edge_labels[c.get('parent')].append(label_text(c.get('value', '')))
+            def has_property(edge, name):
+                return any(re.fullmatch(r'(?:wfkg:)?' + name, text.strip())
+                           for text in edge_labels[edge.get('id')])
+            edges = [c for c in cells if c.get('edge') == '1']
+            owners = [e for e in edges if has_property(e, 'hasSubsidiaryRelation')]
+            if not owners:
+                add('FAIL', f'{tab}/subsidiary-owner-role', 'Missing hasSubsidiaryRelation connector; role invariant cannot be checked')
+            for owner in owners:
+                parents = [e for e in edges if has_property(e, 'parentCompany')
+                           and e.get('source') == owner.get('target')]
+                ok = (len(parents) == 1 and owner.get('source') in known
+                      and owner.get('target') in known
+                      and parents[0].get('target') == owner.get('source'))
+                add('PASS' if ok else 'FAIL',
+                    f'{tab}/cell={owner.get("id")}/subsidiary-owner-role',
+                    'hasSubsidiaryRelation source must equal parentCompany target for the same relation node; '
+                    f'owner={owner.get("source")}; parent targets={[e.get("target") for e in parents]} '
+                    '(role endpoint identity only, not generic class compatibility)')
         if tab.startswith('06-'):
             appendix.extend((f'{tab}/cell={c.get("id")}', label_text(c.get('value', ''))) for c in cells)
     if not appendix:
@@ -191,7 +217,7 @@ def audit(ontology, shapes, drawio):
     add('PASS', 'SHACL', f'{len(list(constraints.objects(None, SH.select)))} SELECT constraints parse (not behavioral execution)')
     for where, message in (
         ('appendix', 'Only printed cardinalities and direct SHACL property shapes compared; qualified/logical/SPARQL constraints not equated to cardinality labels'),
-        ('diagram', 'Other tabs: structure only; route semantics, free-form labels, connector class semantics and layout require human review'),
+        ('diagram', 'Other tabs: structure plus tab00 subsidiary-owner-role endpoint identity only; remaining route semantics, free-form labels, connector class semantics and layout require human review'),
         ('validation', 'No SHACL conformance execution, runtime, calendar, scoring/evaluation or DOCX audit'),
     ):
         add('NOT CHECKED', where, message)
