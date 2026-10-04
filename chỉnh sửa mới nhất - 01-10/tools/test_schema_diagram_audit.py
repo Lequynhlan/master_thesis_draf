@@ -9,7 +9,7 @@ BASE = Path(__file__).resolve().parent.parent
 spec = importlib.util.spec_from_file_location('schema_audit', BASE / 'tools/audit_schema_diagram.py')
 audit_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(audit_module)
-DRAWIO = BASE / 'master_thesis_v1_synced_01-10.drawio.xml'
+DRAWIO = BASE / 'master_thesis_v1_synced_01-10.drawio'
 OWNER = '2411blnfpnkDnIr3tklR-3'
 PARENT = '2411blnfpnkDnIr3tklR-5'
 CHILD = 'R3vZ3JpwLF3V6DxzlldD-2'

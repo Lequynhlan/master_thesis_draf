@@ -231,7 +231,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--ontology', type=Path, default=base / 'ontology_v1.0.ttl')
     parser.add_argument('--shapes', type=Path, default=base / 'shapes_v1.0.ttl')
-    parser.add_argument('--drawio', type=Path, default=base / 'master_thesis_v1_synced_01-10.drawio.xml')
+    parser.add_argument('--drawio', type=Path, default=base / 'master_thesis_v1_synced_01-10.drawio')
     parser.add_argument('--json', action='store_true', help='JSON to stdout only, no file creation')
     parser.add_argument('--verbose', action='store_true', help='Print PASS details as well')
     args = parser.parse_args()

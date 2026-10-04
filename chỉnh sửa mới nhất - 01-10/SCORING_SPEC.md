@@ -100,7 +100,7 @@ SHACL checks baseline impact normalization and marketReactionDirection against C
 
 - `reactionWeight` must not be used to generate or rank a Candidate at `inferenceCutoff`.
 - Candidate ranking uses only `candidateScore` and inputs with `availableAt <= inferenceCutoff = Event.availableAt`.
-- LeadershipPosition/SubsidiaryRelation/IndexMembership use inclusive validity at the local cutoff date, not effectiveTradingDate or replay time. IndustryExposure uses the separately fixed YEAR/newest-period rule with inclusive 365-day staleness and deterministic availableAt/URI ties in EVENT_SCHEMA.md.
+- LeadershipPosition/SubsidiaryRelation/IndexMembership first select the latest cutoff-available version per business key under EVENT_SCHEMA.md's temporal version-selection contract, then test inclusive validity at the local cutoff date, not effectiveTradingDate or replay time. Never fall back to an older open-ended version. IndustryExposure uses the separate scope-partitioned YEAR/newest-period rule with inclusive 365-day staleness and deterministic availableAt/URI ties in EVENT_SCHEMA.md.
 - Day 0 is the first exchange session with `Event.availableAt < session.open` strictly; equality at open moves to the next session. `[0,0]`, `[0,+1]`, `[0,+3]` are post-availability daily windows; `[-1,+1]` is retrospective robustness and never supplies ranking inputs.
 - Reaction may be calculated only after the complete event window closes.
 - Every input observation must have `availableAt` no later than the Reaction availability time.

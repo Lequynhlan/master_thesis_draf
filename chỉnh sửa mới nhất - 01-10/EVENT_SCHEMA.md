@@ -80,7 +80,7 @@ evaluation retrospectively.
 - `effectiveTradingDate` uses the availability/calendar rule below, not the repost's publication day.
 - Both `MarketObservation` and `MarketIndexObservation` require `adjustedClose > 0`; `returnValue`, `availableAt` and `sourceReference` are mandatory. `returnValue` may be negative and is only a derived/cache field; `adjustedClose` is authoritative for recomputation. See the AR/CAR contract above.
 - Reaction provenance contains exactly the predecessor session plus every session in the configured event window for both the Candidate stock and benchmark; the calendar-aware validator checks the exact session dates.
-- `LeadershipPosition`, `SubsidiaryRelation`, `IndexMembership`: `validFrom` required, `validTo` optional. Eligibility is `availableAt <= cutoff AND validFrom <= date(cutoff) AND (validTo absent OR date(cutoff) <= validTo)`; dates are inclusive. Missing start is ineligible, not an unbounded tenure.
+- `LeadershipPosition`, `SubsidiaryRelation`, `IndexMembership`: select the latest available version under the business-key contract below **before** testing validity. `validFrom` is required, `validTo` optional; dates are inclusive. Missing start is ineligible, not an unbounded tenure.
 - `IndustryExposure` uses reporting-period selection below; `validFrom`/`validTo` are optional metadata, not the baseline eligibility filter.
 
 ## Frozen cutoff and daily calendar contract (1.0.4)
@@ -93,6 +93,20 @@ evaluation retrospectively.
 - If the earliest availability has no complete eligible Evidence assignment, retain the extraction record in staging/coverage with `NO_COMPLETE_EVIDENCE_AT_CUTOFF` and produce no baseline Candidate. This algorithmic miss is not an evaluation exclusion: independently resolved gold Events remain in the common RQ2/RQ3 universe with an empty ranking, so missed gold positives count as false negatives. Only independently adjudicated unresolved identity/relevance or predeclared source-frame exclusions may remove a gold item, identically for all methods. Do not silently delay cutoff until a complete assignment arrives, combine incomplete assignments, or change earliest Event availability. Late Evidence/reprints may add current provenance but cannot enrich the historical snapshot. A later-evidence reconstruction for the same assertion is a separately versioned retrospective analysis outside baseline, explicitly retaining the original Event availability; it is not a new baseline Event or a delayed prediction. A genuinely new substantive assertion receives a distinct Event URI, its own earliest supporting availability and recomputed effectiveTradingDate. Newly discovered earlier Evidence likewise requires separately versioned correction/reconstruction outside the frozen baseline, never mutation of its cutoff or day 0.
 - Historical lifecycle queries read an immutable graph snapshot or timestamped status log. Filtering a current mutable `candidateStatus` by observation dates is not historical reconstruction.
 - A Reaction requires completed window and complete Stock + benchmark prices for each session including the predecessor. Windows `[0,0]`, `[0,+1]`, `[0,+3]` are post-availability daily windows under the strict-opening rule; `[-1,+1]` is a retrospective robustness window, not wholly post-event. Its negative session prices never enter Candidate ranking. Temporal facts are selected at `date(inferenceCutoff)`, not at day 0, generation time or the window end: a future-effective `validFrom` remains ineligible even if it begins before day 0. All dates here use Asia/Ho_Chi_Minh.
+
+## Temporal relation version selection (before validity)
+
+Use immutable version nodes and a frozen identity registry; these are existing relation classes, not new ontology properties. Business keys are:
+
+- LeadershipPosition: `(positionHolder, positionAtCompany, normalized positionTitle, original validFrom)`.
+- SubsidiaryRelation: `(subsidiaryCompany, parentCompany, original validFrom)`.
+- IndexMembership: `(memberStock, memberIndex, original validFrom)`.
+
+`original validFrom` identifies the evidenced tenure/membership occurrence; an identity correction uses an explicit version-registry mapping to that same business key. Do not let a corrected start/entity/title create a second active copy. Distinct evidenced tenures have distinct keys. Unresolved identity or missing required key fields remains staging and cannot supply a path.
+
+For each key, consider only versions with `availableAt <= inferenceCutoff`; order by `availableAt DESC, STR(URI) ASC` (case-sensitive Unicode codepoint order), then select one. Only after selection require `validFrom <= date(cutoff)` and either no `validTo` or `date(cutoff) <= validTo`. A selected ended/future-effective/invalid version suppresses the relation; never fall back to an older open-ended version. Retain the key, eligible version IDs, selected URI and validity decision in the immutable audit record. Missing/mismatched endpoint ownership also suppresses the route. Generic SHACL checks node structure, not this registry-aware version-selection algorithm.
+
+IndustryExposure follows the separate reporting-period rule below, not this tenure filter. Query examples must use a graph already partitioned/prefiltered to the frozen reporting scope; consolidated and standalone records never compete for the same selected exposure.
 
 ## IndustryExposure selection (separate from validity)
 

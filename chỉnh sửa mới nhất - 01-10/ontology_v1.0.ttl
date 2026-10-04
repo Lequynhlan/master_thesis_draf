@@ -257,7 +257,7 @@ wfkg:industryName a owl:DatatypeProperty ;
     rdfs:range xsd:string .
 
 wfkg:inferenceCutoff a owl:DatatypeProperty ;
-    rdfs:comment "Baseline 1.0.4: inferenceCutoff = Event.availableAt cho mọi method/ablation; chỉ dùng fact có availableAt <= mốc này. Event.availableAt được freeze theo phiên bản Evidence đầy đủ, đủ điều kiện sớm nhất; Evidence đến sau không sửa ngược cutoff hay score components. Chế độ cutoff khác nằm ngoài baseline 1.0.4."@vi ;
+    rdfs:comment "Baseline 1.0.4: inferenceCutoff = Event.availableAt cho mọi method/ablation; chỉ dùng fact có availableAt <= mốc này. Event.availableAt là mốc khả dụng sớm nhất của Evidence hỗ trợ Event, không phụ thuộc assignment đã đầy đủ hay chưa. Nếu tại mốc đó chưa có complete assignment đủ điều kiện thì không sinh baseline Candidate và ghi coverage miss; không dời cutoff. Evidence đến sau không sửa ngược cutoff hay score components. Chế độ cutoff khác nằm ngoài baseline 1.0.4."@vi ;
     rdfs:domain wfkg:EventStockCandidate ;
     rdfs:range xsd:dateTime .
 
