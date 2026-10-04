@@ -1,0 +1,58 @@
+{
+  "verified_at": "2026-10-04T15:29:31.771430+07:00",
+  "sources": [
+    {
+      "id": "2022.tacl-1.50",
+      "url": "https://aclanthology.org/2022.tacl-1.50.pdf",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2022.tacl-1.50.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2022.tacl-1.50.txt",
+      "sha256": "abe238e8c1bbd8a29d4998ce3a921e8f51f3704247c5e52636b81e08f4f819af",
+      "pages": 16
+    },
+    {
+      "id": "2207.05221",
+      "url": "https://arxiv.org/pdf/2207.05221",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2207.05221.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2207.05221.txt",
+      "sha256": "1d861f7732f65769703cb2731dc085f3c9e69771b1b6196d074646d1473c3fbf",
+      "pages": 43
+    },
+    {
+      "id": "2303.16634",
+      "url": "https://arxiv.org/pdf/2303.16634",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2303.16634.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2303.16634.txt",
+      "sha256": "3a822b8646dccda73b01eda9b07420072daf7601cb0d02d9bbc3b38325ab2fd2",
+      "pages": 11
+    },
+    {
+      "id": "2305.14975",
+      "url": "https://arxiv.org/pdf/2305.14975",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2305.14975.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2305.14975.txt",
+      "sha256": "dd4c8e43690ed8ce1a566d9cc1df01b558749379e4339156113ba93906562633",
+      "pages": 10
+    },
+    {
+      "id": "2306.05685",
+      "url": "https://arxiv.org/pdf/2306.05685",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2306.05685.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2306.05685.txt",
+      "sha256": "1574982845157569b85c1214bfa9987000384d7a5e3b5fbdcc5a29afec59cb81",
+      "pages": 29
+    },
+    {
+      "id": "2306.13063",
+      "url": "https://arxiv.org/pdf/2306.13063",
+      "pdf": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2306.13063.pdf",
+      "text": "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2306.13063.txt",
+      "sha256": "65fa9f9494f00bfb8df26e3de3ccce9c7b011088eaa51a0a349fc2b068456654",
+      "pages": 29
+    }
+  ],
+  "metadata_files": [
+    "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2023.emnlp-main.153.metadata.html",
+    "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2023.emnlp-main.330.metadata.html",
+    "D:\\project\\master_thesis\\01-10-2026\\research_confidence\\sources_llm\\2022.tacl-1.50.metadata.html"
+  ]
+}

@@ -1,0 +1,329 @@
+{
+  "docx": [
+    {
+      "locator": "P11",
+      "text": "RQ3 – Weighting và ranking: Trên cùng tập Candidate của KG đầy đủ, so sánh unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore; market reaction chỉ được phân tích hồi cứu sau khi window đóng bằng reactionWeight. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng max trong cùng methodVersion/cutoff; reactionWeight báo riêng theo path, không cộng lặp CAR. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2, Precision@K và ba ablation riêng cho extractionConfidence, linkingConfidence và relationConfidence (mỗi lần chỉ thay một component bằng 1; sourceConfidence luôn giữ 0,5). Nhãn phải độc lập với công thức score để tránh đánh giá vòng tròn. Per-impactType phải chiếu predictions theo route trước aggregation/top-K, không lọc bằng gold sau dự đoán; common universe và nhãn độc lập được khóa trong EVALUATION_PROTOCOL.md."
+    },
+    {
+      "locator": "P19",
+      "text": "Ontology gồm 22 lớp: 18 lớp nghiệp vụ và 4 lớp biểu diễn quan hệ theo thời gian. Bank là lớp con của Company. Tên thống nhất là WFKG; namespace wfkg: <https://example.org/wfkg/v1#>. Trong gói này, ontology_v1.0.ttl và shapes_v1.0.ttl là nguồn chuẩn về schema; bảng trong báo cáo được rà theo các contract đó. Gói có tools/audit_schema_diagram.py và tools/README.md để kiểm tra chỉ đọc sự nhất quán của phụ lục Draw.io với TTL/SHACL. Công cụ không tự sửa hoặc dựng lại bảng, báo cáo hay sơ đồ. Phiên bản contract hiện hành là 1.0.4; giữ nguyên tên ontology_v1.0.ttl và shapes_v1.0.ttl, namespace và 22 lớp. Phiên bản tăng để không gán quy tắc mới cho kết quả snapshot cũ."
+    },
+    {
+      "locator": "P27",
+      "text": "Các tình huống ngành, chính sách và doanh nghiệp đều phải đi qua quy tắc liên kết được định phiên bản; không tự coi các doanh nghiệp cùng ngành là có exposure bằng nhau. Các mở rộng đường liên hệ được đánh giá ở Phase 2. Trong baseline 1.0.4, relationPath là mã route ổn định và phải bằng impactType; các mũi tên trong bảng chỉ mô tả topology. Không lưu chuỗi URI/property/phiên bản quan hệ vào relationPath; candidateReason giải thích việc chọn Candidate, còn các quan hệ và provenance được biểu diễn bằng liên kết RDF và relation node tương ứng."
+    },
+    {
+      "locator": "P91",
+      "text": "Nếu cùng Event–Stock có nhiều đường giải thích, lưu Candidate riêng cho từng path để giữ expectedDirection, confidence và relationStrength riêng. Đây là các đường đánh giá khác nhau của cùng cặp Event–Stock; khi tổng hợp không đếm thành nhiều sự kiện độc lập. Thông tin mới sau cutoff không được tạo lại baseline Candidate của cùng Event tại cutoff muộn hơn. Substantive assertion mới tạo Event riêng theo mục 2.5; snapshot muộn cho cùng Event chỉ thuộc nhiệm vụ retrospective ngoài baseline và có configuration riêng. Giữ nguyên snapshot đã sử dụng."
+    },
+    {
+      "locator": "P96",
+      "text": "Các trường event study và nguyên tắc tính được chốt ở mức đặc tả Phase 1, còn việc chạy trên dữ liệu thật thuộc Phase 2. Baseline dùng market-adjusted return. Candidate score được tính trước market window: candidateScore = confidenceScore × relationStrength. Reaction chỉ được tạo sau khi đủ market data; reactionWeight = impactScore × confidenceScore × relationStrength. signedWeight = sign(marketReactionDirection) × reactionWeight. Không dùng reactionWeight để ranking tại inferenceCutoff."
+    },
+    {
+      "locator": "P103",
+      "text": "inferenceCutoff lưu trên Candidate là mốc chọn thông tin đầu vào; generatedAt là thời điểm thực thi. Candidate chỉ dùng Evidence và fact khả dụng tại inferenceCutoff, đồng thời cố định confidenceScore và relationStrength theo snapshot này. Baseline 1.0.4 khóa cutoff đúng bằng Event.availableAt, là mốc Evidence sớm nhất hỗ trợ Event, và nhỏ hơn opening day 0. Nếu tại cutoff chưa có complete assignment hay mapping đủ điều kiện, baseline không sinh Candidate; phải ghi coverage/miss, không dời cutoff hoặc loại Event khỏi gold để làm đẹp recall. Replay muộn chỉ tái lập thông tin khả dụng ở cutoff, không phải bằng chứng đã dự đoán trực tiếp lúc đó."
+    },
+    {
+      "locator": "P115",
+      "text": "TTL/SHACL là nguồn chuẩn khi đối chiếu property và cardinality. Công cụ tools/audit_schema_diagram.py kiểm tra inventory trong phụ lục Draw.io, domain/range của các entry có cấu trúc, cardinality được in trực tiếp theo direct SHACL property shapes, cùng ID/reference của các tab. Property dùng chung không có domain riêng, datatype range không được in và phần diễn giải ngoài phụ lục được ghi NOT CHECKED; không được hiểu là PASS. Công cụ parse SELECT constraints nhưng không thực thi SHACL conformance, không kiểm tra calendar, snapshot, arithmetic runtime hoặc toàn bộ pipeline. SHACL 1.0.4 còn kiểm tra impactScore=min(1,abs(CAR)/0,10), direction theo dấu CAR với epsilon=0 và cả hai chiều inverse của Event–Candidate, Candidate–Reaction. Graph đưa vào validation phải đã có đủ inverse, được writer materialize hoặc reasoner sinh trước với provenance; validator không tự sửa graph. Reaction chỉ có onCandidate vẫn bắt buộc Candidate tương ứng REACTION_READY. Calendar, dictionary membership, strength assignment, Evidence aggregation và snapshot immutability vẫn là curated gate Phase 2. Baseline 1.0.4 còn ràng buộc inferenceCutoff bằng Event.availableAt và kiểm tra REACTION_READY có Reaction với literal typed xsd:string nhất quán. Audit bổ sung đối chiếu vai trò mẹ/con của hasSubsidiaryRelation tại tab 00, không nâng phạm vi thành chứng minh mọi cạnh của Draw.io."
+    },
+    {
+      "locator": "P119",
+      "text": "Trọng số Reaction baseline: reactionWeight = impactScore × confidenceScore × relationStrength. Đặt d = +1 khi CAR > epsilon, d = −1 khi CAR < −epsilon, ngược lại d = 0; marketReactionDirection tương ứng POSITIVE/NEGATIVE/NEUTRAL và signedWeight = d × reactionWeight. Baseline epsilon = 0; khi thử ngưỡng khác phải ghi trong methodVersion. Các điểm là heuristic, không phải xác suất hoặc quan hệ nhân quả."
+    },
+    {
+      "locator": "P120",
+      "text": "Baseline được đề xuất để đánh giá: R(i,t) = adjustedClose(i,t)/adjustedClose(i,t−1) − 1; benchmark phải có adjustedClose cùng phiên và nhất quán cách điều chỉnh. AR(i,t) = R(i,t) − R(m,t); CAR(i,[a,b]) là tổng AR theo trading day. impactScore = min(1, abs(CAR)/tau), tau = 0,10. confidenceScore = 0,25 × (sourceConfidence + extractionConfidence + linkingConfidence + relationConfidence) trong baseline đều trọng số; mọi component, tau, epsilon, window và version phải được lưu để tái lập. candidateScore = confidenceScore × relationStrength; reactionWeight = impactScore × candidateScore. Phase 2 thử tau = 0,05/0,10/0,20, các event window và exposureStrength variant trên tập phát triển/validation rồi khóa trước test. SHACL 1.0.4 kiểm tra baseline tau=0,10 và epsilon=0; thử tau/epsilon khác phải dùng shape/configuration được định phiên bản riêng, không chỉ đổi methodVersion."
+    },
+    {
+      "locator": "P121",
+      "text": "Scoring đã khóa: relationStrength DIRECT=1; ba path gián tiếp=0,5. Biến thể industry chỉ thay strength bằng exposureStrength=exposureRatio đã chuẩn hóa, không đổi population, Evidence selection hoặc strength của các path khác. Các hằng số là heuristic thực nghiệm, không phải mức ảnh hưởng kinh tế đo được."
+    },
+    {
+      "locator": "P122",
+      "text": "extractionConfidence lấy maximum trên Evidence hỗ trợ cùng Event và đầy đủ required roles, phù hợp role/identity assignment đã chọn, có availableAt ≤ inferenceCutoff. Nếu chỉ có điểm per-role, lấy minimum để tạo điểm assignment cho một Evidence. Assignment có căn cứ nhưng chưa calibrated dùng fallback 0,5; thiếu role không được điền fallback. Tied score chọn Evidence URI tăng dần. Không ghép các Evidence thiếu role để tạo assignment đầy đủ trong baseline; không có Evidence hợp lệ thì không sinh curated Candidate. Audit giữ tập Evidence đủ điều kiện, URI được chọn, điểm gốc, role assignment và model/calibration version. Component ablation giữ selection gốc. Chi tiết ở SCORING_SPEC.md 1.0.4."
+    },
+    {
+      "locator": "P123",
+      "text": "linkingConfidence dùng các quyết định của cùng Evidence/role assignment đã được selection theo extractionConfidence, không chọn lại Evidence theo linker score. Những entity/Stock suy ra qua route dùng versioned registry/temporal facts đủ điều kiện tại cutoff. Event–Company confidence lấy assignment score hỗ trợ role company trong Evidence được chọn; Company–Stock curated mapping dùng 1, automatic mapping dùng score calibrated hoặc fallback 0,5. SCORING_SPEC.md khóa bảng required inputs của bốn route và nơi lưu audit. Việc tái dùng score được công bố, không giả định các confidence component độc lập thống kê."
+    },
+    {
+      "locator": "P128",
+      "text": "RQ3 – Weighting và ranking: Trên cùng tập Candidate của KG đầy đủ, so sánh unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore. Unweighted dùng điểm 1; weighted dùng candidateScore = confidenceScore × relationStrength. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng max theo rule đã khóa, không dùng CAR hoặc reactionWeight để xếp hạng tại inferenceCutoff. Reaction chỉ được phân tích hồi cứu sau khi event window đóng bằng reactionWeight. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2, Precision@K, ba ablation riêng cho extractionConfidence, linkingConfidence và relationConfidence (mỗi lần chỉ thay một component bằng 1; sourceConfidence luôn giữ 0,5) và báo cáo riêng theo impactType cùng macro theo Event. Nhãn phải độc lập với score. Ablation trung hòa biến thiên điểm của một component, không khẳng định confidence thực tế bằng 1 và không bỏ bước extraction, linking hay kiểm tra path. Mỗi variant tính lại confidenceScore/candidateScore theo công thức đã khóa, lưu Candidate URI và methodVersion riêng, giữ điểm gốc trong audit record và không ghi đè baseline. Các so sánh dùng cùng Event/Stock universe, cutoff, eligible paths, relationStrength, gold labels và tie-break; chỉ aggregate trong cùng methodVersion. Source-confidence ablation nằm ngoài baseline này. Per-impactType là route-level view: chiếu predictions theo route trước max aggregation/top-K, dùng gold route support được gán độc lập và common resolved universe. Pair gold hỗ trợ INDUSTRY nhưng chỉ dự đoán DIRECT là FN của INDUSTRY; overall tính relevance riêng, không đếm pair lặp. Nhãn gain của route view và negative universe được khóa ở EVALUATION_PROTOCOL.md, không lọc overall ranking theo gold sau dự đoán."
+    },
+    {
+      "locator": "P145",
+      "text": "Các query dưới đây là competency queries dự kiến cho từng graph snapshot. DOCX nguồn ghi rằng query được chạy bằng RDFLib và có hình minh họa, nhưng gói hiện không có demo/queries, demo/results hoặc demo/test_results.json để tái chạy và đối chiếu số dòng/nguồn tạo hình. tools/audit_schema_diagram.py chỉ so sánh schema–phụ lục Draw.io, không chạy các competency queries hay dựng demo. Mọi hình/fixture trong chương này là SYNTHETIC TEST ONLY, không phải bằng chứng định lượng cho RQ1–RQ3. Các hình được giữ nguyên làm minh họa lịch sử; nhãn “Executed RDFLib result” là nhãn của bản nguồn, không phải kết quả chạy lại bộ 1.0.4. CSV/JSON ghi trong hình không nằm trong gói này. Không dùng hình lịch sử làm bằng chứng SHACL hiện hành."
+    },
+    {
+      "locator": "P157",
+      "text": "Hình Q1: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P168",
+      "text": "Hình Q2: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P175",
+      "text": " ?candidate a wfkg:EventStockCandidate; wfkg:forEvent ?e; wfkg:candidateStatus ?status; wfkg:sourceConfidence ?source; wfkg:extractionConfidence ?extraction; wfkg:linkingConfidence ?linking; wfkg:relationConfidence ?relation; wfkg:confidenceScore ?confidence; wfkg:relationStrength ?strength; wfkg:candidateScore ?candidateScore ."
+    },
+    {
+      "locator": "P179",
+      "text": "Hình Q3: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4. READY trong hình lịch sử được hiểu là nhãn hiển thị viết tắt của REACTION_READY; không phải giá trị RDF hợp lệ. Dữ liệu mới phải dùng REACTION_READY đúng enum SHACL."
+    },
+    {
+      "locator": "P194",
+      "text": "Hình Q4: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P209",
+      "text": "Hình Q5: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P218",
+      "text": "Hình Q6: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P268",
+      "text": "Hình Q8: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P279",
+      "text": "Hình Q9: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P293",
+      "text": "Hình Q10: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4."
+    },
+    {
+      "locator": "P295",
+      "text": "Sau khi freeze ontology v1.0, Phase 2 triển khai một vertical slice end-to-end trên tập nhỏ 100–300 bài trước khi mở rộng dữ liệu. Trình tự thực hiện gồm:"
+    },
+    {
+      "locator": "P306",
+      "text": "Mục tiêu của vertical slice là chứng minh pipeline chạy đúng và tái lập được từ nguồn tin đến Candidate, Reaction và kết quả truy vấn; chưa mở rộng dữ liệu trước khi hoàn tất kiểm tra end-to-end trên tập nhỏ."
+    },
+    {
+      "locator": "P308",
+      "text": "Bộ contract 1.0.4 đã chạy ba kiểm tra độc lập. Audit tools/audit_schema_diagram.py: 337 assertion PASS, 0 FAIL, 57 NOT CHECKED, exit code 0; parse 44 SELECT constraints và xác nhận SHA256 ba input không đổi. Bộ tools/test_baseline_shacl.py: 31/31 test qua, bao gồm regression REACTION_READY typed string không có Reaction và cutoff khác Event.availableAt. Bộ tools/test_schema_diagram_audit.py: 8/8 test qua, bao gồm mutation sai vai trò công ty mẹ/con. Behavioral SHACL chạy inference=none. Các kiểm tra là synthetic structural regression, không tái tạo demo/hình lịch sử, không chứng minh calendar thật, NLP, immutability, metric executor hay RQ1–RQ3. Số audit là assertion có phạm vi, không phải phần trăm hoàn tất góp ý. PDF được xuất từ DOCX hiện hành bằng Microsoft Word; trạng thái kiểm tra layout được ghi trong PHASE1_ACCEPTANCE.md."
+    },
+    {
+      "locator": "P321",
+      "text": "Các đường suy luận ngoài bốn baseline phải được đánh dấu rõ: FUTURE EXTENSION — NOT IMPLEMENTED IN PHASE 2 BASELINE. Trong baseline 1.0.4, relationPath phải bằng impactType. Draw.io được đối chiếu theo contract TTL/SHACL và chỉ minh họa bốn baseline path; TTL/SHACL vẫn là source of truth."
+    },
+    {
+      "locator": "T2R6C1",
+      "text": "expectedDirection, relationStrength, confidence components, confidenceScore, candidateScore"
+    },
+    {
+      "locator": "T19R6C0",
+      "text": "relationStrength"
+    },
+    {
+      "locator": "T19R6C3",
+      "text": "Baseline: DIRECT=1; INDIRECT_INDUSTRY=0,5; INDIRECT_SUBSIDIARY=0,5; INDIRECT_LEADERSHIP=0,5. Đây là heuristic độc lập market reaction. Biến thể industry dùng exposureStrength=exposureRatio đã chuẩn hóa trên cùng tập exposure hợp lệ."
+    },
+    {
+      "locator": "T19R7C3",
+      "text": "Tổng hợp từ sourceConfidence, extractionConfidence, linkingConfidence và relationConfidence; trong baseline Phase 1, sourceConfidence = 0,5 cho mọi nguồn hỗ trợ, không lấy maximum reliabilityScore và không dùng khác biệt chất lượng nguồn để thay đổi logic Event; freeze tại inferenceCutoff."
+    },
+    {
+      "locator": "T19R9C3",
+      "text": "Baseline 1.0.4 khóa inferenceCutoff = Event.availableAt, trước opening day 0. Chỉ dùng Evidence, dữ liệu và phiên bản quan hệ đã khả dụng tại mốc này. generatedAt có thể muộn hơn khi replay, nhưng không được lấy thêm thông tin sau cutoff."
+    },
+    {
+      "locator": "T19R12C3",
+      "text": "Phiên bản quy tắc sinh Candidate và chấm confidence/relationStrength."
+    },
+    {
+      "locator": "T19R16C0",
+      "text": "sourceConfidence"
+    },
+    {
+      "locator": "T19R16C3",
+      "text": "Điểm nguồn hỗ trợ tại cutoff; trong Phase 1 luôn cố định sourceConfidence = 0,5 cho mọi source/reality source đủ điều kiện. Không cộng dồn nhiều bài cùng source; đánh giá/calibration source là future extension được định phiên bản trong SCORING_SPEC.md."
+    },
+    {
+      "locator": "T19R17C3",
+      "text": "Maximum điểm Evidence đủ điều kiện tại cutoff và hỗ trợ đầy đủ required roles; tie-break Evidence URI tăng dần. Nếu chỉ có điểm theo role thì lấy minimum cho một assignment. Thiếu calibration dùng fallback 0,5 có provenance; thiếu required role thì loại. Freeze Evidence được chọn và điểm gốc; không cộng điểm nhiều bài."
+    },
+    {
+      "locator": "T19R19C3",
+      "text": "Minimum required path-link confidence; Event–Company dùng required-role assignment score của Evidence đã chọn. Company–Stock curated registry dùng 1, automatic mapping dùng calibrated score hoặc fallback 0,5 có provenance. Không giả định các component độc lập."
+    },
+    {
+      "locator": "T19R20C3",
+      "text": "candidateScore = confidenceScore × relationStrength; chỉ dùng tại inference time, không dùng market reaction."
+    },
+    {
+      "locator": "T20R8C3",
+      "text": "reactionWeight = impactScore × Candidate.confidenceScore × Candidate.relationStrength; chỉ tính sau khi event window đóng."
+    },
+    {
+      "locator": "T27R2C1",
+      "text": "confidenceScore, relationStrength, relationConfidence, exposureRatio, exposureStrength, reliabilityScore, extractionConfidence, severityScore, impactScore và reactionWeight trong [0,1] khi có; signedWeight trong [-1,1]; adjustedClose > 0 và volume ≥ 0."
+    },
+    {
+      "locator": "T28R4C2",
+      "text": "Chỉ phân tích hậu nghiệm sau window. Ranking và ba component ablations áp dụng candidateScore tại cutoff, giữ sourceConfidence = 0,5."
+    },
+    {
+      "locator": "T29R3C1",
+      "text": "Candidate lưu sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, methodVersion và inferenceCutoff. Score được freeze, không cập nhật ngược khi Evidence mới xuất hiện."
+    },
+    {
+      "locator": "T29R4C1",
+      "text": "candidateScore = confidenceScore × relationStrength dùng tại inference. reactionWeight = impactScore × confidenceScore × relationStrength chỉ dùng sau window. Canonical property: reactionWeight; không dùng tên property cũ làm alias trong ontology, query, Draw.io hoặc code mới."
+    },
+    {
+      "locator": "T29R6C2",
+      "text": "Dictionary 1.0.4 có 14 eventType cùng vocabulary/normalization cho role tham gia key và chính sách HOLD khi chưa chuẩn hóa. Chất lượng annotation, extraction và identity resolution phải đánh giá ở Phase 2."
+    },
+    {
+      "locator": "T29R7C1",
+      "text": "Article chưa extract Event phải ở staging hoặc cho phép 0..* ở staging. IndustryExposure chọn bản mới nhất đã available, có staleness rule; thử exposureStrength thay hằng số 0,5."
+    },
+    {
+      "locator": "T29R8C2",
+      "text": "Protocol khóa stock frame/universe, out-of-universe invalidation, cutoff trước day 0, route-level projection trước top-K và macro Event. 25% double-label, paired bootstrap và ba component ablations giữ sourceConfidence=0,5. Chưa chạy dữ liệu/metric executor Phase 2."
+    }
+  ],
+  "drawio": [
+    {
+      "tab": "01-Tổng quan đề tài",
+      "cell": "mZ28CVNe_N0uJWWchiWa-41",
+      "text": "ĐẦU RA CỦA PIPELINE wfkg:EventStockCandidate • candidateId, impactType, relationPath, expectedDirection • sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence • confidenceScore, relationStrength, candidateScore • inferenceCutoff, methodVersion, candidateStatus wfkg:EventStockReaction • chỉ tạo sau khi đủ market data, benchmark và event window • AR/CAR, impactScore, reactionWeight, signedWeight • provenance"
+    },
+    {
+      "tab": "01-Tổng quan đề tài",
+      "cell": "mZ28CVNe_N0uJWWchiWa-45",
+      "text": "Baseline 1.0.4: inferenceCutoff = Event.availableAt; input.availableAt ≤ inferenceCutoff. generatedAt có thể muộn khi replay; Candidate score vẫn freeze tại cutoff + methodVersion. Day 0: phiên đầu có sessionOpenAt > Event.availableAt (calendar/version đã khóa). Reaction: window đã đóng; observation.availableAt ≤ Reaction.availableAt, không dùng Candidate cutoff cho giá hậu nghiệm."
+    },
+    {
+      "tab": "03-Chuẩn hóa thực thể",
+      "cell": "A1VN0XJZ2zYTKMQ9EYZ1-37",
+      "text": "LeadershipPosition / SubsidiaryRelation / IndexMembership: chọn latest availableAt ≤ cutoff theo business key, rồi xét validFrom/validTo; không fallback bản cũ. IndustryExposure: chọn theo reporting scope + kỳ YEAR + staleness ≤ 365 ngày, không dùng validity filter chung. Chi tiết: EVENT_SCHEMA.md."
+    },
+    {
+      "tab": "04-Event-Stock trực tiếp",
+      "cell": "izqzSf6VaLfidQc68PAD-2",
+      "text": "EventStockCandidate là quan hệ suy ra từ KG tại inferenceCutoff; các confidence components, confidenceScore, relationStrength và candidateScore được freeze theo inferenceCutoff + methodVersion. EventStockReaction chỉ được tạo sau khi đủ market data, benchmark và toàn bộ event window."
+    },
+    {
+      "tab": "04-Event-Stock trực tiếp",
+      "cell": "izqzSf6VaLfidQc68PAD-19",
+      "text": "  THÔNG TIN LƯU TRONG EVENTSTOCKCANDIDATE  • candidateId, impactType, relationPath, candidateReason, expectedDirection • sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence • confidenceScore, relationStrength, candidateScore • Phase 1: reliabilityScore/sourceConfidence = 0.5; source calibration dùng methodVersion mở rộng sau • inferenceCutoff, generatedAt, availableAt, methodVersion, candidateStatus     candidateStatus: GENERATED | VALIDATED | REJECTED | PENDING_MARKET_WINDOW | REACTION_READY    "
+    },
+    {
+      "tab": "04-Event-Stock trực tiếp",
+      "cell": "izqzSf6VaLfidQc68PAD-21",
+      "text": "Luồng chính: Event → EventStockCandidate → Stock; candidateScore = confidenceScore × relationStrength tại inference time. Sau khi đủ dữ liệu và event window, EventStockCandidate → EventStockReaction; reactionWeight = impactScore × confidenceScore × relationStrength. Reaction nối ngược bằng onCandidate và không cập nhật Candidate lịch sử."
+    },
+    {
+      "tab": "05-4 Đường liên hệ chính",
+      "cell": "weTA0hvWxfCujyoZNfAk-11",
+      "text": "Trong baseline 1.0.4, relationPath phải bằng impactType; mỗi Candidate mang một trong bốn route code DIRECT, INDIRECT_INDUSTRY, INDIRECT_SUBSIDIARY hoặc INDIRECT_LEADERSHIP. Tất cả trước hết tạo EventStockCandidate. Candidate ranking chỉ dùng candidateScore tại inferenceCutoff. EventStockReaction chỉ được tạo sau khi đủ market data, benchmark và event window; reactionWeight không được dùng để tạo hoặc xếp hạng Candidate."
+    },
+    {
+      "tab": "06-Phụ lục Entity Property",
+      "cell": "bRsWfqp-iSm1W4H_WVv9-7",
+      "text": " DatatypeProperty — market và Event–Stock    IndustryExposure:  exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt  Industry:  industryId, industryCode, industryName, taxonomyName  IndustryGroup:  industryGroupId, industryGroupName, taxonomyName  FinancialMetric:  metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt  MarketObservation:  observationId, tradingDate, adjustedClose, volume, returnValue, availableAt  MarketIndex:  indexId, indexCode, indexName  MarketIndexObservation:  observationId, tradingDate, adjustedClose, returnValue, availableAt   EventStockCandidate:  candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion   EventStockReaction:  reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt   ObjectProperty provenance:  NewsArticle.url (IRI), sourceReference (IRI), derivedFromObservation, derivedFromIndexObservation  Shared temporal/provenance:  validFrom, validTo, availableAt, relationConfidence, dataQualityFlag"
+    }
+  ],
+  "pdf": [
+    {
+      "page": 6,
+      "text": "date  expectedDirection,  relationStrength,  confidence components,  confidenceScore,  candidateScore  Candidate score dùng tại inferenceCutoff; không "
+    },
+    {
+      "page": 13,
+      "text": "hoặc UNKNOWN; không lấy từ giá sau  sự kiện.  relationStrength  xsd:decimal  1  Baseline: DIRECT=1;  INDIRECT_INDUSTRY=0,5; "
+    },
+    {
+      "page": 14,
+      "text": "1  Phiên bản quy tắc sinh Candidate và  chấm confidence/relationStrength.  forEvent  Event  1  Event của Candidate; quan hệ nghịch "
+    },
+    {
+      "page": 14,
+      "text": "chỉ có điểm theo role thì lấy minimum  cho một assignment. Thiếu calibration  dùng fallback 0,5 có provenance; thiếu  required role thì loại. Freeze Evidence  được chọn và điểm gốc; không cộng  điểm nhiều bài.  linkingConfidence "
+    },
+    {
+      "page": 14,
+      "text": "Company–Stock curated registry dùng 1,  automatic mapping dùng calibrated score  hoặc fallback 0,5 có provenance. Không  giả định các component độc lập.  candidateScore  xsd:decimal  1 "
+    },
+    {
+      "page": 14,
+      "text": "1  candidateScore = confidenceScore ×  relationStrength; chỉ dùng tại inference  time, không dùng market reaction.   "
+    },
+    {
+      "page": 15,
+      "text": "reactionWeight = impactScore ×  Candidate.confidenceScore ×  Candidate.relationStrength; chỉ tính sau  khi event window đóng.  signedWeight  xsd:decimal  1 "
+    },
+    {
+      "page": 19,
+      "text": "cùng đầu vào không sinh Candidate mới.  Nếu cùng Event–Stock có nhiều đường giải thích, lưu Candidate riêng cho từng  path để giữ expectedDirection, confidence và relationStrength riêng. Đây là các "
+    },
+    {
+      "page": 20,
+      "text": "việc chạy trên dữ liệu thật thuộc Phase 2. Baseline dùng market-adjusted return.  Candidate score được tính trước market window: candidateScore = confidenceScore  × relationStrength. Reaction chỉ được tạo sau khi đủ market data; reactionWeight =  impactScore  ×  confidenceScore  × "
+    },
+    {
+      "page": 20,
+      "text": "confidenceScore  ×  relationStrength.  signedWeight  =  sign(marketReactionDirection) × reactionWeight. Không dùng reactionWeight để  ranking tại inferenceCutoff. "
+    },
+    {
+      "page": 21,
+      "text": "inferenceCutoff lưu trên Candidate là mốc chọn thông tin đầu vào; generatedAt  là thời điểm thực thi. Candidate chỉ dùng Evidence và fact khả dụng tại  inferenceCutoff, đồng thời cố định confidenceScore và relationStrength theo  snapshot này. Baseline 1.0.4 khóa cutoff đúng bằng Event.availableAt, là mốc  Evidence sớm nhất hỗ trợ Event, và nhỏ hơn opening day 0. Nếu tại cutoff chưa có  complete assignment hay mapping đủ điều kiện, baseline không sinh Candidate; phải  ghi coverage/miss, không dời cutoff hoặc loại Event khỏi gold để làm đẹp recall. "
+    },
+    {
+      "page": 23,
+      "text": "REJECTED không có Reaction hợp lệ.  Điểm và số liệu  confidenceScore, relationStrength, relationConfidence,  exposureRatio, exposureStrength, reliabilityScore,  extractionConfidence, severityScore, impactScore và reactionWeight  trong [0,1] khi có; signedWeight trong [-1,1]; adjustedClose > 0 và  volume ≥ 0. "
+    },
+    {
+      "page": 24,
+      "text": "lịch.  Trọng số Reaction baseline: reactionWeight = impactScore × confidenceScore  × relationStrength. Đặt d = +1 khi CAR > epsilon, d = −1 khi CAR < −epsilon, ngược  lại d = 0; marketReactionDirection tương ứng POSITIVE/NEGATIVE/NEUTRAL  và signedWeight = d × reactionWeight. Baseline epsilon = 0; khi thử ngưỡng khác  phải ghi trong methodVersion. Các điểm là heuristic, không phải xác suất hoặc quan  hệ nhân quả. "
+    },
+    {
+      "page": 25,
+      "text": "linkingConfidence + relationConfidence) trong baseline đều trọng số; mọi  component, tau, epsilon, window và version phải được lưu để tái lập. candidateScore  = confidenceScore × relationStrength; reactionWeight = impactScore ×  candidateScore. Phase 2 thử tau = 0,05/0,10/0,20, các event window và  exposureStrength variant trên tập phát triển/validation rồi khóa trước test. SHACL  1.0.4 kiểm tra baseline tau=0,10 và epsilon=0; thử tau/epsilon khác phải dùng  shape/configuration được định phiên bản riêng, không chỉ đổi methodVersion. "
+    },
+    {
+      "page": 25,
+      "text": "1.0.4 kiểm tra baseline tau=0,10 và epsilon=0; thử tau/epsilon khác phải dùng  shape/configuration được định phiên bản riêng, không chỉ đổi methodVersion.  Scoring đã khóa: relationStrength DIRECT=1; ba path gián tiếp=0,5. Biến thể  industry chỉ thay strength bằng exposureStrength=exposureRatio đã chuẩn hóa,  không đổi population, Evidence selection hoặc strength của các path khác. Các hằng  số là heuristic thực nghiệm, không phải mức ảnh hưởng kinh tế đo được.  extractionConfidence lấy maximum trên Evidence hỗ trợ cùng Event và đầy đủ "
+    },
+    {
+      "page": 25,
+      "text": "required roles, phù hợp role/identity assignment đã chọn, có availableAt ≤  inferenceCutoff. Nếu chỉ có điểm per-role, lấy minimum để tạo điểm assignment cho  một Evidence. Assignment có căn cứ nhưng chưa calibrated dùng fallback 0,5; thiếu  role không được điền fallback. Tied score chọn Evidence URI tăng dần. Không ghép  các Evidence thiếu role để tạo assignment đầy đủ trong baseline; không có Evidence  hợp lệ thì không sinh curated Candidate. Audit giữ tập Evidence đủ điều kiện, URI  được chọn, điểm gốc, role assignment và model/calibration version. Component "
+    },
+    {
+      "page": 25,
+      "text": "inferenceCutoff. Nếu chỉ có điểm per-role, lấy minimum để tạo điểm assignment cho  một Evidence. Assignment có căn cứ nhưng chưa calibrated dùng fallback 0,5; thiếu  role không được điền fallback. Tied score chọn Evidence URI tăng dần. Không ghép  các Evidence thiếu role để tạo assignment đầy đủ trong baseline; không có Evidence  hợp lệ thì không sinh curated Candidate. Audit giữ tập Evidence đủ điều kiện, URI  được chọn, điểm gốc, role assignment và model/calibration version. Component  ablation giữ selection gốc. Chi tiết ở SCORING_SPEC.md 1.0.4. "
+    },
+    {
+      "page": 25,
+      "text": "kiện tại cutoff. Event–Company confidence lấy assignment score hỗ trợ role company  trong Evidence được chọn; Company–Stock curated mapping dùng 1, automatic  mapping dùng score calibrated hoặc fallback 0,5. SCORING_SPEC.md khóa bảng  required inputs của bốn route và nơi lưu audit. Việc tái dùng score được công bố,  không giả định các confidence component độc lập thống kê.  Thành phần  Phase 1 "
+    },
+    {
+      "page": 27,
+      "text": "unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore.  Unweighted dùng điểm 1; weighted dùng candidateScore = confidenceScore ×  relationStrength. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng  max theo rule đã khóa, không dùng CAR hoặc reactionWeight để xếp hạng tại  inferenceCutoff. Reaction chỉ được phân tích hồi cứu sau khi event window đóng  bằng reactionWeight. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2,  Precision@K, ba ablation riêng cho extractionConfidence, linkingConfidence và "
+    },
+    {
+      "page": 27,
+      "text": "Candidate URI và methodVersion riêng, giữ điểm gốc trong audit record và không  ghi đè baseline. Các so sánh dùng cùng Event/Stock universe, cutoff, eligible paths,  relationStrength, gold labels và tie-break; chỉ aggregate trong cùng methodVersion.  Source-confidence ablation nằm ngoài baseline này. Per-impactType là route-level  view: chiếu predictions theo route trước max aggregation/top-K, dùng gold route  support được gán độc lập và common resolved universe. Pair gold hỗ trợ INDUSTRY  nhưng chỉ dự đoán DIRECT là FN của INDUSTRY; overall tính relevance riêng, "
+    },
+    {
+      "page": 33,
+      "text": "wfkg:sourceConfidence ?source; wfkg:extractionConfidence ?extraction; wfkg:linkingConfidence  ?linking; wfkg:relationConfidence ?relation; wfkg:confidenceScore ?confidence;  wfkg:relationStrength ?strength; wfkg:candidateScore ?candidateScore .   ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?day . } ORDER BY ?eventId  Bản nguồn ghi nhận 2 dòng tại demo/results/03_candidates.csv; CSV không có trong thư mục này  nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture  synthetic, không phải dữ liệu thị trường. "
+    },
+    {
+      "page": 43,
+      "text": "4. Hai loại score  candidateScore = confidenceScore  × relationStrength dùng tại  inference. reactionWeight =  impactScore × confidenceScore ×  relationStrength chỉ dùng sau  window. Canonical property: "
+    },
+    {
+      "page": 43,
+      "text": "inference. reactionWeight =  impactScore × confidenceScore ×  relationStrength chỉ dùng sau  window. Canonical property:  reactionWeight; không dùng tên  property cũ làm alias trong  ontology, query, Draw.io hoặc "
+    }
+  ],
+  "pdf_pages": 47
+}

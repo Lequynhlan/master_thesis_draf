@@ -1,0 +1,1481 @@
+{
+  "scope": "synthetic algebraic reproduction of current V1 policies, not empirical WFKG results",
+  "spec_path": "D:\\project\\master_thesis\\01-10-2026\\chỉnh sửa mới nhất - 01-10\\SCORING_SPEC.md",
+  "spec_sha256": "fcd60f30d3ce86b2764a896e3f1200046477d61ea31d83198bc34946729f85a3",
+  "policy_guards_pass": true,
+  "automatic_event_entry_R_min_forces_half": true,
+  "assumptions": [
+    "The compared methods use the exact same eligible Event-Stock paths.",
+    "One selected Evidence assignment A is shared across that Event's paths.",
+    "All Event-entry relations are produced by automatic extraction, not ASSISTED/curated fixtures.",
+    "Each accepted path has L=1, S=.5 and T=1.",
+    "Common Stock URI tie-break; no score threshold (as in V1)."
+  ],
+  "event_scenarios": [
+    {
+      "selected_Event_assignment_A": "0.2",
+      "all_rankings_identical": true,
+      "rankings": {
+        "unweighted": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "V1": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_A": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_L": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_R": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ]
+      },
+      "methods": {
+        "unweighted": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "V1": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_A": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_L": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.55"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_R": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.675"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        }
+      }
+    },
+    {
+      "selected_Event_assignment_A": "0.8",
+      "all_rankings_identical": true,
+      "rankings": {
+        "unweighted": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "V1": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_A": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_L": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_R": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ]
+      },
+      "methods": {
+        "unweighted": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "V1": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_A": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_L": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_R": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.825"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        }
+      }
+    },
+    {
+      "selected_Event_assignment_A": "0.99",
+      "all_rankings_identical": true,
+      "rankings": {
+        "unweighted": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "V1": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_A": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_L": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ],
+        "neutralize_R": [
+          "urn:synthetic:stock:01",
+          "urn:synthetic:stock:02",
+          "urn:synthetic:stock:03",
+          "urn:synthetic:stock:04",
+          "urn:synthetic:stock:05",
+          "urn:synthetic:stock:06",
+          "urn:synthetic:stock:07",
+          "urn:synthetic:stock:08"
+        ]
+      },
+      "methods": {
+        "unweighted": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "1"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "V1": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_A": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.75"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_L": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.7475"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        },
+        "neutralize_R": {
+          "unique_score_count": 1,
+          "path_records": [
+            {
+              "stock": "urn:synthetic:stock:01",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:02",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:03",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:04",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:05",
+              "route": "DIRECT",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:06",
+              "route": "INDIRECT_INDUSTRY",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:07",
+              "route": "INDIRECT_SUBSIDIARY",
+              "required_edge_supports": [
+                "0.5",
+                "0.5"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            },
+            {
+              "stock": "urn:synthetic:stock:08",
+              "route": "INDIRECT_LEADERSHIP",
+              "required_edge_supports": [
+                "0.5",
+                "1"
+              ],
+              "original_R": "0.5",
+              "score": "0.8725"
+            }
+          ],
+          "ndcg_at_5": 0.2781491965442198
+        }
+      }
+    }
+  ],
+  "conclusion": "For these policies, per-Event stock order cannot change with V1 weighting or A/L/R neutralization. This is an algebraic consequence for the stated automatic population, not a measured model result."
+}

@@ -1,4 +1,26 @@
-# Đối chiếu góp ý và kiểm tra gói Phase 1
+# Đối chiếu specification V1 và hồ sơ kiểm tra Phase 1
+
+## Current Phase 2 specification boundary — document version 1.1.0
+
+Active method: WFKG-SCORE-V1. EVENT_SCHEMA, SCORING_SPEC, EVALUATION_PROTOCOL và ANNOTATION_GUIDELINE dùng cùng numerical/producer policy: S=.5; A từ trained required decisions không fallback; accepted exact typed unique links L=1; R=min edge supports automatic .5/curated eligible 1; T=1 cả bốn routes. Schema namespace/classes/properties và dictionary taxonomy không đổi.
+
+Luồng active: crawl/snapshot availability → trained PhoBERT V1-SENTENCE-TRIGGER-BIO Evidence/roles → deterministic normalization/identity/exact registry linking → eligible four routes → immutable V1 Candidate/audit → calendar/adjustedClose → complete-window Reaction → RDF validation/diagnostics/replay. Direction dùng Dictionary rule per Candidate, thiếu căn cứ UNKNOWN. Gates và gold independence không bị giản lược.
+
+EVALUATION_PROTOCOL tách INTEGRATION_DIAGNOSTIC, AUTOMATIC_VERTICAL_SLICE và FINAL_RQ; 100–300 batch, four executors regression và real per-route coverage ghi riêng. Final support floors/OWL semantic relation metrics/full ablations/CIs không chặn first integration. L ablation no-op và constant R được báo non-informative. Exposure-strength comparison thầy yêu cầu giữ thành separately versioned experiment sau automatic slice.
+
+**Không coi gói đã đồng bộ hoàn toàn V1:** phần DOCX/PDF/Draw.io/demo và historical verification_contract_1.0.4.json dưới đây chưa được regenerate/audit về numerical V1 prose. TTL/SHACL giữ structural authority; method-aware V1 gates vẫn phải hiện thực/kiểm thử. Existing regression PASS chỉ xác nhận structural behaviors được tests bao phủ, không NLP performance, calibration, calendar correctness hoặc real-data acceptance. Approval của thầy và runtime acceptance chưa được thay thế bằng sửa Markdown.
+
+| Active contract | Authority / required verification |
+| --- | --- |
+| Constants, accessors, edge origins, selection and decimal replay | SCORING_SPEC 1.1.0; method-aware producer/selection regression and audit, không chỉ SHACL pass |
+| Evidence producer, temporal facts, direction, lifecycle/window readiness | EVENT_SCHEMA 1.1.0; original-text/trigger/window/calendar/late-fact tests |
+| Split ownership, three profiles, diagnostic artifacts and final metrics | EVALUATION_PROTOCOL 1.1.0; manifests, independent gold, coverage and replay |
+| Independent gold/whole-sentence anchors and audit separation | ANNOTATION_GUIDELINE 1.1.0; double-label/agreement, scores withheld from gold decisions |
+| Structural schema/cardinality/inverse/arithmetic | unchanged ontology_v1.0.ttl/shapes_v1.0.ttl; existing SHACL/diagram regression, plus method gates outside generic shapes |
+
+## Historical 1.0.4 acceptance evidence — not the active V1 numerical contract
+
+All remaining sections below describe the prior 1.0.4 package and its historical tests/rendering. Legacy indirect strength/fallback statements and whole-package readiness conclusions apply only to that snapshot. Do not use them to override current V1 Markdown rules or claim reports/diagrams were updated in this synchronization.
 
 Contract: **1.0.4**. Namespace giữ nguyên `https://example.org/wfkg/v1#`; ontology giữ 22 lớp, Draw.io giữ 7 tab. TTL/SHACL là nguồn chuẩn về schema/cardinality; các specification Markdown/YAML khóa thuật toán và protocol; Draw.io là minh họa. Không mở rộng lớp, không triển khai pipeline dữ liệu thật trong đợt hiệu đính này.
 
