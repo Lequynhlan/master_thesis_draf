@@ -108,10 +108,25 @@ py -3.13 -B tools/test_schema_diagram_audit.py
 py -3.13 -B tools/audit_schema_diagram.py
 ```
 
-Ở môi trường khác, dùng đúng interpreter có `rdflib` và `pyshacl`; không dùng `pip` của một Python khác. Cờ `-B` tránh tạo `__pycache__` trong bộ bàn giao. Không cần cài thêm gói trong môi trường hiện tại.
+Ở môi trường khác, dùng đúng interpreter đã cài `rdflib` và `pyshacl`; không dùng `pip` của một Python khác. Cờ `-B` tránh tạo `__pycache__` trong bộ bàn giao. Runtime hiện tại thiếu hai dependency này nên audit/SHACL/HDBank rerun bị chặn; không cài dependency tự động trong bước đồng bộ tài liệu.
 
-Bộ hiện tại có 31 unittest (một số test có subtest cho nhiều trạng thái). Giữ 19 regression ban đầu về confidence/score, giá benchmark, daily return/CAR, impactScore, direction, inverse, self-link và thời điểm Reaction; bổ sung REACTION_READY không có Reaction với cả plain/typed string, status ngoài enum, các trạng thái non-ready có/không Reaction, cutoff sớm/muộn hơn Event và thứ tự generatedAt/availableAt. Positive control xác nhận replay chạy muộn vẫn dùng cutoff gốc. Inference bị tắt khi validate để không che lỗi thiếu inverse. Đây là dữ liệu synthetic, không phải pipeline thật.
+## Scoring sync and current verification boundary
 
-SHACL baseline khóa `inferenceCutoff = Event.availableAt`, tau=0.10 và epsilon=0. Lifecycle chấp nhận plain hoặc typed xsd:string với cùng giá trị enum, không chấp nhận status ngoài enum. Thay cutoff regime/tau/epsilon phải dùng specification/shape/configuration được định phiên bản riêng. Calendar, daily effectiveTradingDate, dictionary membership/vocabulary, Evidence selection, strength assignment và snapshot immutability vẫn cần curated gate/validator Phase 2; 31 test không chứng minh các phần đó đã triển khai. Mã thoát 0 nghĩa là tất cả test đã qua; mã khác 0 là thất bại hoặc lỗi môi trường.
+Active method WFKG-SCORE-V1 is specified in document version 1.1.0; ontology/SHACL structural contract is 1.0.5. Route rule: T=relationStrength: DIRECT=1.0; INDIRECT_INDUSTRY=0.5; INDIRECT_SUBSIDIARY=0.5; INDIRECT_LEADERSHIP=0.5. S=sourceConfidence=0.5 and R=min(required edge supports) (automatic evidenced=0.5, eligible curated=1.0) are distinct components. Extraction and linking use no fallback 0.5 in V1.
 
-Kết quả kiểm tra contract 1.0.4: 31/31 SHACL unittest, 8/8 diagram-audit unittest; audit 337 PASS, 0 FAIL, 57 NOT CHECKED và 44 SELECT parse được. Ma trận 9 góp ý, PDF hiện hành và giới hạn xác minh được ghi ở `../PHASE1_ACCEPTANCE.md`. Không diễn giải các con số này thành coverage percentage hoặc kết quả RQ.
+Run standard-library checks from the package directory:
+
+    python3 -B tools/test_phase1_scoring_sync.py
+    python3 -B tools/test_schema_diagram_audit.py
+    python3 -B tools/audit_schema_diagram.py
+
+The first checks document/Word/Draw.io route-map agreement, a Decimal arithmetic control and unchanged HDBank fixture hashes. It does not run SHACL, execute RDF queries, validate external source facts or prove a pipeline.
+
+In an environment with rdflib and pyshacl, run:
+
+    python3 -B tools/test_baseline_shacl.py
+    python3 -B tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py
+
+The historical verification_contract_1.0.5.json records 32/32 SHACL tests, 8/8 diagram-audit tests, 337 PASS / 0 FAIL / 57 NOT CHECKED and six HDBank query results. These are historical recorded results, not a fresh post-edit rerun. The current environment lacked rdflib and pyshacl; do not report them as rerun.
+
+HDBank is deliberately a single-event fixture: one Event, three Article resources, four Evidence records, zero Candidate and zero Reaction. It cannot test route-strength T or Phase 2 Candidate/market behavior. The current report PDF remains pending export from the edited DOCX; the superseded 1.0.4 PDF is not a submission substitute. See tools/phase1_package_manifest_1.1.0.json and ../PHASE1_ACCEPTANCE.md.

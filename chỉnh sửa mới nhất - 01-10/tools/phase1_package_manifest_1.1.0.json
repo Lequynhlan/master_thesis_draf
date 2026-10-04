@@ -1,0 +1,121 @@
+{
+  "package_version": "1.1.0",
+  "method": "WFKG-SCORE-V1",
+  "structural_contract": "1.0.5",
+  "status": "PENDING_RDF_VALIDATION_AND_CURRENT_PDF_EXPORT",
+  "active_rule": {
+    "relationStrength_T": {
+      "DIRECT": 1.0,
+      "INDIRECT_INDUSTRY": 0.5,
+      "INDIRECT_SUBSIDIARY": 0.5,
+      "INDIRECT_LEADERSHIP": 0.5
+    },
+    "sourceConfidence_S": 0.5,
+    "relationConfidence_R": "min(required path edge supports; automatic evidenced=0.5; curated eligible=1.0)",
+    "distinction": "S, R and T are separate; V1 extraction/linking use no fallback 0.5"
+  },
+  "submission_files": [
+    "ontology_v1.0.ttl",
+    "shapes_v1.0.ttl",
+    "EVENT_SCHEMA.md",
+    "SCORING_SPEC.md",
+    "ANNOTATION_GUIDELINE.md",
+    "EVALUATION_PROTOCOL.md",
+    "EVENT_DICTIONARY.yaml",
+    "master_thesis_v1_synced_01-10.drawio",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx",
+    "PHASE1_ACCEPTANCE.md",
+    "tools/README.md",
+    "tools/audit_schema_diagram.py",
+    "tools/test_schema_diagram_audit.py",
+    "tools/test_baseline_shacl.py",
+    "tools/test_phase1_scoring_sync.py",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/data.ttl",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/queries.rq",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/expected.json",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/TEST_PLAN.md",
+    "tools/phase1_package_manifest_1.1.0.json"
+  ],
+  "required_before_send": [
+    "In an environment with rdflib and pyshacl, rerun tools/test_schema_diagram_audit.py, tools/audit_schema_diagram.py, tools/test_baseline_shacl.py, and tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py; record actual outputs.",
+    "Export the edited DOCX to the unsuffixed PDF in Word, inspect layout, then update this manifest."
+  ],
+  "excluded_from_submission": [
+    {
+      "path": "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh_superseded_1.0.4.pdf",
+      "reason": "superseded; does not match edited DOCX"
+    },
+    {
+      "path": "tools/verification_contract_1.0.4.json",
+      "reason": "historical superseded contract record"
+    },
+    {
+      "path": "tools/verification_contract_1.0.5.json",
+      "reason": "preserve locally as historical provenance; predates this synchronization"
+    },
+    {
+      "path": "Trinh_bay_luan_van_WFKG_Phase_1.pptx",
+      "reason": "optional presentation, not normative specification or required Phase 1 review evidence"
+    }
+  ],
+  "verification": {
+    "phase1_scoring_sync": {
+      "status": "PASS",
+      "tests": 10,
+      "exit_code": 0,
+      "scope": "route map including no stale universal T claim, S/R distinction, Word/Draw.io wording, Decimal arithmetic control, unchanged HDBank fixture hashes, package file hashes",
+      "output": "Ran 10 standard-library tests; all passed after the final documentation and manifest updates."
+    },
+    "diagram_unittest": {
+      "status": "BLOCKED_MISSING_DEPENDENCY",
+      "command": "python3 -B tools/test_schema_diagram_audit.py",
+      "error": "ModuleNotFoundError: No module named rdflib"
+    },
+    "diagram_audit": {
+      "status": "BLOCKED_MISSING_DEPENDENCY",
+      "command": "python3 -B tools/audit_schema_diagram.py",
+      "error": "ModuleNotFoundError: No module named rdflib"
+    },
+    "shacl_regression": {
+      "status": "BLOCKED_MISSING_DEPENDENCY",
+      "command": "python3 -B tools/test_baseline_shacl.py",
+      "error": "ModuleNotFoundError: No module named rdflib"
+    },
+    "hdbank_fixture": {
+      "status": "BLOCKED_MISSING_DEPENDENCY",
+      "command": "python3 -B tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py",
+      "error": "ModuleNotFoundError: No module named pyshacl",
+      "previous_record": "tools/verification_contract_1.0.5.json (historical; not a fresh result)"
+    },
+    "pdf": {
+      "status": "NOT_EXPORTED",
+      "reason": "No Word or LibreOffice-compatible PDF exporter is available in this runtime; only superseded 1.0.4 PDF is present."
+    },
+    "phase2": "NOT_IMPLEMENTED_OR_CLAIMED"
+  },
+  "historical_record": "tools/verification_contract_1.0.5.json predates current route-map synchronization; it is not fresh evidence for current T values, PDF or rerun tests.",
+  "sha256": {
+    "ontology_v1.0.ttl": "8bf53768b660d85e2456c9a4d4e9aca36f5016e1d912d287a3651e81fbd28614",
+    "shapes_v1.0.ttl": "cf98b655e3a936411447505152029b42d2e02b14b904a406fc5ed4af70eb3d13",
+    "EVENT_SCHEMA.md": "9c19f254b0930fc53a10810c6935b2729eba93ec1d54cbcacf5a1d6264784638",
+    "SCORING_SPEC.md": "739eacd713a868af33217d9dff5ed0f0e87bc70ad30abf331e87a7c2eb83bea3",
+    "ANNOTATION_GUIDELINE.md": "1e5b784cc7130333ce048199136bb9c2478ce759996a47ef414c7fcb3b50718a",
+    "EVALUATION_PROTOCOL.md": "4680e2e14e21543de23f457a9f00803feba38cc1369ded871f152a72f1ffc32a",
+    "EVENT_DICTIONARY.yaml": "4bc0eb4acbde36f51b0e733b958403e2af2205ca8e12deb28cf0c52565d3e727",
+    "master_thesis_v1_synced_01-10.drawio": "ffc69ace99fbbbb2c53594856b2b6033b255f85112417208e6ef52b64183be33",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx": "a5249ac01e97e6b6ecfcd78e669da6e6661e62cfa859a4c9405c18bf9ec3f597",
+    "PHASE1_ACCEPTANCE.md": "cdb1590fb874a50da83d47a2f4d64feb93135007e5e3230a42a1318028b73bdb",
+    "tools/README.md": "eee48f495d477247033e9a53cd4a53c7ae7630b11763b0d8d271b5ff83bb2dfa",
+    "tools/audit_schema_diagram.py": "6757ca189e7248c710c6d160b72c73ec1f47eea118656af31f74862bdaa6cc49",
+    "tools/test_schema_diagram_audit.py": "dd31af5db37fcd38df8d4531afcb58b810effa36361a81e9e478d3ea1970b31f",
+    "tools/test_baseline_shacl.py": "376536c038884621b939bab22c1ee277911f1d52d981503e7ef54f34515c07e4",
+    "tools/test_phase1_scoring_sync.py": "0986f2b6e2f0d83eaa9da9f51851a1fa6c7f6781089049909857fd377999ce96",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/data.ttl": "7512fba520023d6c03476263bd1279e5e0fc2ce2e1f682702304940856cf081b",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/queries.rq": "8f952d5dd8ae817bd49844a4faa1d8a624da9c653fa7c5b13f8aefa7a8bad046",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/expected.json": "f41eeda0b7addd033a1a7aee11f6e490611367d2e224ed1c6fab7d2acef9247f",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py": "d9233f9f5b5925d8397f2d30ee14c77ea8daa2fc949f466b5b42d389346b5651",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/TEST_PLAN.md": "ab696be52d9fdbbd3c0318e23c5fdd2588802b2498426fc4b3b07b11e48999d2"
+  },
+  "manifest_hash_policy": "The manifest is included as the package index; its own hash is intentionally omitted."
+}

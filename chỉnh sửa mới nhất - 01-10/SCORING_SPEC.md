@@ -9,7 +9,7 @@ Status: đặc tả scoring baseline đã chốt cho vertical slice; chưa xác 
 
 Tài liệu này đặc tả cách sinh từng điểm, chọn đầu vào, tổng hợp và lưu đủ dữ liệu để replay. Không chứa ví dụ số hoặc kết quả thực nghiệm.
 
-`WFKG-SCORE-V1` là quy ước baseline của dự án, không phải chuẩn confidence phổ quát. Softmax/sigmoid scores, giá trị curated `1.0`, automatic relation support `0.5` (legacy fallback được tách ở mục 1.1), phép min và trung bình bốn thành phần không phải xác suất đúng đã calibration. Các thành phần có thể phụ thuộc nhau; không giả định độc lập.
+WFKG-SCORE-V1 là quy ước baseline của dự án, không phải chuẩn confidence phổ quát. Softmax/sigmoid scores, giá trị curated 1.0, automatic relation support 0.5, route strength INDIRECT 0.5, phép min và trung bình bốn thành phần không phải xác suất đúng đã calibration. S=sourceConfidence, R=relationConfidence và T=relationStrength là các đại lượng riêng. Fallback extraction/linking 0.5 trong chính sách cũ không còn dùng ở V1. Các thành phần có thể phụ thuộc nhau; không giả định độc lập.
 
 ### 1.1. Thay đổi so với SCORING_SPEC 1.0.4
 
@@ -19,12 +19,12 @@ Tài liệu này đặc tả cách sinh từng điểm, chọn đầu vào, tổ
 | Automatic entity linking | Cho phép calibrated score hoặc fallback 0.5 | Chỉ resolve xác định qua registry; ambiguous/fuzzy-only phải HOLD |
 | Event–route-entry support | Dùng original extraction assignment score A | Evidence-backed automatic relation dùng 0.5; curated relation fact dùng 1.0 |
 | DIRECT strength | 1.0 | 1.0 |
-| Ba INDIRECT strengths | 0.5 | 1.0 |
+| Ba INDIRECT strengths | 0.5 | 0.5 (retained in V1) |
 | Industry exposure-strength comparison | Có trong legacy baseline | Không thuộc V1; phải dùng method khác |
 
 Các Candidate legacy không được tính lại hoặc ghi đè bằng V1. Không trộn rankings của hai methods.
 
-**Ranh giới đồng bộ:** EVENT_SCHEMA.md, EVALUATION_PROTOCOL.md và ANNOTATION_GUIDELINE.md document version 1.1.0 cùng dùng WFKG-SCORE-V1. Identity, bốn routes, temporal selection và calendar được giữ; numerical policies V1 thay legacy ở bảng trên. TTL/SHACL vẫn là structural source of truth; generic conformance không tự kiểm đầy đủ method-specific constants/origins/selection. `methodVersion` không tự vượt constraints của shape. Reports DOCX/PDF, diagrams, demos và pipeline code chưa được xác nhận đồng bộ V1; PHASE1_ACCEPTANCE.md tách historical 1.0.4 evidence khỏi current spec readiness. Không tuyên bố whole-bundle hay implementation acceptance chỉ vì Markdown đã đồng bộ.
+**Ranh giới đồng bộ:** EVENT_SCHEMA.md, EVALUATION_PROTOCOL.md và ANNOTATION_GUIDELINE.md document version 1.1.0 cùng dùng WFKG-SCORE-V1. Identity, bốn routes, temporal selection và calendar được giữ. V1 bỏ fallback extraction/linking cũ; relation support dùng origin/scores riêng. DIRECT=1.0 và ba INDIRECT=0.5 là route-strength baseline được giữ nguyên. TTL/SHACL vẫn là structural source of truth; generic conformance không tự kiểm đầy đủ method-specific constants/origins/selection. `methodVersion` không tự vượt constraints của shape. DOCX và Draw.io đã được đồng bộ route-strength với đặc tả; PDF hiện hành chưa được xuất lại từ DOCX. PHASE1_ACCEPTANCE.md và manifest phân biệt các kiểm tra mới, bằng chứng lịch sử contract 1.0.5 và phần Phase 2 chưa chạy. Không tuyên bố whole-bundle hay implementation acceptance chỉ vì Markdown đã đồng bộ.
 
 Bản cũ được lưu tại `../review_phase1/backups/before_WFKG_SCORE_V1_20261004_191908/SCORING_SPEC.md`.
 
@@ -41,7 +41,7 @@ confidenceScore = (S + A + L + R) / 4
 candidateScore = confidenceScore * T
 ```
 
-Tất cả thành phần thuộc `[0,1]`. V1 cố định `S=0.5`, `L=1.0` cho path vượt linking gate, `T=1.0`. A biến thiên theo model; R nhận `0.5` hoặc `1.0` theo nguồn xác lập các cạnh. Không áp dụng score threshold để loại Candidate trong V1. Eligibility được quyết định bằng gates, không bằng điểm tổng.
+Tất cả thành phần thuộc `[0,1]`. V1 cố định `S=0.5`, `L=1.0` cho path vượt linking gate; `T=1.0` với DIRECT và `T=0.5` với cả ba INDIRECT route (xem §8). A biến thiên theo model; R nhận `0.5` hoặc `1.0` theo nguồn xác lập các cạnh. Không áp dụng score threshold để loại Candidate trong V1. Eligibility được quyết định bằng gates, không bằng điểm tổng.
 
 ## 2. Eligibility gates và kết quả khi không đạt
 
@@ -193,17 +193,17 @@ Endpoint identity decisions kiểm ở linking gate; các asserted endpoint bind
 ## 8. Relation strength
 
 ```text
-T = relationStrength = 1.0 cho mọi eligible route
+T = relationStrength theo impactType; đây là route strength, độc lập với S và R
 ```
 
 | impactType | V1 relationStrength |
 | --- | --- |
 | DIRECT | 1.0 |
-| INDIRECT_INDUSTRY | 1.0 |
-| INDIRECT_SUBSIDIARY | 1.0 |
-| INDIRECT_LEADERSHIP | 1.0 |
+| INDIRECT_INDUSTRY | 0.5 |
+| INDIRECT_SUBSIDIARY | 0.5 |
+| INDIRECT_LEADERSHIP | 0.5 |
 
-V1 chưa đo economic exposure/path magnitude và không phân biệt strength DIRECT/INDIRECT. Constant 1.0 là experimental control, không phải tuyên bố các relations có tác động thực tế như nhau. Exposure facts vẫn cần đủ fields và đúng selection contract để route hợp lệ; không fabricate exposure khi strength cố định. Exposure-strength hoặc decay variants cần method/config/protocol riêng, không âm thầm dùng trong V1.
+V1 chưa đo economic exposure/path magnitude. DIRECT=1.0 và ba INDIRECT=0.5 là route-specific experimental controls, không phải mức ảnh hưởng kinh tế đã đo. Exposure facts vẫn phải đủ fields và đúng selection contract để route INDUSTRY hợp lệ; không fabricate exposure. So sánh exposure-strength là biến thể Phase 2 được định phiên bản riêng sau AUTOMATIC_VERTICAL_SLICE, chỉ thay T của INDUSTRY bằng exposureStrength=exposureRatio đã chuẩn hóa trên tập exposure đủ điều kiện; giữ nguyên T của các route khác và các thành phần còn lại.
 
 ## 9. Execution order và immutable audit
 
@@ -292,10 +292,10 @@ Candidate URI/assignment IDs phải deterministic từ frozen semantic identity 
 - Giữ common Event/Stock universe, cutoff, eligible paths và independently adjudicated gold; không đánh giá chỉ trên accepted outputs.
 - Unweighted comparator: score 1 trên cùng eligible population; không thay gates.
 - V1 weighted ranking: candidateScore theo tài liệu này.
-- Ba component-neutralization variants: thay riêng A, L hoặc R bằng 1; giữ Evidence/assignment/path selection, original edge scores, S=0.5 và T=1.0. Tính lại tổng, dùng separate methodVersion/Candidate URI.
+- Ba component-neutralization variants: thay riêng A, L hoặc R bằng 1; giữ Evidence/assignment/path selection, original edge scores, S=0.5 và T theo giá trị baseline riêng của route (DIRECT=1.0; ba INDIRECT=0.5). Tính lại tổng, dùng separate methodVersion/Candidate URI.
 - Linking đã constant 1 trong V1 nên neutralization L không thay ranking; phải báo là non-informative ablation, không claim chứng minh linker không quan trọng.
 - R có thể constant 0.5 trong automatic population; nếu không có variation phải báo rõ. Source/strength đều fixed, không claim đã đo source reliability hay economic path strength.
-- Exposure-strength comparison của 1.0.4 không thuộc active V1. Cần giữ dưới method legacy riêng hoặc định nghĩa variant mới và đồng bộ protocol trước chạy.
+- So sánh INDUSTRY exposureStrength=exposureRatio là Phase 2 variant được định phiên bản riêng theo §8; không thuộc V1 và không được trình bày là đã chạy trong Phase 1.
 - Báo ED/EAE correctness, argument/identity/link/path errors, coverage/rejects và association score–correctness trên gold. Không dùng SHACL pass thay semantic quality hoặc gọi min/mean là calibrated probability.
 - Lock mọi formulas, adapters, label/vocab versions và selection/config trước final test. Calibration/scoring changes tạo method mới, chọn trên development/validation.
 
@@ -307,7 +307,7 @@ Candidate URI/assignment IDs phải deterministic từ frozen semantic identity 
 4. Complete assignment selection theo max score và URI/assignment tie-break; không mix roles/Evidence/windows hoặc reselect để cứu route.
 5. Linking accepted => đúng exact typed entity/registry provenance và L=1.0.
 6. Edge origins => đúng 1.0/0.5; thiếu fact suppress; không reuse linker/A làm relation confidence.
-7. S=0.5, T=1.0 cho cả bốn routes; tổng và candidateScore đúng công thức.
+7. S=0.5; T khớp bảng bốn route tại §8 (DIRECT=1.0; ba INDIRECT=0.5); tổng và candidateScore đúng công thức.
 8. Reprints/multiple paths không cộng điểm; grouping và tie-break deterministic.
 9. Audit đủ để replay không cần current mutable registry; late inputs không sửa snapshots.
 10. Reaction có complete sessions, correct benchmark, adjustedClose provenance, tau/epsilon và frozen Candidate values; không partial-window result.

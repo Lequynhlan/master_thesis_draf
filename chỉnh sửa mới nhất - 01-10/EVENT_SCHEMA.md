@@ -3,7 +3,7 @@
 Document version: 1.1.0
 Active scoring method: `WFKG-SCORE-V1`
 Structural schema: existing `ontology_v1.0.ttl` / `shapes_v1.0.ttl`; no new classes or properties.
-Status: algorithm/specification contract for Phase 2; not evidence of pipeline execution. Legacy 1.0.4 numerical policies are inactive for V1. Reports/diagrams/demos may still describe legacy policies; see PHASE1_ACCEPTANCE.md.
+Status: algorithm/specification contract for Phase 2; not evidence of pipeline execution. WFKG-SCORE-V1 numerical rules are specified in SCORING_SPEC.md 1.1.0; ontology/SHACL structural contract remains 1.0.5. Old extraction/linking fallbacks are inactive; see PHASE1_ACCEPTANCE.md for verification boundaries.
 
 ## Canonical namespace
 
@@ -47,11 +47,11 @@ SHACL checks the route code and required graph links; conformance alone does not
 | extractionConfidence A | Selected complete assignment score: min of required trained neural decisions and supported deterministic role conventions; no extraction fallback |
 | linkingConfidence L | 1.0 for exact, typed, unique registry resolution on all required route links; ambiguous/fuzzy-only/absent links HOLD or suppress |
 | relationConfidence R | Min of required edge supports: AUTOMATIC_EVIDENCED=0.5, CURATED_STRUCTURED=1.0; missing/ineligible fact suppresses path |
-| relationStrength T | 1.0 for all four eligible routes; economic strength is not measured in V1 |
+| relationStrength T | DIRECT=1.0; INDIRECT_INDUSTRY, INDIRECT_SUBSIDIARY and INDIRECT_LEADERSHIP=0.5 |
 
 All dictionary-required entity links/identity are resolved and checked per complete assignment before Evidence selection; an ambiguous required link excludes that assignment with a reason. The highest-scoring eligible complete assignment is then selected once. Optional route-entry links and propagated route endpoints are checked only after selection; failure suppresses that route without trying another Evidence. All required Event entities and optional route-entry entities use the same selected complete Evidence assignment. Propagated parent/Bank/position-company endpoints use eligible registry/fact mappings, not fabricated direct mentions. Event-entry automatic relation support is 0.5, not A or L. No score threshold or low-score fallback rescues failed gates. Components are conventions/task scores, not calibrated correctness probabilities. Freeze scores and their input/provenance/versions before Reaction.
 
-Legacy 1.0.4 DIRECT=1.0/INDIRECT=0.5 and exposure-strength policies are not active V1 rules. The supervisor-requested industry exposure comparison remains a separately versioned Phase 2 research experiment after automatic slice acceptance, not a prerequisite of the first integration run. Define and freeze its protocol/config before evaluation; never mix it into a V1 ranking.
+V1 retains the baseline route-strength rule DIRECT=1.0 and all three INDIRECT routes=0.5. This T is distinct from sourceConfidence S=0.5 and from automatic edge support used in relationConfidence R=0.5 (eligible curated support=1.0). The supervisor-requested INDUSTRY exposureStrength comparison remains a separately versioned Phase 2 experiment after automatic slice acceptance; it is not implemented or included in V1 rankings.
 
 ## Scoring timing
 
