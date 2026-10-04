@@ -1,0 +1,114 @@
+@prefix wfkg: <https://example.org/wfkg/v1#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# Public source metadata: VNBA reports 01/10/2026 10:11 GMT, equivalent to UTC.
+# availableAt uses publishedAt as a proxy because no first-seen ingestion log is available.
+wfkg:vnba a wfkg:NewsSource ;
+    wfkg:sourceId "vnba"^^xsd:string ;
+    wfkg:sourceName "Hiệp hội Ngân hàng Việt Nam (VNBA)"^^xsd:string ;
+    wfkg:sourceType "news-media"^^xsd:string ;
+    # Contract-required fixture baseline only; this is not a measured reliability score.
+    wfkg:reliabilityScore "0.5"^^xsd:decimal .
+
+wfkg:article_vnba_hdb_dividend_2026_10_01 a wfkg:NewsArticle ;
+    wfkg:articleId "vnba-2026-10-01-hdb-stock-dividend-record-date"^^xsd:string ;
+    wfkg:title "HDBank phát hành hơn 1,5 tỷ cổ phiếu trả cổ tức và tăng vốn, chốt danh sách cổ đông ngày 12/10/2026"^^xsd:string ;
+    wfkg:url <https://vnba.org.vn/vi/hdbank-phat-hanh-hon-1-5-ty-co-phieu-tra-co-tuc-va-tang-von--chot-danh-sach-co-dong-ngay-12-10-2026-23749.htm> ;
+    wfkg:publishedBy wfkg:vnba ;
+    wfkg:publishedAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:reports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+# This independent report predates VNBA. Its page shows 16:06 with no zone;
+# +07:00 is an explicit Vietnam-local-time assumption. It is Article provenance
+# only in this fixture; the Evidence excerpts below are extracted from VNBA.
+wfkg:vietnamplus a wfkg:NewsSource ;
+    wfkg:sourceId "vietnamplus"^^xsd:string ;
+    wfkg:sourceName "VietnamPlus"^^xsd:string ;
+    wfkg:sourceType "news-media"^^xsd:string ;
+    wfkg:reliabilityScore "0.5"^^xsd:decimal .
+
+wfkg:article_vietnamplus_hdb_dividend_2026_10_01 a wfkg:NewsArticle ;
+    wfkg:articleId "vietnamplus-2026-10-01-hdb-stock-dividend"^^xsd:string ;
+    wfkg:title "Ngân hàng HDBank chốt chia cổ tức và cổ phiếu thưởng tỷ lệ 30%"^^xsd:string ;
+    wfkg:url <https://www.vietnamplus.vn/ngan-hang-hdbank-chot-chia-co-tuc-va-co-phieu-thuong-ty-le-30-post1139459.vnp> ;
+    wfkg:publishedBy wfkg:vietnamplus ;
+    wfkg:publishedAt "2026-10-01T16:06:00+07:00"^^xsd:dateTime ;
+    wfkg:availableAt "2026-10-01T16:06:00+07:00"^^xsd:dateTime ;
+    wfkg:reports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+# Corroborating source: its page identifies HDB as listed on HOSE. The page gives
+# local publication time without a zone; +07:00 below is an explicit Vietnam-time assumption.
+wfkg:tinnhanhchungkhoan a wfkg:NewsSource ;
+    wfkg:sourceId "tinnhanhchungkhoan"^^xsd:string ;
+    wfkg:sourceName "Tin nhanh chứng khoán (ĐTCK)"^^xsd:string ;
+    wfkg:sourceType "news-media"^^xsd:string ;
+    wfkg:reliabilityScore "0.5"^^xsd:decimal .
+
+wfkg:article_tinnhanh_hdb_dividend_2026_10_02 a wfkg:NewsArticle ;
+    wfkg:articleId "tinnhanhchungkhoan-2026-10-02-hdb-dividend"^^xsd:string ;
+    wfkg:title "HDBank (HDB) chốt quyền chia cổ tức và phát hành cổ phiếu thưởng, tỷ lệ 30%"^^xsd:string ;
+    wfkg:url <https://m.tinnhanhchungkhoan.vn/hdbank-hdb-chot-quyen-chia-co-tuc-va-phat-hanh-co-phieu-thuong-ty-le-30-post398709.amp> ;
+    wfkg:publishedBy wfkg:tinnhanhchungkhoan ;
+    wfkg:publishedAt "2026-10-02T11:22:00+07:00"^^xsd:dateTime ;
+    wfkg:availableAt "2026-10-02T11:22:00+07:00"^^xsd:dateTime ;
+    wfkg:reports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+# This is a short verbatim excerpt from the VNBA article, not fabricated article text.
+wfkg:evidence_vnba_hdb_dividend_2026_10_01 a wfkg:Evidence ;
+    wfkg:evidenceId "vnba-hdb-dividend-evidence-2026-10-01-01"^^xsd:string ;
+    wfkg:evidenceText "HDBank công bố phát hành hơn 1,5 tỷ cổ phiếu để trả cổ tức và tăng vốn từ nguồn vốn chủ sở hữu, tổng tỷ lệ 30%."^^xsd:string ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:extractedFrom wfkg:article_vnba_hdb_dividend_2026_10_01 ;
+    wfkg:supports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+wfkg:evidence_vnba_hdb_dividend_ratio_2026_10_01 a wfkg:Evidence ;
+    wfkg:evidenceId "vnba-hdb-dividend-evidence-2026-10-01-02"^^xsd:string ;
+    wfkg:evidenceText "Trả cổ tức bằng cổ phiếu: 1.251.319.080 cổ phiếu, giá trị 12.513.190.800.000 đồng, tỷ lệ thực hiện quyền 100:25"^^xsd:string ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:extractedFrom wfkg:article_vnba_hdb_dividend_2026_10_01 ;
+    wfkg:supports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+wfkg:evidence_vnba_hdb_record_date_2026_10_01 a wfkg:Evidence ;
+    wfkg:evidenceId "vnba-hdb-dividend-evidence-2026-10-01-03"^^xsd:string ;
+    wfkg:evidenceText "Ngày đăng ký cuối cùng để chốt danh sách cổ đông hưởng quyền là 12/10/2026."^^xsd:string ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:extractedFrom wfkg:article_vnba_hdb_dividend_2026_10_01 ;
+    wfkg:supports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+wfkg:evidence_vnba_hdb_notice_id_2026_10_01 a wfkg:Evidence ;
+    wfkg:evidenceId "vnba-hdb-dividend-evidence-2026-10-01-04"^^xsd:string ;
+    wfkg:evidenceText "Theo Công văn số 2318/2026/CV-HDBank và Thông báo số 2319/2026/CV-HDBank ngày 30/9/2026"^^xsd:string ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:extractedFrom wfkg:article_vnba_hdb_dividend_2026_10_01 ;
+    wfkg:supports wfkg:event_hdb_stock_dividend_record_2026_10_12 .
+
+# Canonical identity uses the dictionary's DIVIDEND key order. The record-date
+# assertion is associated with the HDBank notice cited by VNBA; see TEST_PLAN.md
+# for the remaining provenance/adjudication limitation.
+wfkg:event_hdb_stock_dividend_record_2026_10_12 a wfkg:Event ;
+    wfkg:eventId "event-hdb-dividend-2026-10-12"^^xsd:string ;
+    wfkg:eventType "DIVIDEND"^^xsd:string ;
+    wfkg:canonicalKey "DIVIDEND|https://example.org/wfkg/v1#company_hdbank|DECLARE_STOCK|2026-10-12|HDBANK:2319/2026/CV-HDBank"^^xsd:string ;
+    wfkg:description "HDBank dự kiến trả cổ tức năm 2025 bằng cổ phiếu với tỷ lệ 25%; ngày đăng ký cuối cùng để lập danh sách cổ đông hưởng quyền là 2026-10-12. Tin cũng nêu riêng phương án phát hành thêm 5% từ quỹ dự trữ bổ sung vốn điều lệ; tỷ lệ tổng hai cấu phần là 30%."^^xsd:string ;
+    wfkg:availableAt "2026-10-01T10:11:00Z"^^xsd:dateTime ;
+    wfkg:effectiveTradingDate "2026-10-02"^^xsd:date ;
+    wfkg:involvesCompany wfkg:company_hdbank .
+
+wfkg:company_hdbank a wfkg:Company ;
+    wfkg:companyId "HDBANK"^^xsd:string ;
+    wfkg:fullName "Ngân hàng Thương mại cổ phần Phát triển Thành phố Hồ Chí Minh"^^xsd:string ;
+    wfkg:shortName "HDBank"^^xsd:string ;
+    wfkg:companyType "BANK"^^xsd:string ;
+    wfkg:hasStock wfkg:stock_hdb .
+
+# The article reports ticker HDB. The source-backed edge is retained for query
+# coverage, but is not asserted to be a versioned registry mapping for Candidate use.
+wfkg:stock_hdb a wfkg:Stock ;
+    wfkg:stockId "HDB"^^xsd:string ;
+    wfkg:tickerSymbol "HDB"^^xsd:string ;
+    wfkg:exchange "HOSE"^^xsd:string .
+
+wfkg:fixture rdfs:comment "Fixture assertions marked as assumptions or curation in TEST_PLAN.md are test metadata, not claims that the source or frozen pipeline supplied them."@en .

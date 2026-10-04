@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "start": "P150",
+    "end": "P155",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?articleId ?publishedAt ?availableAt ?evidenceId ?evidenceText ?eventId ?effectiveTradingDate WHERE {\n ?a wfkg:articleId ?articleId; wfkg:publishedAt ?publishedAt; wfkg:availableAt ?availableAt; wfkg:reports ?e .\n ?v wfkg:evidenceId ?evidenceId; wfkg:evidenceText ?evidenceText; wfkg:extractedFrom ?a; wfkg:supports ?e .\n ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?effectiveTradingDate . } ORDER BY ?publishedAt ?articleId"
+  },
+  {
+    "id": "2",
+    "start": "P162",
+    "end": "P166",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?eventId ?company ?stock ?ticker ?impactType WHERE {\n ?e wfkg:eventId ?eventId; wfkg:involvesCompany ?company; wfkg:hasEventStockCandidate ?c .\n ?company wfkg:hasStock ?stock . ?stock wfkg:tickerSymbol ?ticker . ?c wfkg:candidateStock ?stock; wfkg:impactType ?impactType . } ORDER BY ?eventId"
+  },
+  {
+    "id": "3",
+    "start": "P173",
+    "end": "P177",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?eventId ?candidate ?status ?day ?source ?extraction ?linking ?relation ?confidence ?strength ?candidateScore WHERE {\n ?candidate a wfkg:EventStockCandidate; wfkg:forEvent ?e; wfkg:candidateStatus ?status; wfkg:sourceConfidence ?source; wfkg:extractionConfidence ?extraction; wfkg:linkingConfidence ?linking; wfkg:relationConfidence ?relation; wfkg:confidenceScore ?confidence; wfkg:relationStrength ?strength; wfkg:candidateScore ?candidateScore .\n ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?day . } ORDER BY ?eventId"
+  },
+  {
+    "id": "4",
+    "start": "P184",
+    "end": "P192",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?cutoff ?articleId ?articleAvailableAt ?evidenceId ?evidenceAvailableAt ?eventId ?eventAvailableAt WHERE {\n VALUES ?cutoff {\"2026-08-26T14:16:00+07:00\"^^xsd:dateTime \"2026-08-26T16:16:00+07:00\"^^xsd:dateTime}\n ?a wfkg:articleId ?articleId; wfkg:availableAt ?articleAvailableAt; wfkg:reports ?e .\n ?v wfkg:evidenceId ?evidenceId; wfkg:extractedFrom ?a; wfkg:supports ?e; wfkg:availableAt ?evidenceAvailableAt .\n ?e wfkg:eventId ?eventId; wfkg:availableAt ?eventAvailableAt .\n FILTER(?articleAvailableAt <= ?cutoff && ?evidenceAvailableAt <= ?cutoff && ?eventAvailableAt <= ?cutoff)\n} ORDER BY ?cutoff ?articleAvailableAt ?evidenceAvailableAt ?articleId ?evidenceId"
+  },
+  {
+    "id": "5",
+    "start": "P199",
+    "end": "P207",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?eventId ?status ?day (COUNT(DISTINCT ?o) AS ?day0Stock) (COUNT(DISTINCT ?i) AS ?day0Benchmark) (COUNT(DISTINCT ?r) AS ?reactions) WHERE {\n ?c a wfkg:EventStockCandidate; wfkg:forEvent ?e; wfkg:candidateStock ?stock; wfkg:candidateStatus ?status .\n ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?day .\n OPTIONAL {?stock wfkg:hasMarketObservation ?o . ?o wfkg:tradingDate ?day}\n OPTIONAL {?index wfkg:hasIndexObservation ?i . ?i wfkg:tradingDate ?day}\n OPTIONAL {?c wfkg:hasReaction ?r}\n } GROUP BY ?eventId ?status ?day ORDER BY ?eventId"
+  },
+  {
+    "id": "6",
+    "start": "P214",
+    "end": "P216",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?newEvent ?oldEvent WHERE {?new wfkg:clarifies ?old; wfkg:eventId ?newEvent . ?old wfkg:eventId ?oldEvent} ORDER BY ?newEvent"
+  },
+  {
+    "id": "7",
+    "start": "P223",
+    "end": "P257",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?kind ?cutoff ?relation ?availableAt ?validTo ?periodEnd ?eligible WHERE {\n {\n VALUES (?cutoff ?cutoffDay ?oldestPeriod) {\n (\"2026-08-26T14:16:00+07:00\"^^xsd:dateTime \"2026-08-26\"^^xsd:date \"2025-08-26\"^^xsd:date)\n (\"2026-08-26T16:16:00+07:00\"^^xsd:dateTime \"2026-08-26\"^^xsd:date \"2025-08-26\"^^xsd:date) }\n VALUES (?kind ?left ?right) {\n (wfkg:LeadershipPosition wfkg:positionHolder wfkg:positionAtCompany)\n (wfkg:SubsidiaryRelation wfkg:subsidiaryCompany wfkg:parentCompany)\n (wfkg:IndexMembership wfkg:memberStock wfkg:memberIndex) }\n ?relation a ?kind; ?left ?a; ?right ?b; wfkg:validFrom ?start; wfkg:availableAt ?availableAt .\n OPTIONAL {?relation wfkg:positionTitle ?title}\n FILTER(?availableAt <= ?cutoff)\n FILTER NOT EXISTS {\n ?new a ?kind; ?left ?a; ?right ?b; wfkg:validFrom ?start; wfkg:availableAt ?newAt .\n OPTIONAL {?new wfkg:positionTitle ?newTitle}\n FILTER((!BOUND(?title) && !BOUND(?newTitle)) || ?title = ?newTitle)\n FILTER(?newAt <= ?cutoff && (?newAt > ?availableAt || (?newAt = ?availableAt && STR(?new) < STR(?relation)))) }\n OPTIONAL {?relation wfkg:validTo ?validTo}\n BIND(?start <= ?cutoffDay && (!BOUND(?validTo) || ?cutoffDay <= ?validTo) AS ?eligible)\n } UNION {\n VALUES (?cutoff ?cutoffDay ?oldestPeriod) {\n (\"2026-08-26T14:16:00+07:00\"^^xsd:dateTime \"2026-08-26\"^^xsd:date \"2025-08-26\"^^xsd:date)\n (\"2026-08-26T16:16:00+07:00\"^^xsd:dateTime \"2026-08-26\"^^xsd:date \"2025-08-26\"^^xsd:date) }\n BIND(wfkg:IndustryExposure AS ?kind)\n ?relation a wfkg:IndustryExposure; wfkg:exposureBank ?bank; wfkg:exposureIndustry ?industry; wfkg:periodType ?pt; wfkg:periodEnd ?periodEnd; wfkg:availableAt ?availableAt .\n FILTER(?pt = \"YEAR\")\n FILTER(?availableAt <= ?cutoff && ?periodEnd <= ?cutoffDay)\n FILTER NOT EXISTS {\n ?new a wfkg:IndustryExposure; wfkg:exposureBank ?bank; wfkg:exposureIndustry ?industry; wfkg:periodType ?pt; wfkg:periodEnd ?np; wfkg:availableAt ?na .\n FILTER(?na <= ?cutoff && ?np <= ?cutoffDay && (?np > ?periodEnd || (?np = ?periodEnd && (?na > ?availableAt || (?na = ?availableAt && STR(?new)<STR(?relation)))))) }\n BIND(?periodEnd >= ?oldestPeriod AS ?eligible)\n }\n} ORDER BY ?kind ?cutoff ?relation"
+  },
+  {
+    "id": "8",
+    "start": "P262",
+    "end": "P266",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?eventId ?reactionId ?ar ?car ?impactScore ?reactionWeight ?signedWeight ?availableAt WHERE {\n ?c wfkg:forEvent ?e; wfkg:hasReaction ?r . ?e wfkg:eventId ?eventId .\n ?r wfkg:reactionId ?reactionId; wfkg:abnormalReturn ?ar; wfkg:cumulativeAbnormalReturn ?car; wfkg:impactScore ?impactScore; wfkg:reactionWeight ?reactionWeight; wfkg:signedWeight ?signedWeight; wfkg:availableAt ?availableAt . } ORDER BY ?eventId"
+  },
+  {
+    "id": "9",
+    "start": "P273",
+    "end": "P277",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?eventId (COUNT(DISTINCT ?a) AS ?articles) (COUNT(DISTINCT ?c) AS ?candidates) (COUNT(DISTINCT ?r) AS ?reactions) WHERE {\n ?e wfkg:eventId ?eventId; wfkg:hasEventStockCandidate ?c . ?a wfkg:reports ?e . OPTIONAL {?c wfkg:hasReaction ?r}\n } GROUP BY ?eventId ORDER BY ?eventId"
+  },
+  {
+    "id": "10",
+    "start": "P284",
+    "end": "P291",
+    "status": "PARSE_PASS",
+    "query": "PREFIX wfkg: <https://example.org/wfkg/v1#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nSELECT ?reactionId ?kind ?observationId ?tradingDate ?adjustedClose ?returnValue ?availableAt ?source ?quality WHERE {\n ?r wfkg:reactionId ?reactionId .\n { ?r wfkg:derivedFromObservation ?o . BIND(\"STOCK\" AS ?kind) }\n UNION { ?r wfkg:derivedFromIndexObservation ?o . BIND(\"BENCHMARK\" AS ?kind) }\n ?o wfkg:observationId ?observationId; wfkg:tradingDate ?tradingDate; wfkg:adjustedClose ?adjustedClose; wfkg:returnValue ?returnValue; wfkg:availableAt ?availableAt; wfkg:sourceReference ?source; wfkg:dataQualityFlag ?quality .\n } ORDER BY ?reactionId ?kind ?tradingDate"
+  }
+]

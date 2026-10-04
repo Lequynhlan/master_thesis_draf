@@ -1,0 +1,1115 @@
+# SHACL contract version: 1.0.4
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix wfkg: <https://example.org/wfkg/v1#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+wfkg:TimezoneAwareDateTimeShape a sh:NodeShape ;
+    sh:targetSubjectsOf wfkg:availableAt, wfkg:publishedAt, wfkg:inferenceCutoff, wfkg:generatedAt, wfkg:occurredAt ;
+    sh:sparql [ sh:message "Các timestamp phải có múi giờ rõ ràng (Z hoặc ±HH:MM)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this ?predicate ?timestamp .
+              FILTER (?predicate IN (wfkg:availableAt, wfkg:publishedAt, wfkg:inferenceCutoff, wfkg:generatedAt, wfkg:occurredAt))
+              FILTER (DATATYPE(?timestamp) = xsd:dateTime)
+              FILTER (!REGEX(STR(?timestamp), "(Z|[+-][0-9]{2}:[0-9]{2})$"))
+            }
+        """ ] .
+
+wfkg:BankShape a sh:NodeShape ;
+    sh:property [ sh:class wfkg:IndustryExposure ;
+            sh:path wfkg:hasIndustryExposure ] ;
+    sh:targetClass wfkg:Bank .
+
+wfkg:CompanyAliasShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:aliasName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:aliasType ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:aliasId ] ;
+    sh:targetClass wfkg:CompanyAlias .
+
+wfkg:CompanyShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:companyType ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:shortName ],
+        [ sh:class wfkg:SubsidiaryRelation ;
+            sh:path wfkg:hasSubsidiaryRelation ],
+        [ sh:class wfkg:Stock ;
+            sh:path wfkg:hasStock ],
+        [ sh:class wfkg:FinancialMetric ;
+            sh:path wfkg:hasFinancialMetric ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:fullName ],
+        [ sh:class wfkg:Industry ;
+            sh:path wfkg:belongsToIndustry ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:companyId ],
+        [ sh:class wfkg:CompanyAlias ;
+            sh:path wfkg:hasAlias ] ;
+    sh:targetClass wfkg:Company .
+
+wfkg:CorporateLeaderShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:personId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:fullName ],
+        [ sh:class wfkg:LeadershipPosition ;
+            sh:path wfkg:hasLeadershipPosition ] ;
+    sh:targetClass wfkg:CorporateLeader .
+
+wfkg:EventShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:path wfkg:severityScore ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:updates ],
+        [ sh:class wfkg:EventStockCandidate ;
+            sh:path wfkg:hasEventStockCandidate ],
+        [ sh:class wfkg:CorporateLeader ;
+            sh:path wfkg:involvesLeader ],
+        [ sh:class wfkg:Industry ;
+            sh:path wfkg:relatedToIndustry ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:description ],
+        [ sh:path wfkg:involves ],
+        [ sh:class wfkg:GovernmentOrganization ;
+            sh:path wfkg:issuedBy ],
+        [ sh:class wfkg:Company ;
+            sh:path wfkg:involvesCompany ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:clarifies ],
+        [ sh:class wfkg:FinancialMetric ;
+            sh:path wfkg:referencesMetric ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:supersedes ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:contradicts ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:relatedEvent ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:eventId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:canonicalKey ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:eventType ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:path wfkg:occurredAt ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:effectiveTradingDate ] ;
+    sh:sparql [ sh:message "Event requires supporting Evidence." ;
+            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { FILTER NOT EXISTS { ?e wfkg:supports $this . } }" ],
+        [ sh:message "Event availability must match earliest supporting Evidence." ;
+            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { $this wfkg:availableAt ?t . { SELECT $this (MIN(?v) AS ?earliest) WHERE { ?e wfkg:supports $this ; wfkg:availableAt ?v . } GROUP BY $this } FILTER(?t != ?earliest) }" ],
+        [ sh:message "Event requires reporting Article." ;
+            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { FILTER NOT EXISTS { ?a wfkg:reports $this . } }" ],
+        [ sh:message "hasEventStockCandidate requires the matching forEvent inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:hasEventStockCandidate ?candidate .
+              FILTER NOT EXISTS { ?candidate wfkg:forEvent $this . }
+            }
+        """ ],
+        [ sh:message "Event–Event relations must not self-reference."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE { $this ?relation $this .
+              FILTER (?relation IN (wfkg:updates, wfkg:clarifies, wfkg:supersedes, wfkg:contradicts, wfkg:relatedEvent))
+            }
+        """ ] ;
+    sh:targetClass wfkg:Event .
+
+wfkg:EventStockCandidateShape a sh:NodeShape ;
+    sh:property [ sh:class wfkg:EventStockReaction ;
+            sh:path wfkg:hasReaction ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:candidateId ],
+        [ sh:class wfkg:Event ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:forEvent ],
+        [ sh:class wfkg:Stock ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:candidateStock ],
+        [ sh:datatype xsd:string ;
+            sh:in ( "DIRECT"^^xsd:string "INDIRECT_INDUSTRY"^^xsd:string "INDIRECT_SUBSIDIARY"^^xsd:string "INDIRECT_LEADERSHIP"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:impactType ],
+        [ sh:datatype xsd:string ;
+                    sh:in ( "DIRECT"^^xsd:string "INDIRECT_INDUSTRY"^^xsd:string "INDIRECT_SUBSIDIARY"^^xsd:string "INDIRECT_LEADERSHIP"^^xsd:string ) ;
+                    sh:maxCount 1 ;
+                    sh:minCount 1 ;
+                    sh:path wfkg:relationPath ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:candidateReason ],
+        [ sh:datatype xsd:string ;
+            sh:in ( "POSITIVE"^^xsd:string "NEGATIVE"^^xsd:string "NEUTRAL"^^xsd:string "UNKNOWN"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:expectedDirection ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:relationStrength ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:confidenceScore ],
+        [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:sourceConfidence ],
+        [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:extractionConfidence ],
+        [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:linkingConfidence ],
+        [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:relationConfidence ],
+        [ sh:datatype xsd:decimal ; sh:maxCount 1 ; sh:minCount 1 ; sh:minInclusive 0 ; sh:maxInclusive 1 ; sh:path wfkg:candidateScore ],
+        [ sh:datatype xsd:string ;
+            # RDF 1.1 string forms are equivalent; accept both rdflib representations.
+            sh:in ( "GENERATED" "GENERATED"^^xsd:string "VALIDATED" "VALIDATED"^^xsd:string "REJECTED" "REJECTED"^^xsd:string "PENDING_MARKET_WINDOW" "PENDING_MARKET_WINDOW"^^xsd:string "REACTION_READY" "REACTION_READY"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:candidateStatus ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:inferenceCutoff ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:generatedAt ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:methodVersion ] ;
+    sh:sparql [ sh:message "Baseline inferenceCutoff must equal Event.availableAt; generatedAt/availableAt must be ordered."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:forEvent ?event ; wfkg:inferenceCutoff ?cutoff ; wfkg:generatedAt ?generated ; wfkg:availableAt ?available .
+              ?event wfkg:availableAt ?eventAvailable .
+              FILTER (?cutoff != ?eventAvailable || ?generated < ?cutoff || ?available < ?generated)
+            }
+        """ ],
+        [ sh:message "forEvent requires the matching hasEventStockCandidate inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:forEvent ?event .
+              FILTER NOT EXISTS { ?event wfkg:hasEventStockCandidate $this . }
+            }
+        """ ],
+        [ sh:message "hasReaction requires the matching onCandidate inverse."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:hasReaction ?reaction .
+              FILTER NOT EXISTS { ?reaction wfkg:onCandidate $this . }
+            }
+        """ ],
+        [ sh:message "candidateScore must equal confidenceScore × relationStrength."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:candidateScore ?score ; wfkg:confidenceScore ?confidence ; wfkg:relationStrength ?strength .
+              FILTER (ABS(?score - (?confidence * ?strength)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "confidenceScore must be the mean of its four frozen components."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:confidenceScore ?score ; wfkg:sourceConfidence ?source ;
+                    wfkg:extractionConfidence ?extraction ; wfkg:linkingConfidence ?linking ;
+                    wfkg:relationConfidence ?relation .
+              FILTER (ABS(?score - ((?source + ?extraction + ?linking + ?relation) / 4)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "REACTION_READY requires an inverse-linked Reaction." ;
+            sh:select "PREFIX wfkg: <https://example.org/wfkg/v1#> SELECT $this WHERE { $this wfkg:candidateStatus ?status . FILTER (STR(?status) = \"REACTION_READY\") FILTER NOT EXISTS { $this wfkg:hasReaction ?r . ?r wfkg:onCandidate $this . } }" ],
+
+        [ sh:message "Candidate có Reaction phải ở trạng thái REACTION_READY."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+\r
+            SELECT $this WHERE {\r
+              $this wfkg:hasReaction ?reaction ; wfkg:candidateStatus ?status .\r
+              FILTER (STR(?status) != "REACTION_READY")\r
+            }\r
+        """ ] ;
+    sh:sparql [ sh:message "relationPath phải trùng với impactType trong baseline."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:impactType ?impact ; wfkg:relationPath ?path .
+              FILTER (?impact != ?path)
+            }
+        """ ],
+        [ sh:message "Phase 1 baseline cố định sourceConfidence=0.5."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:sourceConfidence ?source .
+              FILTER (?source != 0.5)
+            }
+        """ ],
+        [ sh:message "DIRECT Candidate phải có đường Event → Company → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "DIRECT"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesCompany ?company .
+                ?company wfkg:hasStock ?stock .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_INDUSTRY Candidate phải có đường Event → Industry ← IndustryExposure ← Bank → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_INDUSTRY"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:relatedToIndustry ?industry .
+                ?bank wfkg:hasIndustryExposure ?exposure ; wfkg:hasStock ?stock .
+                ?exposure wfkg:exposureBank ?bank ; wfkg:exposureIndustry ?industry .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_SUBSIDIARY Candidate phải nối công ty con với parent sở hữu cổ phiếu."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_SUBSIDIARY"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesCompany ?subsidiary .
+                ?parent wfkg:hasSubsidiaryRelation ?relation ; wfkg:hasStock ?stock .
+                ?relation wfkg:subsidiaryCompany ?subsidiary ; wfkg:parentCompany ?parent .
+              }
+            }
+        """ ],
+        [ sh:message "INDIRECT_LEADERSHIP Candidate phải có đường Event → Leader → Position → Company → Stock."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT $this WHERE {
+              $this wfkg:impactType "INDIRECT_LEADERSHIP"^^xsd:string ; wfkg:forEvent ?event ; wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS {
+                ?event wfkg:involvesLeader ?leader .
+                ?leader wfkg:hasLeadershipPosition ?position .
+                ?position wfkg:positionHolder ?leader ; wfkg:positionAtCompany ?company .
+                ?company wfkg:hasStock ?stock .
+              }
+            }
+        """ ] ;
+    sh:targetClass wfkg:EventStockCandidate .
+
+wfkg:EventStockReactionShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:reactionId ],
+        [ sh:class wfkg:EventStockCandidate ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:onCandidate ],
+        [ sh:class wfkg:MarketIndex ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:benchmarkIndex ],
+        [ sh:class wfkg:MarketObservation ;
+            sh:minCount 1 ;
+            sh:path wfkg:derivedFromObservation ],
+        [ sh:class wfkg:MarketIndexObservation ;
+            sh:minCount 1 ;
+            sh:path wfkg:derivedFromIndexObservation ],
+        [ sh:datatype xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:windowStartOffset ],
+        [ sh:datatype xsd:integer ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:windowEndOffset ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:abnormalReturn ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:cumulativeAbnormalReturn ],
+        [ sh:datatype xsd:string ;
+            sh:in ( "POSITIVE"^^xsd:string "NEGATIVE"^^xsd:string "NEUTRAL"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:marketReactionDirection ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:impactScore ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:reactionWeight ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive -1 ;
+            sh:path wfkg:signedWeight ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:methodVersion ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ] ;
+    sh:sparql [ sh:message "onCandidate requires hasReaction and REACTION_READY on the same Candidate."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate .
+              FILTER NOT EXISTS {
+                ?candidate wfkg:hasReaction $this ; wfkg:candidateStatus ?status .
+                FILTER (STR(?status) = "REACTION_READY")
+              }
+            }
+        """ ],
+        [ sh:message "impactScore must equal min(1, abs(CAR) / 0.10) in the baseline."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ; wfkg:impactScore ?impact .
+              BIND (ABS(?car) / 0.10 AS ?rawImpact)
+              BIND (IF(?rawImpact > 1, 1, ?rawImpact) AS ?expectedImpact)
+              FILTER (ABS(?impact - ?expectedImpact) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "marketReactionDirection must follow CAR with epsilon=0 in the baseline."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ; wfkg:marketReactionDirection ?direction .
+              FILTER ((?car > 0 && ?direction != "POSITIVE")
+                   || (?car < 0 && ?direction != "NEGATIVE")
+                   || (?car = 0 && ?direction != "NEUTRAL"))
+            }
+        """ ],
+        [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho cổ phiếu (gồm predecessor)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end ;
+                    wfkg:derivedFromObservation ?obs .
+              ?obs wfkg:tradingDate ?date .
+            }
+            GROUP BY $this ?start ?end
+            HAVING (COUNT(DISTINCT ?date) != (?end - ?start + 2))
+        """ ],
+        [ sh:message "Reaction phải có đúng window length + 1 ngày giao dịch khác nhau cho benchmark (gồm predecessor)."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end ;
+                    wfkg:derivedFromIndexObservation ?obs .
+              ?obs wfkg:tradingDate ?date .
+            }
+            GROUP BY $this ?start ?end
+            HAVING (COUNT(DISTINCT ?date) != (?end - ?start + 2))
+        """ ],
+        [ sh:message "Stock và benchmark observations phải có cùng tập tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              { $this wfkg:derivedFromObservation ?stockObs .
+                ?stockObs wfkg:tradingDate ?date .
+                FILTER NOT EXISTS {
+                  $this wfkg:derivedFromIndexObservation ?indexObs .
+                  ?indexObs wfkg:tradingDate ?date .
+                }
+              }
+              UNION
+              { $this wfkg:derivedFromIndexObservation ?indexObs .
+                ?indexObs wfkg:tradingDate ?date .
+                FILTER NOT EXISTS {
+                  $this wfkg:derivedFromObservation ?stockObs .
+                  ?stockObs wfkg:tradingDate ?date .
+                }
+              }
+            }
+        """ ],
+        [ sh:message "Mỗi stock observation phải thuộc candidateStock."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate ; wfkg:derivedFromObservation ?obs .
+              ?candidate wfkg:candidateStock ?stock .
+              FILTER NOT EXISTS { ?stock wfkg:hasMarketObservation ?obs . }
+            }
+        """ ],
+        [ sh:message "Mỗi index observation phải thuộc benchmarkIndex."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:benchmarkIndex ?index ; wfkg:derivedFromIndexObservation ?obs .
+              FILTER NOT EXISTS { ?index wfkg:hasIndexObservation ?obs . }
+            }
+        """ ],
+        [ sh:message "Reaction không được có nhiều stock observations cùng tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromObservation ?obs1, ?obs2 .
+              FILTER (?obs1 != ?obs2)
+              ?obs1 wfkg:tradingDate ?date .
+              ?obs2 wfkg:tradingDate ?date .
+            }
+        """ ],
+        [ sh:message "Reaction không được có nhiều benchmark observations cùng tradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromIndexObservation ?obs1, ?obs2 .
+              FILTER (?obs1 != ?obs2)
+              ?obs1 wfkg:tradingDate ?date .
+              ?obs2 wfkg:tradingDate ?date .
+            }
+        """ ],
+        [ sh:message "Các event window baseline phải chứa offset 0."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end .
+              FILTER (?start > 0 || ?end < 0)
+            }
+        """ ],
+        [ sh:message "Reaction phải có cặp stock/index observation tại effectiveTradingDate."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:onCandidate ?candidate .
+              ?candidate wfkg:forEvent ?event .
+              ?event wfkg:effectiveTradingDate ?date .
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromObservation ?stockObs ;
+                      wfkg:derivedFromIndexObservation ?indexObs .
+                ?stockObs wfkg:tradingDate ?date .
+                ?indexObs wfkg:tradingDate ?date .
+              }
+            }
+        """ ],
+        [ sh:message "Daily stock returnValue phải khớp tỷ suất tính từ adjustedClose của session trước."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromObservation ?current, ?previous .
+              ?current wfkg:tradingDate ?date ; wfkg:adjustedClose ?close ; wfkg:returnValue ?return .
+              ?previous wfkg:tradingDate ?previousDate ; wfkg:adjustedClose ?previousClose .
+              FILTER (?previousDate < ?date)
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromObservation ?nearer .
+                ?nearer wfkg:tradingDate ?nearerDate .
+                FILTER (?nearerDate > ?previousDate && ?nearerDate < ?date)
+              }
+              FILTER (ABS(?return - ((?close / ?previousClose) - 1)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "Daily benchmark returnValue phải khớp tỷ suất tính từ adjustedClose của session trước."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT DISTINCT $this WHERE {
+              $this wfkg:derivedFromIndexObservation ?current, ?previous .
+              ?current wfkg:tradingDate ?date ; wfkg:adjustedClose ?close ; wfkg:returnValue ?return .
+              ?previous wfkg:tradingDate ?previousDate ; wfkg:adjustedClose ?previousClose .
+              FILTER (?previousDate < ?date)
+              FILTER NOT EXISTS {
+                $this wfkg:derivedFromIndexObservation ?nearer .
+                ?nearer wfkg:tradingDate ?nearerDate .
+                FILTER (?nearerDate > ?previousDate && ?nearerDate < ?date)
+              }
+              FILTER (ABS(?return - ((?close / ?previousClose) - 1)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "windowEndOffset phải lớn hơn hoặc bằng windowStartOffset."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset ?start ; wfkg:windowEndOffset ?end .
+              FILTER (?end < ?start)
+            }
+        """ ],
+        [ sh:message "Reaction availability must not precede its Candidate or any input observation."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              { $this wfkg:availableAt ?ready ; wfkg:onCandidate ?candidate .
+                ?candidate wfkg:availableAt ?input . FILTER (?ready < ?input) }
+              UNION
+              { $this wfkg:availableAt ?ready ; wfkg:derivedFromObservation ?o .
+                ?o wfkg:availableAt ?input . FILTER (?ready < ?input) }
+              UNION
+              { $this wfkg:availableAt ?ready ; wfkg:derivedFromIndexObservation ?o .
+                ?o wfkg:availableAt ?input . FILTER (?ready < ?input) }
+            }
+        """ ],
+        [ sh:message "abnormalReturn must equal AR at the Event effectiveTradingDate (offset 0)."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:abnormalReturn ?ar ; wfkg:onCandidate ?candidate ;
+                    wfkg:derivedFromObservation ?stockObs ;
+                    wfkg:derivedFromIndexObservation ?indexObs .
+              ?candidate wfkg:forEvent ?event .
+              ?event wfkg:effectiveTradingDate ?date .
+              ?stockObs wfkg:tradingDate ?date ; wfkg:returnValue ?stockReturn .
+              ?indexObs wfkg:tradingDate ?date ; wfkg:returnValue ?indexReturn .
+              FILTER (ABS(?ar - (?stockReturn - ?indexReturn)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "cumulativeAbnormalReturn must equal the sum of daily AR values in the event window."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ;
+                    wfkg:derivedFromObservation ?stockObs ;
+                    wfkg:derivedFromIndexObservation ?indexObs .
+              ?stockObs wfkg:tradingDate ?date ; wfkg:returnValue ?stockReturn .
+              ?indexObs wfkg:tradingDate ?date ; wfkg:returnValue ?indexReturn .
+              FILTER EXISTS {
+                $this wfkg:derivedFromObservation ?priorObs .
+                ?priorObs wfkg:tradingDate ?priorDate .
+                FILTER (?priorDate < ?date)
+              }
+            }
+            GROUP BY $this ?car
+            HAVING (ABS(?car - SUM(?stockReturn - ?indexReturn)) > 0.000000001)
+        """ ],
+        [ sh:message "For a [0,0] window, CAR must equal AR."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:windowStartOffset 0 ; wfkg:windowEndOffset 0 ;
+                    wfkg:abnormalReturn ?ar ; wfkg:cumulativeAbnormalReturn ?car .
+              FILTER (ABS(?ar - ?car) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "Reaction weight must equal impactScore × Candidate confidence × relationStrength."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:reactionWeight ?weight ; wfkg:impactScore ?impact ; wfkg:onCandidate ?candidate .
+              ?candidate wfkg:confidenceScore ?confidence ; wfkg:relationStrength ?strength .
+              FILTER (ABS(?weight - (?impact * ?confidence * ?strength)) > 0.000000001)
+            }
+        """ ],
+        [ sh:message "signedWeight must follow the sign of cumulativeAbnormalReturn with epsilon=0."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:cumulativeAbnormalReturn ?car ;
+                    wfkg:reactionWeight ?weight ;
+                    wfkg:signedWeight ?signed .
+              FILTER ((?car > 0 && ABS(?signed - ?weight) > 0.000000001)
+                   || (?car < 0 && ABS(?signed + ?weight) > 0.000000001)
+                   || (?car = 0 && ABS(?signed) > 0.000000001))
+            }
+        """ ] ;
+    sh:targetClass wfkg:EventStockReaction .
+
+wfkg:EvidenceShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:evidenceText ],
+        [ sh:datatype xsd:integer ;
+            sh:maxCount 1 ;
+            sh:path wfkg:startOffset ],
+        [ sh:datatype xsd:integer ;
+            sh:maxCount 1 ;
+            sh:path wfkg:endOffset ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:class wfkg:NewsArticle ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:extractedFrom ],
+        [ sh:class wfkg:Event ;
+            sh:minCount 1 ;
+            sh:path wfkg:supports ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:evidenceId ] ;
+    sh:sparql [ sh:message "Evidence offsets must be both absent or satisfy 0 <= startOffset < endOffset."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              OPTIONAL { $this wfkg:startOffset ?start }
+              OPTIONAL { $this wfkg:endOffset ?end }
+              FILTER (BOUND(?start) != BOUND(?end) || (BOUND(?start) && (?start < 0 || ?end <= ?start)))
+            }
+        """ ],
+        [ sh:message "Evidence cannot be available before its source Article."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:availableAt ?evidenceAt ; wfkg:extractedFrom ?article .
+              ?article wfkg:availableAt ?articleAt .
+              FILTER (?evidenceAt < ?articleAt)
+            }
+        """ ],
+        [ sh:message "Evidence cannot be available before the Article publication time."@en ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+            SELECT $this WHERE {
+              $this wfkg:availableAt ?evidenceAt ; wfkg:extractedFrom ?article .
+              ?article wfkg:publishedAt ?publishedAt .
+              FILTER (?evidenceAt < ?publishedAt)
+            }
+        """ ] ;
+    sh:targetClass wfkg:Evidence .
+
+wfkg:FinancialMetricShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:metricType ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:metricValue ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:unit ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:periodEnd ],
+        [ sh:datatype xsd:string ;
+            sh:in ( "DAY"^^xsd:string "MONTH"^^xsd:string "QUARTER"^^xsd:string "HALF_YEAR"^^xsd:string "YEAR"^^xsd:string "TRAILING_TWELVE_MONTHS"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:periodType ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:periodStart ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:metricId ] ;
+    sh:targetClass wfkg:FinancialMetric .
+
+wfkg:GovernmentOrganizationShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:organizationId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:organizationName ] ;
+    sh:targetClass wfkg:GovernmentOrganization .
+
+wfkg:IndexMembershipShape a sh:NodeShape ;
+    sh:node wfkg:TemporalProvenanceShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:dataQualityFlag ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validTo ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:validFrom ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:relationConfidence ],
+        [ sh:class wfkg:Stock ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:memberStock ],
+        [ sh:class wfkg:MarketIndex ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:memberIndex ] ;
+    sh:targetClass wfkg:IndexMembership .
+
+wfkg:IndustryExposureShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:reportedCategory ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validTo ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validFrom ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:relationConfidence ],
+        [ sh:datatype xsd:string ;
+            sh:in ( "DAY"^^xsd:string "MONTH"^^xsd:string "QUARTER"^^xsd:string "HALF_YEAR"^^xsd:string "YEAR"^^xsd:string "TRAILING_TWELVE_MONTHS"^^xsd:string ) ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:periodType ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:dataQualityFlag ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:exposureRatio ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:exposureStrength ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:periodEnd ],
+        [ sh:class wfkg:Bank ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:exposureBank ],
+        [ sh:class wfkg:Industry ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:exposureIndustry ] ;
+    sh:targetClass wfkg:IndustryExposure .
+
+wfkg:IndustryGroupShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:industryGroupName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:taxonomyName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:industryGroupId ] ;
+    sh:targetClass wfkg:IndustryGroup .
+
+wfkg:IndustryShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:industryName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:industryId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:industryCode ],
+        [ sh:class wfkg:IndustryGroup ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:belongsToGroup ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:taxonomyName ] ;
+    sh:targetClass wfkg:Industry .
+
+wfkg:LeadershipPositionShape a sh:NodeShape ;
+    sh:node wfkg:TemporalProvenanceShape ;
+    sh:property [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validTo ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:relationConfidence ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:validFrom ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:dataQualityFlag ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:class wfkg:CorporateLeader ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:positionHolder ],
+        [ sh:class wfkg:Company ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:positionAtCompany ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:positionTitle ] ;
+    sh:targetClass wfkg:LeadershipPosition .
+
+wfkg:MarketIndexObservationShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:observationId ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:tradingDate ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:returnValue ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:minExclusive 0 ;
+            sh:path wfkg:adjustedClose ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ] ;
+    sh:targetClass wfkg:MarketIndexObservation .
+
+wfkg:MarketIndexShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:indexName ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:indexCode ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:indexId ],
+        [ sh:class wfkg:MarketIndexObservation ;
+            sh:path wfkg:hasIndexObservation ] ;
+    sh:targetClass wfkg:MarketIndex .
+
+wfkg:MarketObservationShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:observationId ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:tradingDate ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:minExclusive 0 ;
+            sh:path wfkg:adjustedClose ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:volume ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:returnValue ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ] ;
+    sh:targetClass wfkg:MarketObservation .
+
+wfkg:NewsArticleShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:articleId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:title ],
+        [ sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:url ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:publishedAt ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:class wfkg:NewsSource ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:publishedBy ],
+        [ sh:class wfkg:Event ;
+            sh:path wfkg:reports ] ;
+    sh:targetClass wfkg:NewsArticle .
+
+wfkg:NewsSourceShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:sourceId ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:path wfkg:sourceType ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:sourceName ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:maxInclusive 1 ;
+            sh:path wfkg:reliabilityScore ] ;
+    sh:targetClass wfkg:NewsSource .
+
+wfkg:StockShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:tickerSymbol ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:stockId ],
+        [ sh:class wfkg:IndexMembership ;
+            sh:path wfkg:hasIndexMembership ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:exchange ],
+        [ sh:class wfkg:MarketObservation ;
+            sh:path wfkg:hasMarketObservation ] ;
+    sh:targetClass wfkg:Stock .
+
+wfkg:SubsidiaryRelationShape a sh:NodeShape ;
+    sh:node wfkg:TemporalProvenanceShape ;
+    sh:property [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:dataQualityFlag ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:validFrom ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:relationConfidence ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validTo ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:class wfkg:Company ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:subsidiaryCompany ],
+        [ sh:class wfkg:Company ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:parentCompany ] ;
+    sh:targetClass wfkg:SubsidiaryRelation .
+
+wfkg:TemporalProvenanceShape a sh:NodeShape ;
+    sh:property [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:validFrom ],
+        [ sh:datatype xsd:date ;
+            sh:maxCount 1 ;
+            sh:path wfkg:validTo ],
+        [ sh:datatype xsd:dateTime ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:availableAt ],
+        [ sh:minCount 1 ;
+            sh:nodeKind sh:IRI ;
+            sh:path wfkg:sourceReference ],
+        [ sh:datatype xsd:decimal ;
+            sh:maxCount 1 ;
+            sh:maxInclusive 1 ;
+            sh:minCount 1 ;
+            sh:minInclusive 0 ;
+            sh:path wfkg:relationConfidence ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path wfkg:dataQualityFlag ] ;
+    sh:sparql [ sh:message "validTo phải lớn hơn hoặc bằng validFrom."@vi ;
+            sh:select """PREFIX wfkg: <https://example.org/wfkg/v1#>
+\r
+            SELECT $this WHERE {\r
+              $this wfkg:validFrom ?from ; wfkg:validTo ?to .\r
+              FILTER (?to < ?from)\r
+            }\r
+        """ ] .
+

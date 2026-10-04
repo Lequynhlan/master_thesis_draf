@@ -1,0 +1,39 @@
+{
+  "synthetic_diagnostic_not_original_fixture": true,
+  "q5_unrelated_benchmark_count": {
+    "columns": [
+      "eventId",
+      "status",
+      "day",
+      "day0Stock",
+      "day0Benchmark",
+      "reactions"
+    ],
+    "rows": [
+      [
+        "DIAGNOSTIC_ONLY",
+        "PENDING_MARKET_WINDOW",
+        "2026-08-27",
+        "0",
+        "1",
+        "0"
+      ]
+    ]
+  },
+  "q9_zero_candidate_event_omitted": {
+    "columns": [
+      "eventId",
+      "articles",
+      "candidates",
+      "reactions"
+    ],
+    "rows": [
+      [
+        "DIAGNOSTIC_ONLY",
+        "1",
+        "1",
+        "0"
+      ]
+    ]
+  }
+}

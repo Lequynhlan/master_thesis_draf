@@ -1,0 +1,1236 @@
+P001	ĐẠI HỌC BÁCH KHOA HÀ NỘI
+P002	Nghiên cứu xây dựng đồ thị tri thức tài chính có trọng số từ tin tức tiếng Việt và dữ liệu giao dịch cho thị trường chứng khoán Việt Nam
+P003	CHƯƠNG 1. MỤC TIÊU VÀ PHẠM VI TÌM HIỂU
+P004	1.1. Mục tiêu
+P005	Qua Phase 1, em muốn trả lời ba câu hỏi cơ bản. Thứ nhất, dữ liệu tin tức và dữ liệu tài chính cần những thực thể nào. Thứ hai, các thực thể đó liên kết với nhau bằng quan hệ nào. Thứ ba, hệ thống cần lưu những trường gì để sau này có thể giải thích vì sao một cổ phiếu được chọn và phản ứng thị trường được tính từ đâu.
+P006	Biểu diễn nguồn tin, bài báo, đoạn bằng chứng và sự kiện được trích xuất.
+P007	Liên kết sự kiện với doanh nghiệp, lãnh đạo, ngành và cổ phiếu.
+P008	Lưu quan sát thị trường của cổ phiếu và chỉ số đối chứng theo ngày giao dịch.
+P009	1.2. Câu hỏi nghiên cứu và định hướng đánh giá
+P010	RQ1 – Extraction & Linking: Có thể xây dựng một financial knowledge graph có provenance từ tin tức tiếng Việt với độ chính xác entity linking và event extraction như thế nào? Việc đánh giá bao gồm Evidence span, loại sự kiện/vai trò bắt buộc, entity linking, canonicalization và quan hệ Event–Event theo protocol đã khóa.
+P011	RQ2 – Event–Stock inference: Các relation path trong KG có giúp phát hiện các cổ phiếu liên quan ngoài direct mention tốt hơn baseline keyword/co-occurrence hay không? Ba method dùng chung extractor/registry. Keyword quét toàn văn Article hỗ trợ Event đã available tại cutoff, match alias/ticker chính xác theo registry và union Stock, score=1; prediction bucket DIRECT chỉ là quy ước, indirect abstain. DIRECT-only và KG bốn đường dùng score=1 cho RQ2; RQ3 mới so với candidateScore trên cùng paths. Matching/route projection khóa chi tiết trong EVALUATION_PROTOCOL.md. Cả ba method, kể cả keyword, dùng cùng complete-assignment gate tại cutoff: thiếu assignment thì đều trả empty ranking, gold Event vẫn giữ trong universe.
+P012	RQ3 – Weighting và ranking: Trên cùng tập Candidate của KG đầy đủ, so sánh unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore; market reaction chỉ được phân tích hồi cứu sau khi window đóng bằng reactionWeight. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng max trong cùng methodVersion/cutoff; reactionWeight báo riêng theo path, không cộng lặp CAR. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2, Precision@K và ba ablation riêng cho extractionConfidence, linkingConfidence và relationConfidence (mỗi lần chỉ thay một component bằng 1; sourceConfidence luôn giữ 0,5). Nhãn phải độc lập với công thức score để tránh đánh giá vòng tròn. Per-impactType phải chiếu predictions theo route trước aggregation/top-K, không lọc bằng gold sau dự đoán; common universe và nhãn độc lập được khóa trong EVALUATION_PROTOCOL.md.
+P013	Evaluation Phase 2 đánh giá RQ1 bằng Evidence span, event type/required roles, entity linking, canonicalization và quan hệ Event–Event theo hai tầng bắt buộc: gán assertion trực tiếp có Evidence, rồi kiểm tra OWL suy luận và graph cuối cùng. Contradicts đối xứng; metric ngữ nghĩa cuối quy hai chiều về một cặp Event không có thứ tự, tránh đếm lặp. Updates/clarifies/supersedes vẫn có hướng. Universe, NONE và multi-label theo EVALUATION_PROTOCOL.md. RQ2 so sánh keyword/co-occurrence, DIRECT-only và KG bốn đường trên cùng Event/Stock universe và cutoff. RQ3 so sánh unweighted với candidateScore tại inferenceCutoff; reactionWeight chỉ hậu nghiệm. Synthetic không phải kết quả RQ.
+P014	Sơ đồ xác định phạm vi ứng dụng V1 hẹp hơn là cổ phiếu ngân hàng thuộc VN30 theo từng thời kỳ. Em xem đây là universe dự kiến cho pilot, không phải bằng chứng đã đánh giá toàn bộ ngân hàng VN30. Demo trong báo cáo chỉ có Candidate TCB và dữ liệu synthetic. Trước final_evaluation, phải khóa Stock universe, benchmarkIndex, exchange/calendar và khoảng thời gian trong run manifest; mọi baseline phải dùng cùng universe và cutoff.
+P015	Để tránh lẫn phạm vi luận văn với dữ liệu minh họa, em tách ba mức. Đề tài hướng tới WFKG cho tin tức tiếng Việt và thị trường chứng khoán Việt Nam; ontology giữ mô hình Company/Stock dùng chung, không giới hạn các lớp nghiệp vụ chỉ ở ngân hàng.
+P016	1.3. Phạm vi nghiên cứu, ontology và minh họa
+P017	CHƯƠNG 2. ĐẶC TẢ ONTOLOGY PHASE 1
+P018	Chương này chốt bốn nội dung theo góp ý: tách Candidate/Reaction; thống nhất property; quan hệ có hiệu lực thời gian; Event chuẩn hóa và xử lý thông tin trùng/cập nhật. Các công thức thực nghiệm và triển khai thuật toán thuộc Phase 2.
+P019	2.1. Phạm vi và cấu trúc mô hình
+P020	Ontology gồm 22 lớp: 18 lớp nghiệp vụ và 4 lớp biểu diễn quan hệ theo thời gian. Bank là lớp con của Company. Tên thống nhất là WFKG; namespace wfkg: <https://example.org/wfkg/v1#>. Trong gói này, ontology_v1.0.ttl và shapes_v1.0.ttl là nguồn chuẩn về schema; bảng trong báo cáo được rà theo các contract đó. Gói có tools/audit_schema_diagram.py và tools/README.md để kiểm tra chỉ đọc sự nhất quán của phụ lục Draw.io với TTL/SHACL. Công cụ không tự sửa hoặc dựng lại bảng, báo cáo hay sơ đồ. Phiên bản contract hiện hành là 1.0.4; giữ nguyên tên ontology_v1.0.ttl và shapes_v1.0.ttl, namespace và 22 lớp. Phiên bản tăng để không gán quy tắc mới cho kết quả snapshot cũ.
+T01R01C01P1	Nhóm
+T01R01C02P1	Lớp
+T01R01C03P1	Vai trò
+T01R02C01P1	Tin tức
+T01R02C02P1	NewsSource, NewsArticle, Evidence
+T01R02C03P1	Nguồn tin, nội dung bài báo và đoạn văn làm bằng chứng.
+T01R03C01P1	Sự kiện
+T01R03C02P1	Event, GovernmentOrganization
+T01R03C03P1	Sự kiện chuẩn hóa và cơ quan ban hành/liên quan.
+T01R04C01P1	Chủ thể
+T01R04C02P1	Company, Bank, CorporateLeader, CompanyAlias
+T01R04C03P1	Doanh nghiệp, ngân hàng, cá nhân lãnh đạo và tên gọi phục vụ linking.
+T01R05C01P1	Phân loại
+T01R05C02P1	Industry, IndustryGroup
+T01R05C03P1	Ngành và nhóm ngành.
+T01R06C01P1	Tài chính
+T01R06C02P1	FinancialMetric
+T01R06C03P1	Chỉ tiêu theo kỳ, có nguồn và thời điểm khả dụng.
+T01R07C01P1	Thị trường
+T01R07C02P1	Stock, MarketObservation, MarketIndex, MarketIndexObservation
+T01R07C03P1	Cổ phiếu, chỉ số và quan sát theo ngày giao dịch.
+T01R08C01P1	Event–Stock
+T01R08C02P1	EventStockCandidate, EventStockReaction
+T01R08C03P1	Ứng viên suy ra và kết quả phản ứng thị trường quan sát được.
+T01R09C01P1	Quan hệ thời gian
+T01R09C02P1	LeadershipPosition, SubsidiaryRelation, IndexMembership, IndustryExposure
+T01R09C03P1	Quan hệ có hiệu lực, kỳ/phiên bản dữ liệu và provenance.
+P021	
+P022	2.1.1. Luồng tin tức, Candidate và Reaction
+P023	NewsArticle publishedBy NewsSource; Evidence extractedFrom NewsArticle và supports Event; NewsArticle reports Event. reports là quan hệ nhiều–nhiều: nhiều bài có thể cùng đưa tin một Event, và một bài có thể đưa tin nhiều Event.
+P024	Event hasEventStockCandidate EventStockCandidate; Candidate forEvent Event và candidateStock Stock. Khi đủ dữ liệu, Candidate hasReaction EventStockReaction; Reaction onCandidate Candidate. hasEventStockCandidate/forEvent và hasReaction/onCandidate là hai cặp quan hệ nghịch đảo, phải nhất quán khi được lưu hoặc suy ra.
+P025	Candidate biểu diễn sự liên quan theo đường tri thức, độc lập với việc giá có phản ứng hay không. Reaction là kết quả quan sát sau khi đủ dữ liệu; không chứng minh Event là nguyên nhân làm giá thay đổi.
+P026	2.1.2. Bốn loại đường liên hệ của baseline
+T02R01C01P1	impactType
+T02R01C02P1	Đường nghiệp vụ
+T02R01C03P1	Điều kiện
+T02R02C01P1	DIRECT
+T02R02C02P1	Event → Company → Stock
+T02R02C03P1	Event liên quan trực tiếp doanh nghiệp có Stock.
+T02R03C01P1	INDIRECT_INDUSTRY
+T02R03C02P1	Event → Industry ← IndustryExposure ← Bank → Stock
+T02R03C03P1	Bank có exposure hợp lệ đối với ngành. Ngành có thể được liên kết từ nội dung Event hoặc thực thể liên quan với bằng chứng tại cutoff.
+T02R04C01P1	INDIRECT_SUBSIDIARY
+T02R04C02P1	Event → Company con → SubsidiaryRelation → Company mẹ → Stock
+T02R04C03P1	Quan hệ công ty con–mẹ còn hiệu lực và đã khả dụng tại cutoff. Baseline chốt chiều từ công ty con tới cổ phiếu công ty mẹ.
+T02R05C01P1	INDIRECT_LEADERSHIP
+T02R05C02P1	Event → CorporateLeader → LeadershipPosition → Company → Stock
+T02R05C03P1	Nhiệm kỳ đúng tại cutoff, không dùng chức vụ hiện tại để suy luận cho quá khứ.
+P027	
+P028	Các tình huống ngành, chính sách và doanh nghiệp đều phải đi qua quy tắc liên kết được định phiên bản; không tự coi các doanh nghiệp cùng ngành là có exposure bằng nhau. Các mở rộng đường liên hệ được đánh giá ở Phase 2. Trong baseline 1.0.4, relationPath là mã route ổn định và phải bằng impactType; các mũi tên trong bảng chỉ mô tả topology. Không lưu chuỗi URI/property/phiên bản quan hệ vào relationPath; candidateReason giải thích việc chọn Candidate, còn các quan hệ và provenance được biểu diễn bằng liên kết RDF và relation node tương ứng.
+P029	2.1.3. Quy ước thống nhất property
+T03R01C01P1	Thực thể
+T03R01C02P1	Bộ trường thống nhất
+T03R01C03P1	Quy ước
+T03R02C01P1	FinancialMetric
+T03R02C02P1	metricValue, periodEnd, periodType; periodStart tùy chọn
+T03R02C03P1	Không dùng value/period như tên thay thế; kỳ báo cáo khác thời gian khả dụng.
+T03R03C01P1	MarketObservation
+T03R03C02P1	adjustedClose, volume, returnValue
+T03R03C03P1	Baseline lưu adjustedClose để tính lại return; MarketIndexObservation cũng phải có close/adjustedClose, cả hai lớp có availableAt và sourceReference.
+T03R04C01P1	CorporateLeader
+T03R04C02P1	personId, fullName
+T03R04C03P1	positionTitle thuộc LeadershipPosition, không đặt trực tiếp trên cá nhân.
+T03R05C01P1	CompanyAlias
+T03R05C02P1	aliasName, aliasType
+T03R05C03P1	Chuỗi TCB có thể là alias phục vụ linking. Company và Stock luôn là hai thực thể riêng.
+T03R06C01P1	IndustryExposure
+T03R06C02P1	exposureRatio, exposureStrength, periodEnd, periodType và temporal provenance
+T03R06C03P1	Entity nghiệp vụ bình thường; không dùng rdf:Statement hoặc rdf:subject/predicate/object.
+T03R07C01P1	EventStockCandidate
+T03R07C02P1	expectedDirection, relationStrength, confidence components, confidenceScore, candidateScore
+T03R07C03P1	Candidate score dùng tại inferenceCutoff; không chứa market reaction tương lai.
+P030	
+P031	2.2. Danh mục property theo từng lớp
+P032	Mỗi dòng mô tả property theo ngữ cảnh lớp, kiểu/lớp đích và số lượng giá trị của baseline. 1: bắt buộc đúng một; 0..1: tùy chọn tối đa một; 0..*: nhiều giá trị tùy chọn; 1..*: ít nhất một. Đây là ràng buộc dữ liệu dự kiến cho SHACL, không đồng nhất với giả định thế giới đóng của OWL. Property dùng chung có thể xuất hiện ở nhiều lớp; không khai báo nhiều rdfs:domain riêng lẻ để diễn đạt phép hợp lớp.
+P033	2.2.1. NewsSource – Nguồn tin
+T04R01C01P1	Property
+T04R01C02P1	Kiểu / lớp đích
+T04R01C03P1	Số lượng
+T04R01C04P1	Ý nghĩa
+T04R02C01P1	sourceId
+T04R02C02P1	xsd:string
+T04R02C03P1	1
+T04R02C04P1	Mã định danh duy nhất của nguồn tin.
+T04R03C01P1	sourceName
+T04R03C02P1	xsd:string
+T04R03C03P1	1
+T04R03C04P1	Tên hiển thị của nguồn tin.
+T04R04C01P1	sourceType
+T04R04C02P1	xsd:string
+T04R04C03P1	0..1
+T04R04C04P1	Loại nguồn, ví dụ báo tài chính hoặc nguồn công bố chính thức.
+T04R05C01P1	reliabilityScore
+T04R05C02P1	xsd:decimal
+T04R05C03P1	1
+T04R05C04P1	Điểm tin cậy của nguồn trong khoảng [0,1].
+P034	
+P035	2.2.2. NewsArticle – Bài báo tài chính
+T05R01C01P1	Property
+T05R01C02P1	Kiểu / lớp đích
+T05R01C03P1	Số lượng
+T05R01C04P1	Ý nghĩa
+T05R02C01P1	articleId
+T05R02C02P1	xsd:string
+T05R02C03P1	1
+T05R02C04P1	Mã định danh của bài báo.
+T05R03C01P1	title
+T05R03C02P1	xsd:string
+T05R03C03P1	1
+T05R03C04P1	Tiêu đề bài báo.
+T05R04C01P1	url
+T05R04C02P1	IRI (tài nguyên nguồn)
+T05R04C03P1	1
+T05R04C04P1	Đường dẫn đến bài báo gốc.
+T05R05C01P1	publishedAt
+T05R05C02P1	xsd:dateTime
+T05R05C03P1	1
+T05R05C04P1	Thời điểm nguồn công bố bài báo.
+T05R06C01P1	availableAt
+T05R06C02P1	xsd:dateTime
+T05R06C03P1	1
+T05R06C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T05R07C01P1	publishedBy
+T05R07C02P1	NewsSource
+T05R07C03P1	1
+T05R07C04P1	Liên kết bài báo với nguồn đã xuất bản bài.
+T05R08C01P1	reports
+T05R08C02P1	Event
+T05R08C03P1	0..*
+T05R08C04P1	Bài raw/staging có thể chưa có Event. Chỉ bản ghi curated sau relevance/extraction gate mới được dùng để sinh Candidate; curated profile yêu cầu ít nhất một Event.
+P036	
+P037	2.2.3. Evidence – Bằng chứng văn bản
+T06R01C01P1	Property
+T06R01C02P1	Kiểu / lớp đích
+T06R01C03P1	Số lượng
+T06R01C04P1	Ý nghĩa
+T06R02C01P1	evidenceId
+T06R02C02P1	xsd:string
+T06R02C03P1	1
+T06R02C04P1	Mã định danh của đoạn bằng chứng.
+T06R03C01P1	evidenceText
+T06R03C02P1	xsd:string
+T06R03C03P1	1
+T06R03C04P1	Nội dung văn bản được dùng để hỗ trợ sự kiện.
+T06R04C01P1	startOffset
+T06R04C02P1	xsd:integer
+T06R04C03P1	0..1
+T06R04C04P1	Vị trí ký tự bắt đầu của bằng chứng trong văn bản nguồn.
+T06R05C01P1	endOffset
+T06R05C02P1	xsd:integer
+T06R05C03P1	0..1
+T06R05C04P1	Vị trí ký tự kết thúc của bằng chứng trong văn bản nguồn.
+T06R06C01P1	availableAt
+T06R06C02P1	xsd:dateTime
+T06R06C03P1	1
+T06R06C04P1	Thời điểm Evidence đủ điều kiện sử dụng; không sớm hơn availableAt của bài báo nguồn.
+T06R07C01P1	extractedFrom
+T06R07C02P1	NewsArticle
+T06R07C03P1	1
+T06R07C04P1	Bài báo mà bằng chứng được trích xuất từ đó.
+T06R08C01P1	supports
+T06R08C02P1	Event
+T06R08C03P1	1..*
+T06R08C04P1	Sự kiện được đoạn bằng chứng hỗ trợ.
+P038	
+P039	startOffset và endOffset cùng có hoặc cùng vắng mặt; khi có phải thỏa 0 ≤ startOffset < endOffset và trỏ đúng phiên bản văn bản nguồn. Nguồn và thời điểm khả dụng phải được truy vết qua extractedFrom.
+P040	2.2.4. Event – Sự kiện tài chính chuẩn hóa
+T07R01C01P1	Property
+T07R01C02P1	Kiểu / lớp đích
+T07R01C03P1	Số lượng
+T07R01C04P1	Ý nghĩa
+T07R02C01P1	eventId
+T07R02C02P1	xsd:string
+T07R02C03P1	1
+T07R02C04P1	Mã định danh của sự kiện.
+T07R03C01P1	canonicalKey
+T07R03C02P1	xsd:string
+T07R03C03P1	1
+T07R03C04P1	Khóa nghiệp vụ nhận diện một Event chuẩn hóa; không phụ thuộc articleId hoặc số bài báo. Quy tắc nhận diện ở mục 2.5.
+T07R04C01P1	eventType
+T07R04C02P1	xsd:string
+T07R04C03P1	1
+T07R04C04P1	Loại sự kiện tài chính, ví dụ EARNINGS hoặc M&A negotiation.
+T07R05C01P1	description
+T07R05C02P1	xsd:string
+T07R05C03P1	1
+T07R05C04P1	Mô tả ngắn nội dung sự kiện.
+T07R06C01P1	occurredAt
+T07R06C02P1	xsd:dateTime
+T07R06C03P1	0..1
+T07R06C04P1	Thời điểm sự kiện xảy ra hoặc được ghi nhận theo quy ước dữ liệu.
+T07R07C01P1	availableAt
+T07R07C02P1	xsd:dateTime
+T07R07C03P1	1
+T07R07C04P1	Thời điểm sớm nhất có Evidence khả dụng hỗ trợ đúng thông tin của Event này; không thay bằng occurredAt.
+T07R08C01P1	effectiveTradingDate
+T07R08C02P1	xsd:date
+T07R08C03P1	1
+T07R08C04P1	Phiên giao dịch đầu tiên đủ điều kiện để đánh giá phản ứng sau khi thông tin sẵn sàng.
+T07R09C01P1	severityScore
+T07R09C02P1	xsd:decimal
+T07R09C03P1	0..1
+T07R09C04P1	Điểm mức độ nghiêm trọng hoặc đáng chú ý của sự kiện.
+T07R10C01P1	involves
+T07R10C02P1	Thực thể tài chính
+T07R10C03P1	0..*
+T07R10C04P1	Quan hệ tổng quát biểu diễn sự kiện liên quan đến một thực thể; là super-property của involvesCompany và involvesLeader.
+T07R11C01P1	involvesCompany
+T07R11C02P1	Company
+T07R11C03P1	0..*
+T07R11C04P1	Doanh nghiệp trực tiếp liên quan đến sự kiện.
+T07R12C01P1	involvesLeader
+T07R12C02P1	CorporateLeader
+T07R12C03P1	0..*
+T07R12C04P1	Lãnh đạo doanh nghiệp liên quan đến sự kiện.
+T07R13C01P1	relatedToIndustry
+T07R13C02P1	Industry
+T07R13C03P1	0..*
+T07R13C04P1	Ngành kinh tế có liên quan đến sự kiện.
+T07R14C01P1	issuedBy
+T07R14C02P1	GovernmentOrganization
+T07R14C03P1	0..*
+T07R14C04P1	Cơ quan nhà nước ban hành hoặc phát hành sự kiện/quyết định.
+T07R15C01P1	referencesMetric
+T07R15C02P1	FinancialMetric
+T07R15C03P1	0..*
+T07R15C04P1	Chỉ tiêu tài chính được sự kiện đề cập.
+T07R16C01P1	relatedEvent
+T07R16C02P1	Event
+T07R16C03P1	0..*
+T07R16C04P1	Quan hệ tổng quát Event–Event; các quan hệ cụ thể ở mục 2.5 là thuộc tính con.
+T07R17C01P1	clarifies
+T07R17C02P1	Event
+T07R17C03P1	0..*
+T07R17C04P1	Event làm rõ trỏ tới Event được làm rõ; không mặc nhiên thay thế toàn bộ thông tin trước.
+T07R18C01P1	updates
+T07R18C02P1	Event
+T07R18C03P1	0..*
+T07R18C04P1	Event chứa diễn biến/thông tin mới trỏ tới Event được cập nhật.
+T07R19C01P1	contradicts
+T07R19C02P1	Event
+T07R19C03P1	0..*
+T07R19C04P1	Hai Event chứa thông tin mâu thuẫn trong cùng bối cảnh; quan hệ đối xứng, không tự quyết định bên nào đúng. Lưu mới→cũ để truy vết; metric ngữ nghĩa cuối dùng một cặp không có thứ tự.
+T07R20C01P1	supersedes
+T07R20C02P1	Event
+T07R20C03P1	0..*
+T07R20C04P1	Event mới trỏ tới Event mà thông tin của nó thay thế; vẫn giữ dữ liệu lịch sử.
+T07R21C01P1	hasEventStockCandidate
+T07R21C02P1	EventStockCandidate
+T07R21C03P1	0..*
+T07R21C04P1	Ứng viên Event–Stock được suy ra cho sự kiện.
+P041	
+P042	Event phải có ít nhất một Evidence hỗ trợ qua chiều nghịch của supports và ít nhất một NewsArticle reports. occurredAt có thể chưa biết; không tự gán bằng publishedAt. Các quan hệ thuộc nhóm involves là tùy loại sự kiện, không yêu cầu mọi Event phải có đủ Company, Leader, Industry và GovernmentOrganization.
+P043	2.2.5. GovernmentOrganization – Cơ quan nhà nước
+T08R01C01P1	Property
+T08R01C02P1	Kiểu / lớp đích
+T08R01C03P1	Số lượng
+T08R01C04P1	Ý nghĩa
+T08R02C01P1	organizationId
+T08R02C02P1	xsd:string
+T08R02C03P1	1
+T08R02C04P1	Mã định danh của cơ quan nhà nước.
+T08R03C01P1	organizationName
+T08R03C02P1	xsd:string
+T08R03C03P1	1
+T08R03C04P1	Tên đầy đủ của cơ quan nhà nước.
+P044	
+P045	2.2.6. CorporateLeader – Lãnh đạo doanh nghiệp
+T09R01C01P1	Property
+T09R01C02P1	Kiểu / lớp đích
+T09R01C03P1	Số lượng
+T09R01C04P1	Ý nghĩa
+T09R02C01P1	personId
+T09R02C02P1	xsd:string
+T09R02C03P1	1
+T09R02C04P1	Mã định danh của cá nhân.
+T09R03C01P1	fullName
+T09R03C02P1	xsd:string
+T09R03C03P1	1
+T09R03C04P1	Họ tên đầy đủ của lãnh đạo.
+T09R04C01P1	hasLeadershipPosition
+T09R04C02P1	LeadershipPosition
+T09R04C03P1	0..*
+T09R04C04P1	Các node nhiệm kỳ của CorporateLeader; phải xét phiên bản, hiệu lực và availableAt.
+P046	
+P047	2.2.7. Company – Doanh nghiệp
+T10R01C01P1	Property
+T10R01C02P1	Kiểu / lớp đích
+T10R01C03P1	Số lượng
+T10R01C04P1	Ý nghĩa
+T10R02C01P1	companyId
+T10R02C02P1	xsd:string
+T10R02C03P1	1
+T10R02C04P1	Mã định danh của doanh nghiệp.
+T10R03C01P1	fullName
+T10R03C02P1	xsd:string
+T10R03C03P1	1
+T10R03C04P1	Tên đầy đủ của doanh nghiệp.
+T10R04C01P1	shortName
+T10R04C02P1	xsd:string
+T10R04C03P1	0..1
+T10R04C04P1	Tên viết tắt hoặc tên giao dịch ngắn.
+T10R05C01P1	companyType
+T10R05C02P1	xsd:string
+T10R05C03P1	1
+T10R05C04P1	Phân loại doanh nghiệp, ví dụ BANK, SUBSIDIARY hoặc NON_BANK.
+T10R06C01P1	hasAlias
+T10R06C02P1	CompanyAlias
+T10R06C03P1	0..*
+T10R06C04P1	Danh sách tên gọi khác của doanh nghiệp.
+T10R07C01P1	hasStock
+T10R07C02P1	Stock
+T10R07C03P1	0..*
+T10R07C04P1	Cổ phiếu do doanh nghiệp phát hành.
+T10R08C01P1	belongsToIndustry
+T10R08C02P1	Industry
+T10R08C03P1	0..*
+T10R08C04P1	Ngành hoạt động của doanh nghiệp.
+T10R09C01P1	hasFinancialMetric
+T10R09C02P1	FinancialMetric
+T10R09C03P1	0..*
+T10R09C04P1	Chỉ tiêu tài chính thuộc về doanh nghiệp.
+T10R10C01P1	hasSubsidiaryRelation
+T10R10C02P1	SubsidiaryRelation
+T10R10C03P1	0..*
+T10R10C04P1	Các node quan hệ trong đó Company này là parentCompany (công ty mẹ). SubsidiaryRelation trỏ lại mẹ bằng parentCompany và xác định công ty con bằng subsidiaryCompany.
+P048	
+P049	2.2.8. Bank – Ngân hàng
+P050	Bank kế thừa các property của Company, đồng thời có hasIndustryExposure. Bảng này chỉ liệt kê property bổ sung.
+T11R01C01P1	Property
+T11R01C02P1	Kiểu / lớp đích
+T11R01C03P1	Số lượng
+T11R01C04P1	Ý nghĩa
+T11R02C01P1	hasIndustryExposure
+T11R02C02P1	IndustryExposure
+T11R02C03P1	0..*
+T11R02C04P1	Quan hệ Bank–Industry theo reporting period; chọn bản mới nhất đã available tại cutoff và áp dụng staleness rule. Không mặc định validFrom/validTo như nhiệm kỳ lãnh đạo.
+P051	
+P052	2.2.9. CompanyAlias – Tên gọi thay thế
+T12R01C01P1	Property
+T12R01C02P1	Kiểu / lớp đích
+T12R01C03P1	Số lượng
+T12R01C04P1	Ý nghĩa
+T12R02C01P1	aliasId
+T12R02C02P1	xsd:string
+T12R02C03P1	1
+T12R02C04P1	Mã định danh của tên gọi khác.
+T12R03C01P1	aliasName
+T12R03C02P1	xsd:string
+T12R03C03P1	1
+T12R03C04P1	Chuỗi tên gọi dùng cho entity linking, có thể gồm Techcombank hoặc TCB; không đồng nhất Company với Stock.
+T12R04C01P1	aliasType
+T12R04C02P1	xsd:string
+T12R04C03P1	0..1
+T12R04C04P1	SHORT_NAME, TICKER hoặc OFFICIAL_NAME; TICKER là loại chuỗi alias, không phải kiểu của thực thể Company.
+P053	
+P054	2.2.10. Stock – Cổ phiếu
+T13R01C01P1	Property
+T13R01C02P1	Kiểu / lớp đích
+T13R01C03P1	Số lượng
+T13R01C04P1	Ý nghĩa
+T13R02C01P1	stockId
+T13R02C02P1	xsd:string
+T13R02C03P1	1
+T13R02C04P1	Mã định danh nội bộ của cổ phiếu.
+T13R03C01P1	tickerSymbol
+T13R03C02P1	xsd:string
+T13R03C03P1	1
+T13R03C04P1	Mã chứng khoán giao dịch trên sàn.
+T13R04C01P1	exchange
+T13R04C02P1	xsd:string
+T13R04C03P1	1
+T13R04C04P1	Sàn giao dịch, ví dụ HOSE, HNX hoặc UPCOM.
+T13R05C01P1	hasIndexMembership
+T13R05C02P1	IndexMembership
+T13R05C03P1	0..*
+T13R05C04P1	Các node membership của Stock; phải xét phiên bản và hiệu lực.
+T13R06C01P1	hasMarketObservation
+T13R06C02P1	MarketObservation
+T13R06C03P1	0..*
+T13R06C04P1	Các quan sát giá và lợi suất của cổ phiếu theo phiên.
+P055	
+P056	2.2.11. Industry – Ngành
+T14R01C01P1	Property
+T14R01C02P1	Kiểu / lớp đích
+T14R01C03P1	Số lượng
+T14R01C04P1	Ý nghĩa
+T14R02C01P1	industryId
+T14R02C02P1	xsd:string
+T14R02C03P1	1
+T14R02C04P1	Mã định danh của ngành.
+T14R03C01P1	industryCode
+T14R03C02P1	xsd:string
+T14R03C03P1	0..1
+T14R03C04P1	Mã phân loại ngành.
+T14R04C01P1	industryName
+T14R04C02P1	xsd:string
+T14R04C03P1	1
+T14R04C04P1	Tên ngành.
+T14R05C01P1	taxonomyName
+T14R05C02P1	xsd:string
+T14R05C03P1	0..1
+T14R05C04P1	Tên hệ thống phân loại ngành được sử dụng.
+T14R06C01P1	belongsToGroup
+T14R06C02P1	IndustryGroup
+T14R06C03P1	1
+T14R06C04P1	Nhóm ngành cấp cao chứa ngành này.
+P057	
+P058	2.2.12. IndustryGroup – Nhóm ngành
+T15R01C01P1	Property
+T15R01C02P1	Kiểu / lớp đích
+T15R01C03P1	Số lượng
+T15R01C04P1	Ý nghĩa
+T15R02C01P1	industryGroupId
+T15R02C02P1	xsd:string
+T15R02C03P1	1
+T15R02C04P1	Mã định danh của nhóm ngành.
+T15R03C01P1	industryGroupName
+T15R03C02P1	xsd:string
+T15R03C03P1	1
+T15R03C04P1	Tên nhóm ngành.
+T15R04C01P1	taxonomyName
+T15R04C02P1	xsd:string
+T15R04C03P1	0..1
+T15R04C04P1	Tên hệ thống phân loại ngành được sử dụng.
+P059	
+P060	2.2.13. FinancialMetric – Chỉ tiêu tài chính
+T16R01C01P1	Property
+T16R01C02P1	Kiểu / lớp đích
+T16R01C03P1	Số lượng
+T16R01C04P1	Ý nghĩa
+T16R02C01P1	metricId
+T16R02C02P1	xsd:string
+T16R02C03P1	1
+T16R02C04P1	Mã định danh của chỉ tiêu tài chính.
+T16R03C01P1	metricType
+T16R03C02P1	xsd:string
+T16R03C03P1	1
+T16R03C04P1	Loại chỉ tiêu, ví dụ PROFIT_GROWTH hoặc POTENTIAL_TRANSACTION_VALUE.
+T16R04C01P1	metricValue
+T16R04C02P1	xsd:decimal
+T16R04C03P1	1
+T16R04C04P1	Giá trị số của chỉ tiêu.
+T16R05C01P1	unit
+T16R05C02P1	xsd:string
+T16R05C03P1	1
+T16R05C04P1	Đơn vị đo của chỉ tiêu.
+T16R06C01P1	periodStart
+T16R06C02P1	xsd:date
+T16R06C03P1	0..1
+T16R06C04P1	Ngày đầu kỳ báo cáo, tùy chọn; không thay cho validFrom.
+T16R07C01P1	periodEnd
+T16R07C02P1	xsd:date
+T16R07C03P1	1
+T16R07C04P1	Ngày kết thúc kỳ báo cáo; không phải thời điểm thông tin được công bố hoặc khả dụng.
+T16R08C01P1	periodType
+T16R08C02P1	xsd:string
+T16R08C03P1	1
+T16R08C04P1	Loại kỳ: DAY, MONTH, QUARTER, HALF_YEAR, YEAR hoặc TRAILING_TWELVE_MONTHS.
+T16R09C01P1	availableAt
+T16R09C02P1	xsd:dateTime
+T16R09C03P1	1
+T16R09C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T16R10C01P1	sourceReference
+T16R10C02P1	IRI (tài nguyên nguồn)
+T16R10C03P1	1..*
+T16R10C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+P061	
+P062	2.2.14. MarketObservation – Quan sát cổ phiếu
+T17R01C01P1	Property
+T17R01C02P1	Kiểu / lớp đích
+T17R01C03P1	Số lượng
+T17R01C04P1	Ý nghĩa
+T17R02C01P1	observationId
+T17R02C02P1	xsd:string
+T17R02C03P1	1
+T17R02C04P1	Mã định danh của quan sát thị trường.
+T17R03C01P1	tradingDate
+T17R03C02P1	xsd:date
+T17R03C03P1	1
+T17R03C04P1	Ngày giao dịch của quan sát.
+T17R04C01P1	adjustedClose
+T17R04C02P1	xsd:decimal
+T17R04C03P1	1
+T17R04C04P1	Giá đóng cửa điều chỉnh lớn hơn 0; giữ giá cùng nguồn/phiên bản để tính lại lợi suất, không chỉ lưu return cache.
+T17R05C01P1	volume
+T17R05C02P1	xsd:decimal
+T17R05C03P1	1
+T17R05C04P1	Khối lượng giao dịch trong phiên.
+T17R06C01P1	returnValue
+T17R06C02P1	xsd:decimal
+T17R06C03P1	1
+T17R06C04P1	Lợi suất của cổ phiếu trong phiên, lưu ở dạng thập phân.
+T17R07C01P1	availableAt
+T17R07C02P1	xsd:dateTime
+T17R07C03P1	1
+T17R07C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T17R08C01P1	sourceReference
+T17R08C02P1	IRI (tài nguyên nguồn)
+T17R08C03P1	1..*
+T17R08C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+P063	
+P064	2.2.15. MarketIndex – Chỉ số thị trường
+T18R01C01P1	Property
+T18R01C02P1	Kiểu / lớp đích
+T18R01C03P1	Số lượng
+T18R01C04P1	Ý nghĩa
+T18R02C01P1	indexId
+T18R02C02P1	xsd:string
+T18R02C03P1	1
+T18R02C04P1	Mã định danh nội bộ của chỉ số.
+T18R03C01P1	indexCode
+T18R03C02P1	xsd:string
+T18R03C03P1	1
+T18R03C04P1	Mã chỉ số, ví dụ VN30 hoặc VNINDEX.
+T18R04C01P1	indexName
+T18R04C02P1	xsd:string
+T18R04C03P1	1
+T18R04C04P1	Tên đầy đủ của chỉ số thị trường.
+T18R05C01P1	hasIndexObservation
+T18R05C02P1	MarketIndexObservation
+T18R05C03P1	0..*
+T18R05C04P1	Các quan sát của chỉ số theo phiên giao dịch.
+P065	
+P066	2.2.16. MarketIndexObservation – Quan sát chỉ số
+T19R01C01P1	Property
+T19R01C02P1	Kiểu / lớp đích
+T19R01C03P1	Số lượng
+T19R01C04P1	Ý nghĩa
+T19R02C01P1	observationId
+T19R02C02P1	xsd:string
+T19R02C03P1	1
+T19R02C04P1	Mã định danh của quan sát thị trường.
+T19R03C01P1	tradingDate
+T19R03C02P1	xsd:date
+T19R03C03P1	1
+T19R03C04P1	Ngày giao dịch của quan sát.
+T19R04C01P1	returnValue
+T19R04C02P1	xsd:decimal
+T19R04C03P1	1
+T19R04C04P1	Lợi suất benchmark được lưu để truy vấn nhanh nhưng không thay thế close/adjustedClose provenance.
+T19R05C01P1	availableAt
+T19R05C02P1	xsd:dateTime
+T19R05C03P1	1
+T19R05C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T19R06C01P1	sourceReference
+T19R06C02P1	IRI (tài nguyên nguồn)
+T19R06C03P1	1..*
+T19R06C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+T19R07C01P1	adjustedClose
+T19R07C02P1	xsd:decimal
+T19R07C03P1	1
+T19R07C04P1	Giá đóng cửa điều chỉnh lớn hơn 0; giữ giá cùng nguồn/phiên bản để tính lại lợi suất, không chỉ lưu return cache.
+P067	
+P068	2.2.17. EventStockCandidate – Ứng viên Event–Stock
+T20R01C01P1	Property
+T20R01C02P1	Kiểu / lớp đích
+T20R01C03P1	Số lượng
+T20R01C04P1	Ý nghĩa
+T20R02C01P1	candidateId
+T20R02C02P1	xsd:string
+T20R02C03P1	1
+T20R02C04P1	Mã định danh của Candidate.
+T20R03C01P1	impactType
+T20R03C02P1	xsd:string
+T20R03C03P1	1
+T20R03C04P1	DIRECT, INDIRECT_INDUSTRY, INDIRECT_SUBSIDIARY hoặc INDIRECT_LEADERSHIP.
+T20R04C01P1	relationPath
+T20R04C02P1	xsd:string
+T20R04C03P1	1
+T20R04C04P1	Mã route ổn định: DIRECT, INDIRECT_INDUSTRY, INDIRECT_SUBSIDIARY hoặc INDIRECT_LEADERSHIP; baseline yêu cầu relationPath = impactType. Đường nghiệp vụ được biểu diễn bằng các liên kết RDF/relation node và giải thích trong candidateReason, không tuần tự hóa URI/property vào trường này.
+T20R05C01P1	candidateReason
+T20R05C02P1	xsd:string
+T20R05C03P1	1
+T20R05C04P1	Giải thích vì sao đường liên kết đủ điều kiện sinh Candidate tại inferenceCutoff.
+T20R06C01P1	expectedDirection
+T20R06C02P1	xsd:string
+T20R06C03P1	1
+T20R06C04P1	Chiều kỳ vọng trên Candidate: POSITIVE, NEGATIVE, NEUTRAL hoặc UNKNOWN; không lấy từ giá sau sự kiện.
+T20R07C01P1	relationStrength
+T20R07C02P1	xsd:decimal
+T20R07C03P1	1
+T20R07C04P1	Baseline: DIRECT=1; INDIRECT_INDUSTRY=0,5; INDIRECT_SUBSIDIARY=0,5; INDIRECT_LEADERSHIP=0,5. Đây là heuristic độc lập market reaction. Biến thể industry dùng exposureStrength=exposureRatio đã chuẩn hóa trên cùng tập exposure hợp lệ.
+T20R08C01P1	confidenceScore
+T20R08C02P1	xsd:decimal
+T20R08C03P1	1
+T20R08C04P1	Tổng hợp từ sourceConfidence, extractionConfidence, linkingConfidence và relationConfidence; trong baseline Phase 1, sourceConfidence = 0,5 cho mọi nguồn hỗ trợ, không lấy maximum reliabilityScore và không dùng khác biệt chất lượng nguồn để thay đổi logic Event; freeze tại inferenceCutoff.
+T20R09C01P1	candidateStatus
+T20R09C02P1	xsd:string
+T20R09C03P1	1
+T20R09C04P1	GENERATED, VALIDATED, REJECTED, PENDING_MARKET_WINDOW hoặc REACTION_READY; ý nghĩa và điều kiện ở mục 2.3.
+T20R10C01P1	inferenceCutoff
+T20R10C02P1	xsd:dateTime
+T20R10C03P1	1
+T20R10C04P1	Baseline 1.0.4 khóa inferenceCutoff = Event.availableAt, trước opening day 0. Chỉ dùng Evidence, dữ liệu và phiên bản quan hệ đã khả dụng tại mốc này. generatedAt có thể muộn hơn khi replay, nhưng không được lấy thêm thông tin sau cutoff.
+T20R11C01P1	generatedAt
+T20R11C02P1	xsd:dateTime
+T20R11C03P1	1
+T20R11C04P1	Thời điểm thực thi sinh Candidate. Tách khỏi inferenceCutoff của dữ liệu được phép dùng.
+T20R12C01P1	availableAt
+T20R12C02P1	xsd:dateTime
+T20R12C03P1	1
+T20R12C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T20R13C01P1	methodVersion
+T20R13C02P1	xsd:string
+T20R13C03P1	1
+T20R13C04P1	Phiên bản quy tắc sinh Candidate và chấm confidence/relationStrength.
+T20R14C01P1	forEvent
+T20R14C02P1	Event
+T20R14C03P1	1
+T20R14C04P1	Event của Candidate; quan hệ nghịch đảo của hasEventStockCandidate.
+T20R15C01P1	candidateStock
+T20R15C02P1	Stock
+T20R15C03P1	1
+T20R15C04P1	Một Stock được chọn theo relationPath của Candidate.
+T20R16C01P1	hasReaction
+T20R16C02P1	EventStockReaction
+T20R16C03P1	0..*
+T20R16C04P1	Các kết quả Reaction thuộc Candidate, chỉ tồn tại sau khi đủ dữ liệu và kiểm tra hợp lệ.
+T20R17C01P1	sourceConfidence
+T20R17C02P1	xsd:decimal
+T20R17C03P1	1
+T20R17C04P1	Điểm nguồn hỗ trợ tại cutoff; trong Phase 1 luôn cố định sourceConfidence = 0,5 cho mọi source/reality source đủ điều kiện. Không cộng dồn nhiều bài cùng source; đánh giá/calibration source là future extension được định phiên bản trong SCORING_SPEC.md.
+T20R18C01P1	extractionConfidence
+T20R18C02P1	xsd:decimal
+T20R18C03P1	1
+T20R18C04P1	Maximum điểm Evidence đủ điều kiện tại cutoff và hỗ trợ đầy đủ required roles; tie-break Evidence URI tăng dần. Nếu chỉ có điểm theo role thì lấy minimum cho một assignment. Thiếu calibration dùng fallback 0,5 có provenance; thiếu required role thì loại. Freeze Evidence được chọn và điểm gốc; không cộng điểm nhiều bài.
+T20R19C01P1	linkingConfidence
+T20R19C02P1	xsd:decimal
+T20R19C03P1	1
+T20R19C04P1	Minimum confidence của quyết định linking bắt buộc: entity được trích xuất lấy từ cùng complete Evidence assignment đã chọn; endpoint suy ra từ route lấy từ registry/fact đủ điều kiện tại cutoff. Không chọn Evidence khác chỉ để tăng linker score. Bảng đầu vào bốn route ở SCORING_SPEC.md.
+T20R20C01P1	relationConfidence
+T20R20C02P1	xsd:decimal
+T20R20C03P1	1
+T20R20C04P1	Minimum required path-link confidence; Event–Company dùng required-role assignment score của Evidence đã chọn. Company–Stock curated registry dùng 1, automatic mapping dùng calibrated score hoặc fallback 0,5 có provenance. Không giả định các component độc lập.
+T20R21C01P1	candidateScore
+T20R21C02P1	xsd:decimal
+T20R21C03P1	1
+T20R21C04P1	candidateScore = confidenceScore × relationStrength; chỉ dùng tại inference time, không dùng market reaction.
+P069	
+P070	2.2.18. EventStockReaction – Phản ứng Event–Stock
+T21R01C01P1	Property
+T21R01C02P1	Kiểu / lớp đích
+T21R01C03P1	Số lượng
+T21R01C04P1	Ý nghĩa
+T21R02C01P1	reactionId
+T21R02C02P1	xsd:string
+T21R02C03P1	1
+T21R02C04P1	Mã định danh của Reaction.
+T21R03C01P1	windowStartOffset
+T21R03C02P1	xsd:integer
+T21R03C03P1	1
+T21R03C04P1	Độ lệch phiên đầu so với effectiveTradingDate; tính theo ngày giao dịch, không theo ngày lịch.
+T21R04C01P1	windowEndOffset
+T21R04C02P1	xsd:integer
+T21R04C03P1	1
+T21R04C04P1	Độ lệch phiên cuối; không nhỏ hơn windowStartOffset.
+T21R05C01P1	abnormalReturn
+T21R05C02P1	xsd:decimal
+T21R05C03P1	1
+T21R05C04P1	AR tại phiên 0 so với benchmark. Công thức cụ thể được nhận diện bởi methodVersion ở Phase 2.
+T21R06C01P1	cumulativeAbnormalReturn
+T21R06C02P1	xsd:decimal
+T21R06C03P1	1
+T21R06C04P1	CAR trên cửa sổ [windowStartOffset, windowEndOffset]; không ngầm giả định CAR bằng AR.
+T21R07C01P1	marketReactionDirection
+T21R07C02P1	xsd:string
+T21R07C03P1	1
+T21R07C04P1	Chiều phản ứng quan sát POSITIVE, NEGATIVE hoặc NEUTRAL theo phương pháp đã định phiên bản.
+T21R08C01P1	impactScore
+T21R08C02P1	xsd:decimal
+T21R08C03P1	1
+T21R08C04P1	Điểm chuẩn hóa mô tả cường độ phản ứng; không phải xác suất.
+T21R09C01P1	reactionWeight
+T21R09C02P1	xsd:decimal
+T21R09C03P1	1
+T21R09C04P1	reactionWeight = impactScore × Candidate.confidenceScore × Candidate.relationStrength; chỉ tính sau khi event window đóng.
+T21R10C01P1	signedWeight
+T21R10C02P1	xsd:decimal
+T21R10C03P1	1
+T21R10C04P1	Trọng số có dấu theo marketReactionDirection, trong [-1,1].
+T21R11C01P1	methodVersion
+T21R11C02P1	xsd:string
+T21R11C03P1	1
+T21R11C04P1	Phiên bản phương pháp event study, chuẩn hóa impactScore và tính trọng số.
+T21R12C01P1	availableAt
+T21R12C02P1	xsd:dateTime
+T21R12C03P1	1
+T21R12C04P1	Thời điểm kết quả Reaction sẵn sàng; không sớm hơn Candidate và mọi quan sát được dùng.
+T21R13C01P1	onCandidate
+T21R13C02P1	EventStockCandidate
+T21R13C03P1	1
+T21R13C04P1	Một Candidate mà Reaction đánh giá; nghịch đảo của hasReaction.
+T21R14C01P1	benchmarkIndex
+T21R14C02P1	MarketIndex
+T21R14C03P1	1
+T21R14C04P1	Chỉ số thị trường dùng làm benchmark.
+T21R15C01P1	derivedFromObservation
+T21R15C02P1	MarketObservation
+T21R15C03P1	1..*
+T21R15C04P1	Quan sát cổ phiếu dùng để tính Reaction.
+T21R16C01P1	derivedFromIndexObservation
+T21R16C02P1	MarketIndexObservation
+T21R16C03P1	1..*
+T21R16C04P1	Toàn bộ quan sát benchmark trong window và phiên trước ngày đầu window, đủ adjustedClose để tính lại lợi suất.
+P071	
+P072	2.2.19. LeadershipPosition – Nhiệm kỳ lãnh đạo
+T22R01C01P1	Property
+T22R01C02P1	Kiểu / lớp đích
+T22R01C03P1	Số lượng
+T22R01C04P1	Ý nghĩa
+T22R02C01P1	positionTitle
+T22R02C02P1	xsd:string
+T22R02C03P1	1
+T22R02C04P1	Chức danh thuộc nhiệm kỳ LeadershipPosition tại một Company, không thuộc trực tiếp CorporateLeader.
+T22R03C01P1	validFrom
+T22R03C02P1	xsd:date
+T22R03C03P1	1
+T22R03C04P1	Ngày bắt đầu hiệu lực; bắt buộc có căn cứ nguồn. Không tự điền ngày giả khi chưa biết.
+T22R04C01P1	validTo
+T22R04C02P1	xsd:date
+T22R04C03P1	0..1
+T22R04C04P1	Ngày cuối cùng còn hiệu lực, tính bao gồm. Để trống khi chưa biết ngày kết thúc theo phiên bản dữ liệu đang xét.
+T22R05C01P1	availableAt
+T22R05C02P1	xsd:dateTime
+T22R05C03P1	1
+T22R05C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T22R06C01P1	sourceReference
+T22R06C02P1	IRI (tài nguyên nguồn)
+T22R06C03P1	1..*
+T22R06C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+T22R07C01P1	relationConfidence
+T22R07C02P1	xsd:decimal
+T22R07C03P1	1
+T22R07C04P1	Độ tin cậy của path hoặc phiên bản quan hệ trong [0,1]. Property dùng chung không có domain chỉ riêng Candidate.
+T22R08C01P1	dataQualityFlag
+T22R08C02P1	xsd:string
+T22R08C03P1	1
+T22R08C04P1	Cờ chất lượng dữ liệu, ví dụ REPORTED, ESTIMATED hoặc INCOMPLETE; không thay thế điểm confidence.
+T22R09C01P1	positionHolder
+T22R09C02P1	CorporateLeader
+T22R09C03P1	1
+T22R09C04P1	CorporateLeader giữ chức vụ trong nhiệm kỳ này.
+T22R10C01P1	positionAtCompany
+T22R10C02P1	Company
+T22R10C03P1	1
+T22R10C04P1	Company nơi nhiệm kỳ có hiệu lực.
+P073	
+P074	URI của node nhận diện một phiên bản quan hệ có nguồn. Quy tắc chọn phiên bản và hiệu lực được chốt ở mục 2.4; không ghi đè phiên bản đã dùng trong kết quả lịch sử.
+P075	2.2.20. SubsidiaryRelation – Quan hệ công ty con–công ty mẹ
+T23R01C01P1	Property
+T23R01C02P1	Kiểu / lớp đích
+T23R01C03P1	Số lượng
+T23R01C04P1	Ý nghĩa
+T23R02C01P1	validFrom
+T23R02C02P1	xsd:date
+T23R02C03P1	1
+T23R02C04P1	Ngày bắt đầu hiệu lực; bắt buộc có căn cứ nguồn. Không tự điền ngày giả khi chưa biết.
+T23R03C01P1	validTo
+T23R03C02P1	xsd:date
+T23R03C03P1	0..1
+T23R03C04P1	Ngày cuối cùng còn hiệu lực, tính bao gồm. Để trống khi chưa biết ngày kết thúc theo phiên bản dữ liệu đang xét.
+T23R04C01P1	availableAt
+T23R04C02P1	xsd:dateTime
+T23R04C03P1	1
+T23R04C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T23R05C01P1	sourceReference
+T23R05C02P1	IRI (tài nguyên nguồn)
+T23R05C03P1	1..*
+T23R05C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+T23R06C01P1	relationConfidence
+T23R06C02P1	xsd:decimal
+T23R06C03P1	1
+T23R06C04P1	Độ tin cậy của path hoặc phiên bản quan hệ trong [0,1]. Property dùng chung không có domain chỉ riêng Candidate.
+T23R07C01P1	dataQualityFlag
+T23R07C02P1	xsd:string
+T23R07C03P1	1
+T23R07C04P1	Cờ chất lượng dữ liệu, ví dụ REPORTED, ESTIMATED hoặc INCOMPLETE; không thay thế điểm confidence.
+T23R08C01P1	subsidiaryCompany
+T23R08C02P1	Company
+T23R08C03P1	1
+T23R08C04P1	Company đóng vai trò công ty con trong quan hệ.
+T23R09C01P1	parentCompany
+T23R09C02P1	Company
+T23R09C03P1	1
+T23R09C04P1	Company đóng vai trò công ty mẹ; khác với subsidiaryCompany.
+P076	
+P077	URI của node nhận diện một phiên bản quan hệ có nguồn. Quy tắc chọn phiên bản và hiệu lực được chốt ở mục 2.4; không ghi đè phiên bản đã dùng trong kết quả lịch sử.
+P078	2.2.21. IndexMembership – Tư cách thành viên chỉ số
+T24R01C01P1	Property
+T24R01C02P1	Kiểu / lớp đích
+T24R01C03P1	Số lượng
+T24R01C04P1	Ý nghĩa
+T24R02C01P1	validFrom
+T24R02C02P1	xsd:date
+T24R02C03P1	1
+T24R02C04P1	Ngày bắt đầu hiệu lực; bắt buộc có căn cứ nguồn. Không tự điền ngày giả khi chưa biết.
+T24R03C01P1	validTo
+T24R03C02P1	xsd:date
+T24R03C03P1	0..1
+T24R03C04P1	Ngày cuối cùng còn hiệu lực, tính bao gồm. Để trống khi chưa biết ngày kết thúc theo phiên bản dữ liệu đang xét.
+T24R04C01P1	availableAt
+T24R04C02P1	xsd:dateTime
+T24R04C03P1	1
+T24R04C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T24R05C01P1	sourceReference
+T24R05C02P1	IRI (tài nguyên nguồn)
+T24R05C03P1	1..*
+T24R05C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+T24R06C01P1	relationConfidence
+T24R06C02P1	xsd:decimal
+T24R06C03P1	1
+T24R06C04P1	Độ tin cậy của path hoặc phiên bản quan hệ trong [0,1]. Property dùng chung không có domain chỉ riêng Candidate.
+T24R07C01P1	dataQualityFlag
+T24R07C02P1	xsd:string
+T24R07C03P1	1
+T24R07C04P1	Cờ chất lượng dữ liệu, ví dụ REPORTED, ESTIMATED hoặc INCOMPLETE; không thay thế điểm confidence.
+T24R08C01P1	memberStock
+T24R08C02P1	Stock
+T24R08C03P1	1
+T24R08C04P1	Stock là thành viên trong phiên bản membership này.
+T24R09C01P1	memberIndex
+T24R09C02P1	MarketIndex
+T24R09C03P1	1
+T24R09C04P1	MarketIndex mà Stock tham gia trong khoảng hiệu lực.
+P079	
+P080	URI của node nhận diện một phiên bản quan hệ có nguồn. Quy tắc chọn phiên bản và hiệu lực được chốt ở mục 2.4; không ghi đè phiên bản đã dùng trong kết quả lịch sử.
+P081	2.2.22. IndustryExposure – Mức độ tiếp xúc ngành
+T25R01C01P1	Property
+T25R01C02P1	Kiểu / lớp đích
+T25R01C03P1	Số lượng
+T25R01C04P1	Ý nghĩa
+T25R02C01P1	exposureRatio
+T25R02C02P1	xsd:decimal
+T25R02C03P1	1
+T25R02C04P1	Tỷ lệ tiếp xúc, chuẩn hóa trong [0,1].
+T25R03C01P1	exposureStrength
+T25R03C02P1	xsd:decimal
+T25R03C03P1	1
+T25R03C04P1	Biến thể measured khóa exposureStrength=exposureRatio sau chuẩn hóa về [0,1]. Giữ đơn vị, tử số/mẫu số và mapping hạng mục trong audit ingestion; thiếu căn cứ thì giữ staging, không đoán hoặc clipping.
+T25R04C01P1	periodEnd
+T25R04C02P1	xsd:date
+T25R04C03P1	1
+T25R04C04P1	Ngày kết thúc kỳ báo cáo; không phải thời điểm thông tin được công bố hoặc khả dụng.
+T25R05C01P1	periodType
+T25R05C02P1	xsd:string
+T25R05C03P1	1
+T25R05C04P1	Loại kỳ: DAY, MONTH, QUARTER, HALF_YEAR, YEAR hoặc TRAILING_TWELVE_MONTHS.
+T25R06C01P1	reportedCategory
+T25R06C02P1	xsd:string
+T25R06C03P1	0..1
+T25R06C04P1	Hạng mục ngành do nguồn báo cáo; không phải điểm confidence hoặc cờ chất lượng.
+T25R07C01P1	validFrom
+T25R07C02P1	xsd:date
+T25R07C03P1	0..1
+T25R07C04P1	Chỉ ghi khi nguồn cung cấp đúng semantics hiệu lực; không mặc định giống nhiệm kỳ lãnh đạo.
+T25R08C01P1	validTo
+T25R08C02P1	xsd:date
+T25R08C03P1	0..1
+T25R08C04P1	Ngày cuối cùng còn hiệu lực, tính bao gồm. Để trống khi chưa biết ngày kết thúc theo phiên bản dữ liệu đang xét.
+T25R09C01P1	availableAt
+T25R09C02P1	xsd:dateTime
+T25R09C03P1	1
+T25R09C04P1	Thời điểm fact hoặc kết quả đủ điều kiện sử dụng, có căn cứ về nguồn và khả năng truy cập; không được thay bằng occurredAt hoặc ngày kết thúc kỳ báo cáo.
+T25R10C01P1	sourceReference
+T25R10C02P1	IRI (tài nguyên nguồn)
+T25R10C03P1	1..*
+T25R10C04P1	URI tài liệu hoặc nguồn dữ liệu làm căn cứ; có thể lưu nhiều URI khi một fact có nhiều nguồn.
+T25R11C01P1	relationConfidence
+T25R11C02P1	xsd:decimal
+T25R11C03P1	1
+T25R11C04P1	Độ tin cậy của path hoặc phiên bản quan hệ trong [0,1]. Property dùng chung không có domain chỉ riêng Candidate.
+T25R12C01P1	dataQualityFlag
+T25R12C02P1	xsd:string
+T25R12C03P1	1
+T25R12C04P1	Cờ chất lượng dữ liệu, ví dụ REPORTED, ESTIMATED hoặc INCOMPLETE; không thay thế điểm confidence.
+T25R13C01P1	exposureBank
+T25R13C02P1	Bank
+T25R13C03P1	1
+T25R13C04P1	Bank có mức độ tiếp xúc ngành.
+T25R14C01P1	exposureIndustry
+T25R14C02P1	Industry
+T25R14C03P1	1
+T25R14C04P1	Industry được ngân hàng tiếp xúc.
+P082	
+P083	URI của node nhận diện một phiên bản quan hệ có nguồn. Quy tắc chọn phiên bản và hiệu lực được chốt ở mục 2.4; không ghi đè phiên bản đã dùng trong kết quả lịch sử.
+P084	2.3. Vòng đời, định danh và điều kiện của Event–Stock
+P085	2.3.1. Trạng thái của Candidate
+T26R01C01P1	candidateStatus
+T26R01C02P1	Ý nghĩa
+T26R02C01P1	GENERATED
+T26R02C02P1	Candidate đã được sinh, chưa hoàn tất kiểm tra đường liên hệ và điều kiện dữ liệu.
+T26R03C01P1	VALIDATED
+T26R03C02P1	Candidate hợp lệ về Event, Stock, relationPath và thời gian; chưa có Reaction hợp lệ.
+T26R04C01P1	REJECTED
+T26R04C02P1	Candidate bị loại với lý do ghi trong candidateReason; không tạo Reaction hợp lệ cho bản Candidate này.
+T26R05C01P1	PENDING_MARKET_WINDOW
+T26R05C02P1	Candidate hợp lệ nhưng chưa đủ cửa sổ thị trường, dữ liệu cổ phiếu hoặc benchmark; chưa có Reaction.
+T26R06C01P1	REACTION_READY
+T26R06C02P1	Đã có ít nhất một Reaction hợp lệ thuộc Candidate. Không có nghĩa mọi cửa sổ/phương pháp đều đã tính xong.
+P086	
+P087	Luồng thông thường: GENERATED → VALIDATED → PENDING_MARKET_WINDOW → REACTION_READY; nếu dữ liệu đã đầy đủ có thể chuyển từ VALIDATED sang REACTION_READY. Candidate không đạt kiểm tra chuyển sang REJECTED và ghi lý do. Không tạo Reaction cho Candidate REJECTED.
+P088	Candidate chưa tồn tại được báo ở tầng pipeline là chưa có Candidate; thiếu candidateStatus trên một Candidate đã tồn tại là lỗi dữ liệu. Không suy ra pipeline chưa chạy, Candidate bị loại hoặc đang chờ chỉ từ việc không có Reaction. Trạng thái REACTION_READY yêu cầu có ít nhất một Reaction hợp lệ, và Candidate có Reaction hợp lệ phải mang trạng thái này.
+P089	Trạng thái phản ánh lần xử lý hiện tại; để phân biệt đã chạy nhưng không tìm được ứng viên với chưa chạy, pipeline phải lưu nhật ký chạy. Việc này không cần thêm lớp nghiệp vụ vào ontology. Nếu cần xem trạng thái lịch sử, phải dùng nhật ký/snapshot tại thời điểm đó, không đọc candidateStatus hiện tại để thay thế.
+P090	2.3.2. Đơn vị Candidate và chống ghi trùng
+P091	Một Candidate thuộc một Event, một Stock và một relationPath chuẩn hóa tại một inferenceCutoff, theo một methodVersion sinh ứng viên. Khóa chống trùng là (canonicalKey của Event, stockId, relationPath, inferenceCutoff, methodVersion). candidateId là định danh ổn định của bản ghi này. Thêm bài báo trùng hoặc chạy lại cùng đầu vào không sinh Candidate mới.
+P092	Nếu cùng Event–Stock có nhiều đường giải thích, lưu Candidate riêng cho từng path để giữ expectedDirection, confidence và relationStrength riêng. Đây là các đường đánh giá khác nhau của cùng cặp Event–Stock; khi tổng hợp không đếm thành nhiều sự kiện độc lập. Thông tin mới sau cutoff không được tạo lại baseline Candidate của cùng Event tại cutoff muộn hơn. Substantive assertion mới tạo Event riêng theo mục 2.5; snapshot muộn cho cùng Event chỉ thuộc nhiệm vụ retrospective ngoài baseline và có configuration riêng. Giữ nguyên snapshot đã sử dụng.
+P093	2.3.3. Điều kiện tạo và định danh Reaction
+P094	Chỉ tạo Reaction khi Candidate hợp lệ và đủ mọi phiên cần thiết của Stock, benchmark, dữ liệu tính lợi suất và cửa sổ quan sát. Các quan sát phải đúng Stock và benchmarkIndex; provenance trỏ tới đúng URI phiên bản quan sát. Chưa đủ một điều kiện thì giữ Candidate và trạng thái phù hợp, không điền AR/CAR hoặc reactionWeight giả.
+P095	Một Reaction thuộc đúng một Candidate, một benchmarkIndex, một cửa sổ và một methodVersion tính toán. Khóa chống trùng gồm (candidateId, benchmarkIndex, windowStartOffset, windowEndOffset, methodVersion, bộ URI phiên bản quan sát đầu vào). Cùng khóa thì tái sử dụng kết quả; dữ liệu đầu vào được sửa phải tạo phiên bản kết quả mới và giữ provenance của bản cũ.
+P096	Một Candidate có thể có 0..* Reaction vì có thể xét nhiều cửa sổ hoặc phương pháp. REACTION_READY chỉ xác nhận có ít nhất một kết quả hợp lệ. Với nhiều Candidate của cùng Event–Stock, có thể dùng lại phép tính AR/CAR cho cùng đầu vào nhưng reactionWeight theo path được đánh giá riêng và không cộng lặp CAR khi tổng hợp.
+P097	Các trường event study và nguyên tắc tính được chốt ở mức đặc tả Phase 1, còn việc chạy trên dữ liệu thật thuộc Phase 2. Baseline dùng market-adjusted return. Candidate score được tính trước market window: candidateScore = confidenceScore × relationStrength. Reaction chỉ được tạo sau khi đủ market data; reactionWeight = impactScore × confidenceScore × relationStrength. signedWeight = sign(marketReactionDirection) × reactionWeight. Không dùng reactionWeight để ranking tại inferenceCutoff.
+P098	2.4. Hiệu lực thời gian và provenance
+P099	validFrom và validTo dùng xsd:date; khoảng hiệu lực tính bao gồm hai đầu. availableAt và inferenceCutoff dùng xsd:dateTime có múi giờ. Ngày tại cutoff được xác định theo Asia/Ho_Chi_Minh.
+P100	Với LeadershipPosition, SubsidiaryRelation và IndexMembership: chọn phiên bản mới nhất đã available tại cutoff t trong cùng khóa quan hệ nghiệp vụ, sau đó kiểm tra validFrom ≤ date(t) ≤ validTo (nếu có). validFrom bắt buộc có căn cứ; không quay lại dùng bản cũ đang mở nếu bản mới đã xác nhận hết hiệu lực. IndustryExposure không dùng chung phép kiểm tra này: chọn theo reporting period, phiên bản và staleness như phụ lục DATA RULES và EVENT_SCHEMA.md.
+P101	validTo để trống chỉ có nghĩa chưa biết ngày kết thúc theo phiên bản thông tin đang xét; không khẳng định quan hệ tồn tại vĩnh viễn. periodEnd/periodType mô tả kỳ báo cáo, không thay thế thời gian hiệu lực hoặc thời gian khả dụng.
+P102	Khi nguồn bổ sung hoặc sửa một quan hệ, lưu node phiên bản mới với IRI, availableAt và sourceReference riêng, không ghi đè phiên bản lịch sử. Với ba quan hệ theo nhiệm kỳ/hiệu lực, chọn latest availableAt trước rồi mới xét validFrom/validTo; tie-break IRI tăng dần. IndustryExposure áp dụng selection contract riêng theo Bank–Industry–periodType, reporting scope, reporting period và staleness.
+P103	Quan hệ nghiệp vụ được nhận diện bởi các đầu liên kết và ngữ cảnh: nhiệm kỳ gồm người, doanh nghiệp, chức danh và mốc bắt đầu; công ty con gồm hai doanh nghiệp và mốc bắt đầu; membership gồm Stock, chỉ số và mốc bắt đầu; exposure gồm Bank, Industry và kỳ báo cáo. Thay đổi định danh nghiệp vụ do sửa sai phải có bảng đối chiếu phiên bản, không ghi đè bản đã dùng.
+P104	inferenceCutoff lưu trên Candidate là mốc chọn thông tin đầu vào; generatedAt là thời điểm thực thi. Candidate chỉ dùng Evidence và fact khả dụng tại inferenceCutoff, đồng thời cố định confidenceScore và relationStrength theo snapshot này. Baseline 1.0.4 khóa cutoff đúng bằng Event.availableAt, là mốc Evidence sớm nhất hỗ trợ Event, và nhỏ hơn opening day 0. Nếu tại cutoff chưa có complete assignment hay mapping đủ điều kiện, baseline không sinh Candidate; phải ghi coverage/miss, không dời cutoff hoặc loại Event khỏi gold để làm đẹp recall. Replay muộn chỉ tái lập thông tin khả dụng ở cutoff, không phải bằng chứng đã dự đoán trực tiếp lúc đó.
+P105	availableAt của Candidate không sớm hơn dữ liệu đầu vào; availableAt của Reaction không sớm hơn Candidate và toàn bộ quan sát được sử dụng. Dữ liệu sau sự kiện được dùng để đo Reaction khi đã khả dụng, nhưng không quay ngược để sinh hoặc sửa Candidate tại một cutoff trước đó. Hai mốc tách biệt: input sinh Candidate phải có availableAt ≤ inferenceCutoff; observation tính Reaction phải có availableAt ≤ Reaction.availableAt và window đã đóng. Không giới hạn observation hậu nghiệm bằng inferenceCutoff.
+P106	Các fact master data chưa được tách thành relation node trong baseline được đọc từ snapshot KG có nguồn và thời điểm khả dụng phù hợp; không dùng master data hiện tại để mặc định thay thế trạng thái quá khứ. Bốn quan hệ thay đổi theo thời gian nêu trong góp ý luôn đi qua các node chuyên biệt đã đặc tả.
+P107	2.5. Event chuẩn hóa và quan hệ giữa các Event
+P108	Event là một đơn vị sự kiện/thông tin kinh tế đã được chuẩn hóa, không phải một lần nhắc tên trong bài báo. Loại Event phải phản ánh đúng nội dung nguồn: tin đồn, kế hoạch hoặc thông tin làm rõ không được biến thành khẳng định giao dịch đã hoàn tất. Một Event có thể được nhiều bài đưa tin, một bài có thể reports nhiều Event.
+P109	canonicalKey được xác lập từ loại sự kiện, chủ thể chuẩn, hành động/nội dung kinh tế, đối tượng liên quan và thời điểm hoặc kỳ nghiệp vụ theo từng loại Event. Không dùng articleId, URL hoặc tiêu đề làm khóa sự kiện. Trước khi gộp cần đối chiếu Evidence; trùng chủ thể và ngày chưa đủ kết luận là cùng Event. Khi chưa đủ căn cứ gộp, giữ riêng để rà soát, không đoán rằng hai Event là một. Trước khi ghép key, dùng role-value vocabulary/normalization được định phiên bản trong EVENT_DICTIONARY.yaml: action, metric, instrument, title và reporting period có token chuẩn và mapping rõ ràng. Không suy diễn synonym chưa khai báo; giá trị chưa ánh xạ được giữ staging/HOLD_FOR_REVIEW. Token extraction/identity không phải lớp hoặc property mới trong ontology.
+T27R01C01P1	Trường hợp
+T27R01C02P1	Quy tắc xử lý
+T27R02C01P1	Tin trùng, không có thông tin nghiệp vụ mới
+T27R02C02P1	Dùng lại Event và canonicalKey; thêm NewsArticle reports Event và Evidence supports Event. Không tạo Event mới chỉ vì nguồn hoặc câu chữ khác.
+T27R03C01P1	Diễn biến mới
+T27R03C02P1	Tạo Event mới với canonicalKey riêng; Event mới updates Event trước khi nội dung bổ sung diễn biến có ý nghĩa nghiệp vụ.
+T27R04C01P1	Làm rõ
+T27R04C02P1	Tạo Event làm rõ với canonicalKey riêng; Event mới clarifies Event được làm rõ. Bài chỉ diễn đạt lại cùng thông tin thì vẫn là tin trùng.
+T27R05C01P1	Mâu thuẫn
+T27R05C02P1	Giữ cả hai Event cùng Evidence. Lưu assertion contradicts mới→cũ theo Evidence gốc; OWL-RL suy ra chiều ngược. Kiểm tra cả assertion và suy luận; graph cuối chấm một cặp không có thứ tự, không đếm lặp hai chiều. Quan hệ không tự xác định bên nào đúng.
+T27R06C01P1	Thay thế
+T27R06C02P1	Event mới supersedes Event cũ khi nguồn xác nhận thông tin mới thay thế thông tin trước. Giữ lịch sử, không xóa Event cũ hoặc kết quả đã tạo.
+P110	
+P111	updates, clarifies và supersedes có chiều từ assertion mới tới assertion cũ. contradicts đối xứng về ngữ nghĩa, không xác định bên nào đúng; lưu assertion mới→cũ chỉ để truy vết. Thứ tự lấy từ Evidence gốc, không từ ingestion; nếu bằng nhau/chưa rõ, dùng URI Event tăng dần và ghi cờ trong audit, không suy thành thứ tự thời gian. Giữ assertion trực tiếp tách biệt cạnh OWL-RL suy ra. B contradicts A cho phép A contradicts B, không cho phép suy bắc cầu hay tự trỏ. Cả bốn là thuộc tính con của relatedEvent; không tự xóa/hợp nhất Event hoặc hủy Reaction. Chỉ dùng Events và Evidence của relation đã khả dụng tại cutoff; thông tin đến sau không sửa snapshot cũ.
+P112	Event.availableAt là mốc sớm nhất có Evidence khả dụng hỗ trợ đúng nội dung của Event đó. Evidence bổ sung về sau giữ mốc khả dụng riêng. Quan hệ Event–Event chỉ được dùng khi các Event và Evidence làm căn cứ cho quan hệ đã khả dụng tại cutoff; không đưa thông tin đính chính sau này vào trạng thái tri thức trước khi nó được công bố/khả dụng.
+P113	Tin trùng chỉ bổ sung nguồn/Evidence cho Event cũ và không tạo lại Candidate/Reaction cùng khóa. Khi sau này xác định hai Event là trùng, lưu bảng đối chiếu định danh và chọn Event chuẩn, giữ provenance và lịch sử kết quả. Quy tắc trên là đặc tả nghiệp vụ Phase 1; thuật toán extraction, clustering, linking và đánh giá độ chính xác được triển khai ở Phase 2.
+P114	2.6. Các ràng buộc dữ liệu cần đồng bộ khi triển khai TTL/SHACL
+T28R01C01P1	Nhóm
+T28R01C02P1	Ràng buộc
+T28R02C01P1	Candidate / Reaction
+T28R02C02P1	Đúng số lượng liên kết; đúng lớp đích; expectedDirection chỉ trên Candidate; REACTION_READY tương ứng có Reaction hợp lệ; REJECTED không có Reaction hợp lệ.
+T28R03C01P1	Điểm và số liệu
+T28R03C02P1	confidenceScore, relationStrength, relationConfidence, exposureRatio, exposureStrength, reliabilityScore, extractionConfidence, severityScore, impactScore và reactionWeight trong [0,1] khi có; signedWeight trong [-1,1]; adjustedClose > 0 và volume ≥ 0.
+T28R04C01P1	Thời gian
+T28R04C02P1	validTo ≥ validFrom khi có; dữ liệu đầu vào availableAt ≤ inferenceCutoff; xét hiệu lực trên phiên bản quan hệ đúng; windowEndOffset ≥ windowStartOffset.
+T28R05C01P1	Kỳ và provenance
+T28R05C02P1	periodEnd/periodType bắt buộc cho FinancialMetric và IndustryExposure; periodStart ≤ periodEnd khi có; URI nguồn và URI phiên bản quan sát phải truy vết được.
+T28R06C01P1	Event
+T28R06C02P1	Có Evidence và reports; canonicalKey ổn định theo đơn vị nghiệp vụ; Event–Event không tự trỏ; không tái tạo ứng viên/kết quả chỉ vì thêm bài trùng.
+P115	
+P116	TTL/SHACL là nguồn chuẩn khi đối chiếu property và cardinality. Công cụ tools/audit_schema_diagram.py kiểm tra inventory trong phụ lục Draw.io, domain/range của các entry có cấu trúc, cardinality được in trực tiếp theo direct SHACL property shapes, cùng ID/reference của các tab. Property dùng chung không có domain riêng, datatype range không được in và phần diễn giải ngoài phụ lục được ghi NOT CHECKED; không được hiểu là PASS. Công cụ parse SELECT constraints nhưng không thực thi SHACL conformance, không kiểm tra calendar, snapshot, arithmetic runtime hoặc toàn bộ pipeline. SHACL 1.0.4 còn kiểm tra impactScore=min(1,abs(CAR)/0,10), direction theo dấu CAR với epsilon=0 và cả hai chiều inverse của Event–Candidate, Candidate–Reaction. Graph đưa vào validation phải đã có đủ inverse, được writer materialize hoặc reasoner sinh trước với provenance; validator không tự sửa graph. Reaction chỉ có onCandidate vẫn bắt buộc Candidate tương ứng REACTION_READY. Calendar, dictionary membership, strength assignment, Evidence aggregation và snapshot immutability vẫn là curated gate Phase 2. Baseline 1.0.4 còn ràng buộc inferenceCutoff bằng Event.availableAt và kiểm tra REACTION_READY có Reaction với literal typed xsd:string nhất quán. Audit bổ sung đối chiếu vai trò mẹ/con của hasSubsidiaryRelation tại tab 00, không nâng phạm vi thành chứng minh mọi cạnh của Draw.io.
+P117	2.7. Quy ước AR/CAR và trọng số cho Phase 2
+P118	Phase 1 chốt các trường và nguyên tắc biểu diễn phản ứng thị trường; việc tính toán trên dữ liệu thật và đánh giá thực nghiệm được thực hiện ở Phase 2.
+P119	Baseline market-adjusted return được định nghĩa như sau: AR(i,t) = R(i,t) − R(m,t), trong đó R(i,t) là lợi suất của cổ phiếu và R(m,t) là lợi suất benchmark trong cùng phiên giao dịch. CAR(i,[a,b]) là tổng AR trong event window [a,b]. Các cửa sổ dự kiến gồm [0,0], [0,+1], [-1,+1] và [0,+3], tính theo ngày giao dịch thay vì ngày lịch.
+P120	Trọng số Reaction baseline: reactionWeight = impactScore × confidenceScore × relationStrength. Đặt d = +1 khi CAR > epsilon, d = −1 khi CAR < −epsilon, ngược lại d = 0; marketReactionDirection tương ứng POSITIVE/NEGATIVE/NEUTRAL và signedWeight = d × reactionWeight. Baseline epsilon = 0; khi thử ngưỡng khác phải ghi trong methodVersion. Các điểm là heuristic, không phải xác suất hoặc quan hệ nhân quả.
+P121	Baseline được đề xuất để đánh giá: R(i,t) = adjustedClose(i,t)/adjustedClose(i,t−1) − 1; benchmark phải có adjustedClose cùng phiên và nhất quán cách điều chỉnh. AR(i,t) = R(i,t) − R(m,t); CAR(i,[a,b]) là tổng AR theo trading day. impactScore = min(1, abs(CAR)/tau), tau = 0,10. confidenceScore = 0,25 × (sourceConfidence + extractionConfidence + linkingConfidence + relationConfidence) trong baseline đều trọng số; mọi component, tau, epsilon, window và version phải được lưu để tái lập. candidateScore = confidenceScore × relationStrength; reactionWeight = impactScore × candidateScore. Phase 2 thử tau = 0,05/0,10/0,20, các event window và exposureStrength variant trên tập phát triển/validation rồi khóa trước test. SHACL 1.0.4 kiểm tra baseline tau=0,10 và epsilon=0; thử tau/epsilon khác phải dùng shape/configuration được định phiên bản riêng, không chỉ đổi methodVersion.
+P122	Scoring đã khóa: relationStrength DIRECT=1; ba path gián tiếp=0,5. Biến thể industry chỉ thay strength bằng exposureStrength=exposureRatio đã chuẩn hóa, không đổi population, Evidence selection hoặc strength của các path khác. Các hằng số là heuristic thực nghiệm, không phải mức ảnh hưởng kinh tế đo được.
+P123	extractionConfidence lấy maximum trên Evidence hỗ trợ cùng Event và đầy đủ required roles, phù hợp role/identity assignment đã chọn, có availableAt ≤ inferenceCutoff. Nếu chỉ có điểm per-role, lấy minimum để tạo điểm assignment cho một Evidence. Assignment có căn cứ nhưng chưa calibrated dùng fallback 0,5; thiếu role không được điền fallback. Tied score chọn Evidence URI tăng dần. Không ghép các Evidence thiếu role để tạo assignment đầy đủ trong baseline; không có Evidence hợp lệ thì không sinh curated Candidate. Audit giữ tập Evidence đủ điều kiện, URI được chọn, điểm gốc, role assignment và model/calibration version. Component ablation giữ selection gốc. Chi tiết ở SCORING_SPEC.md 1.0.4.
+P124	linkingConfidence dùng các quyết định của cùng Evidence/role assignment đã được selection theo extractionConfidence, không chọn lại Evidence theo linker score. Những entity/Stock suy ra qua route dùng versioned registry/temporal facts đủ điều kiện tại cutoff. Event–Company confidence lấy assignment score hỗ trợ role company trong Evidence được chọn; Company–Stock curated mapping dùng 1, automatic mapping dùng score calibrated hoặc fallback 0,5. SCORING_SPEC.md khóa bảng required inputs của bốn route và nơi lưu audit. Việc tái dùng score được công bố, không giả định các confidence component độc lập thống kê.
+T29R01C01P1	Thành phần
+T29R01C02P1	Phase 1
+T29R01C03P1	Phase 2
+T29R02C01P1	AR/CAR
+T29R02C02P1	Chốt công thức baseline
+T29R02C03P1	Tính trên dữ liệu thị trường thật
+T29R03C01P1	Event window
+T29R03C02P1	Định nghĩa các cửa sổ dự kiến
+T29R03C03P1	Chạy và sensitivity analysis
+T29R04C01P1	impactScore
+T29R04C02P1	Chốt ý nghĩa và nguyên tắc chuẩn hóa
+T29R04C03P1	Cố định và đánh giá trên tập thử nghiệm
+T29R05C01P1	reactionWeight
+T29R05C02P1	Chốt công thức heuristic
+T29R05C03P1	Chỉ phân tích hậu nghiệm sau window. Ranking và ba component ablations áp dụng candidateScore tại cutoff, giữ sourceConfidence = 0,5.
+P125	2.8. Research Questions và vai trò của demo
+P126	Phase 1 chốt ba câu hỏi nghiên cứu và cách đánh giá để định hướng triển khai. Demo không được dùng làm bằng chứng định lượng cho các câu hỏi này; demo chỉ kiểm tra rằng ontology có đủ cấu trúc để biểu diễn, truy vấn và giải thích các đối tượng cần thiết.
+P127	RQ1 – Extraction và entity linking: Có thể xây dựng provenance-aware financial KG từ tin tức tiếng Việt với độ chính xác như thế nào? Phase 2 đánh giá Evidence span, event type/required roles, entity linking và duplicate pairwise P/R/F1. Quan hệ Event được kiểm tra ở hai tầng: assertion trực tiếp trên cặp có thứ tự với gold cùng quy ước lưu; OWL-RL trên ontology/snapshot đã đóng băng và chất lượng graph cuối với semantic gold độc lập. Contradicts cuối dùng khóa cặp URI đã sắp xếp, deduplicate hai chiều; các relation còn lại chấm có hướng. Báo metrics/support riêng, không trộn mẫu ordered và unordered. NONE phụ thuộc view; không gán reverse contradiction là semantic-negative, không coi thiếu triple là gold-negative. Gold/universe/negatives phải adjudicate trước prediction; manifest ghi reasoner/version, cutoff, provenance và pair owner bootstrap. OWL có thể suy đúng quy tắc từ assertion sai nên vẫn phải chấm graph cuối; demo synthetic không chứng minh chất lượng RQ. Matching primary là exact one-to-one trên articleId, offsets Unicode [start,end) và eventType; output trùng dư là FP, gold không match là FN. Role/entity URI được chấm end-to-end trên mention đã match; oracle-mention linking là diagnostic riêng. Quy tắc cluster alignment và coverage ledger nằm trong EVALUATION_PROTOCOL.md, không đưa gold ID vào extractor.
+P128	RQ2 – Event–Stock inference: So sánh keyword/co-occurrence (ticker hoặc alias trong bài), DIRECT-only (Event → Company → Stock) và KG đầy đủ (bốn impactType) trên cùng Event, universe cổ phiếu và cutoff. Đánh giá precision/recall ở mức cặp Event–Stock, Recall@5/@10 và Precision@5/@10; báo cáo riêng cổ phiếu ngoài direct mention và từng impactType. Demo chỉ có hai Candidate DIRECT cùng cổ phiếu TCB nên chưa chứng minh lợi ích đường gián tiếp hoặc cải thiện ranking. Stock frame và resolved universe theo Event được freeze độc lập trước predictions; method phải giới hạn generation/ranking trong universe này. Prediction ngoài universe làm run invalid, không lọc hậu nghiệm rồi tính lại top-K. Event không có Candidate vẫn được giữ để tính miss/recall theo gold. Ba method dùng chung extractor/registry. Keyword quét toàn văn Article hỗ trợ Event đã available tại cutoff, match alias/ticker chính xác theo registry và union Stock, score=1; prediction bucket DIRECT chỉ là quy ước, indirect abstain. DIRECT-only và KG bốn đường dùng score=1 cho RQ2; RQ3 mới so với candidateScore trên cùng paths. Matching/route projection khóa chi tiết trong EVALUATION_PROTOCOL.md. Cả ba method, kể cả keyword, dùng cùng complete-assignment gate tại cutoff: thiếu assignment thì đều trả empty ranking, gold Event vẫn giữ trong universe.
+P129	RQ3 – Weighting và ranking: Trên cùng tập Candidate của KG đầy đủ, so sánh unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore. Unweighted dùng điểm 1; weighted dùng candidateScore = confidenceScore × relationStrength. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng max theo rule đã khóa, không dùng CAR hoặc reactionWeight để xếp hạng tại inferenceCutoff. Reaction chỉ được phân tích hồi cứu sau khi event window đóng bằng reactionWeight. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2, Precision@K, ba ablation riêng cho extractionConfidence, linkingConfidence và relationConfidence (mỗi lần chỉ thay một component bằng 1; sourceConfidence luôn giữ 0,5) và báo cáo riêng theo impactType cùng macro theo Event. Nhãn phải độc lập với score. Ablation trung hòa biến thiên điểm của một component, không khẳng định confidence thực tế bằng 1 và không bỏ bước extraction, linking hay kiểm tra path. Mỗi variant tính lại confidenceScore/candidateScore theo công thức đã khóa, lưu Candidate URI và methodVersion riêng, giữ điểm gốc trong audit record và không ghi đè baseline. Các so sánh dùng cùng Event/Stock universe, cutoff, eligible paths, relationStrength, gold labels và tie-break; chỉ aggregate trong cùng methodVersion. Source-confidence ablation nằm ngoài baseline này. Per-impactType là route-level view: chiếu predictions theo route trước max aggregation/top-K, dùng gold route support được gán độc lập và common resolved universe. Pair gold hỗ trợ INDUSTRY nhưng chỉ dự đoán DIRECT là FN của INDUSTRY; overall tính relevance riêng, không đếm pair lặp. Nhãn gain của route view và negative universe được khóa ở EVALUATION_PROTOCOL.md, không lọc overall ranking theo gold sau dự đoán.
+P130	Phase 2 bắt đầu bằng vertical slice 100–300 bài để smoke/debug end-to-end; lát cắt này không dùng để kết luận RQ hoặc thay cho final_evaluation. Development, validation và final_evaluation được tách riêng theo EVALUATION_PROTOCOL.md, không để cùng canonical Event qua nhiều tập. Gold data gán nhãn Evidence, Event, entity IRI, duplicate/update và Event–Stock; một phần được double-label và phân xử bất đồng. RQ1 dùng metric cho Evidence span, extraction, entity linking, canonicalization và Event relation classification; cùng protocol, cutoff và universe được khóa trước khi mở test. Giữ 22 lớp hiện tại, không mở rộng lớp chỉ để tăng phạm vi.
+P131	
+P132	CHƯƠNG 3. KIỂM TRA DỮ LIỆU VÀ CÁC DEMO CHÍNH
+P133	Em kiểm tra ở hai mức. Mức thứ nhất là SHACL để phát hiện dữ liệu thiếu trường, sai kiểu hoặc sai miền giá trị. Mức thứ hai là competency query để xem graph có trả lời được các câu hỏi đã đặt ra hay không.
+P134	Demo dùng hai bài báo liên quan Techcombank ngày 26/08/2026 với thời điểm khả dụng khác nhau. Quy tắc daily là chọn phiên giao dịch đầu tiên có giờ mở cửa strictly later than Event.availableAt: trước giờ mở cửa dùng phiên đó; đúng giờ mở cửa, trong phiên hoặc sau giờ đóng cửa dùng phiên kế tiếp theo market calendar đã khóa. Với calendar fixture khai báo giờ mở cửa 09:00 +07, Event khả dụng lúc 14:16 và 16:16 ngày 26/08 dùng phiên 27/08; đúng 09:00 ngày 26/08 cũng chuyển sang phiên kế tiếp. Đây là quy ước trên fixture, chưa xác minh bằng market calendar/provider thật. Reaction chỉ được tạo khi dữ liệu của phiên và toàn bộ event window đã available.
+P135	Bài thứ hai trong case được ghi nhận lúc 16:16 ngày 26/08/2026, có nội dung làm rõ nên được biểu diễn bằng Event riêng với clarifies, không khẳng định giao dịch hoàn tất. Cả hai Event đều có day 0 là 27/08 theo daily rule. Ở snapshot trước window, cả hai Candidate PENDING_MARKET_WINDOW; khi cùng Stock, benchmark và window [0,0] đã đủ dữ liệu ở snapshot sau window, cả hai Candidate REACTION_READY và mỗi Candidate có một Reaction riêng.
+P136	Hai trạng thái được minh họa bằng hai snapshot tách biệt, không phải bằng cách giữ một Event pending giả khi dữ liệu đã đủ. Query 5 chạy trên snapshot trước window; các query Reaction chạy trên snapshot sau window. Không trộn hai graph snapshot vào cùng default graph; không dùng trạng thái hiện tại để tái dựng quá khứ.
+P137	Evidence trong demo là diễn giải từ báo cáo gốc, không khẳng định giao dịch hoàn tất. URL MarketTimes chưa xác minh nên graph dùng URN bản ghi nguồn; URL CafeF được lưu trong graph. Giá TCB, benchmark, bản tin lặp và các quan hệ temporal là fixture kiểm thử có cờ SYNTHETIC_TEST_ONLY, không phải dữ liệu thị trường hoặc bài báo bổ sung đã xác minh.
+P138	3.1. Mục đích demo
+P139	• Kiểm tra bài báo, nguồn và Evidence có nối đúng tới Event hay không.
+P140	• Kiểm tra Techcombank và TCB được entity linking về đúng Company và Stock.
+P141	• Kiểm tra query giải thích được đường DIRECT: Event → EventStockCandidate → Stock.
+P142	• Thử quy ước trạng thái PENDING_MARKET_WINDOW khi Candidate chưa có Reaction.
+P143	• Kiểm tra graph không tự tạo AR/CAR, impactScore hoặc reactionWeight khi chưa có dữ liệu hợp lệ.
+P144	• Kiểm tra duplicate, clarification, cutoff và các relation node có temporal validity.
+P145	3.1.1. Kiểm thử bằng Competency Query
+P146	Các query dưới đây là competency queries dự kiến cho từng graph snapshot. DOCX nguồn ghi rằng query được chạy bằng RDFLib và có hình minh họa, nhưng gói hiện không có demo/queries, demo/results hoặc demo/test_results.json để tái chạy và đối chiếu số dòng/nguồn tạo hình. tools/audit_schema_diagram.py chỉ so sánh schema–phụ lục Draw.io, không chạy các competency queries hay dựng demo. Mọi hình/fixture trong chương này là SYNTHETIC TEST ONLY, không phải bằng chứng định lượng cho RQ1–RQ3. Các hình được giữ nguyên làm minh họa lịch sử; nhãn “Executed RDFLib result” là nhãn của bản nguồn, không phải kết quả chạy lại bộ 1.0.4. CSV/JSON ghi trong hình không nằm trong gói này. Không dùng hình lịch sử làm bằng chứng SHACL hiện hành.
+P147	Query 1 – Nguồn tin, Evidence và Event
+P148	Mục đích và kết quả cần kiểm tra: Ba Article/Evidence, hai canonical Event; bài lặp là fixture, không phải nguồn tin bổ sung đã xác minh.
+P149	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/01_evidence.rq
+P150	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P151	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P152	SELECT ?articleId ?publishedAt ?availableAt ?evidenceId ?evidenceText ?eventId ?effectiveTradingDate WHERE {
+P153	 ?a wfkg:articleId ?articleId; wfkg:publishedAt ?publishedAt; wfkg:availableAt ?availableAt; wfkg:reports ?e .
+P154	 ?v wfkg:evidenceId ?evidenceId; wfkg:evidenceText ?evidenceText; wfkg:extractedFrom ?a; wfkg:supports ?e .
+P155	 ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?effectiveTradingDate . } ORDER BY ?publishedAt ?articleId
+P156	Bản nguồn ghi nhận 3 dòng tại demo/results/01_evidence.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P157	
+P158	Hình Q1: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P159	Query 2 – Liên kết Company và Stock
+P160	Mục đích và kết quả cần kiểm tra: Company và Stock riêng biệt; ticker string có thể dùng làm alias của Company.
+P161	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/02_linking.rq
+P162	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P163	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P164	SELECT ?eventId ?company ?stock ?ticker ?impactType WHERE {
+P165	 ?e wfkg:eventId ?eventId; wfkg:involvesCompany ?company; wfkg:hasEventStockCandidate ?c .
+P166	 ?company wfkg:hasStock ?stock . ?stock wfkg:tickerSymbol ?ticker . ?c wfkg:candidateStock ?stock; wfkg:impactType ?impactType . } ORDER BY ?eventId
+P167	Bản nguồn ghi nhận 2 dòng tại demo/results/02_linking.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P168	
+P169	Hình Q2: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P170	Query 3 – Candidate và ngày hiệu lực
+P171	Mục đích và kết quả cần kiểm tra: Cả hai Event có effectiveTradingDate 27/08/2026; trong snapshot sau window cả hai Candidate READY.
+P172	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/03_candidates.rq
+P173	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P174	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P175	SELECT ?eventId ?candidate ?status ?day ?source ?extraction ?linking ?relation ?confidence ?strength ?candidateScore WHERE {
+P176	 ?candidate a wfkg:EventStockCandidate; wfkg:forEvent ?e; wfkg:candidateStatus ?status; wfkg:sourceConfidence ?source; wfkg:extractionConfidence ?extraction; wfkg:linkingConfidence ?linking; wfkg:relationConfidence ?relation; wfkg:confidenceScore ?confidence; wfkg:relationStrength ?strength; wfkg:candidateScore ?candidateScore .
+P177	 ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?day . } ORDER BY ?eventId
+P178	Bản nguồn ghi nhận 2 dòng tại demo/results/03_candidates.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P179	
+P180	Hình Q3: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4. READY trong hình lịch sử được hiểu là nhãn hiển thị viết tắt của REACTION_READY; không phải giá trị RDF hợp lệ. Dữ liệu mới phải dùng REACTION_READY đúng enum SHACL.
+P181	Query 4 – Thông tin khả dụng tại cutoff
+P182	Mục đích: chỉ trả về Article–Evidence–Event khi availableAt của cả ba không muộn hơn cutoff; query kiểm tra cả Evidence/Event, không chỉ thời điểm của bài báo.
+P183	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/04_cutoff.rq
+P184	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P185	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P186	SELECT ?cutoff ?articleId ?articleAvailableAt ?evidenceId ?evidenceAvailableAt ?eventId ?eventAvailableAt WHERE {
+P187	 VALUES ?cutoff {"2026-08-26T14:16:00+07:00"^^xsd:dateTime "2026-08-26T16:16:00+07:00"^^xsd:dateTime}
+P188	 ?a wfkg:articleId ?articleId; wfkg:availableAt ?articleAvailableAt; wfkg:reports ?e .
+P189	 ?v wfkg:evidenceId ?evidenceId; wfkg:extractedFrom ?a; wfkg:supports ?e; wfkg:availableAt ?evidenceAvailableAt .
+P190	 ?e wfkg:eventId ?eventId; wfkg:availableAt ?eventAvailableAt .
+P191	 FILTER(?articleAvailableAt <= ?cutoff && ?evidenceAvailableAt <= ?cutoff && ?eventAvailableAt <= ?cutoff)
+P192	} ORDER BY ?cutoff ?articleAvailableAt ?evidenceAvailableAt ?articleId ?evidenceId
+P193	Bản nguồn ghi nhận 4 dòng tại demo/results/04_cutoff.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P194	
+P195	Hình Q4: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P196	Query 5 – Snapshot trước khi đủ market window
+P197	Mục đích và kết quả cần kiểm tra: Cả hai Candidate PENDING, không có Reaction và không có observation ngày 27/08 khả dụng ở snapshot 26/08 16:17.
+P198	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/05_pending_snapshot.rq
+P199	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P200	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P201	SELECT ?eventId ?status ?day (COUNT(DISTINCT ?o) AS ?day0Stock) (COUNT(DISTINCT ?i) AS ?day0Benchmark) (COUNT(DISTINCT ?r) AS ?reactions) WHERE {
+P202	 ?c a wfkg:EventStockCandidate; wfkg:forEvent ?e; wfkg:candidateStock ?stock; wfkg:candidateStatus ?status .
+P203	 ?e wfkg:eventId ?eventId; wfkg:effectiveTradingDate ?day .
+P204	 OPTIONAL {?stock wfkg:hasMarketObservation ?o . ?o wfkg:tradingDate ?day}
+P205	 OPTIONAL {?index wfkg:hasIndexObservation ?i . ?i wfkg:tradingDate ?day}
+P206	 OPTIONAL {?c wfkg:hasReaction ?r}
+P207	 } GROUP BY ?eventId ?status ?day ORDER BY ?eventId
+P208	Bản nguồn ghi nhận 2 dòng tại demo/results/05_pending_snapshot.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P209	
+P210	Hình Q5: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P211	Query 6 – Event làm rõ và lịch sử
+P212	Mục đích và kết quả cần kiểm tra: Event làm rõ liên kết clarifies tới Event trước; không gộp thành duplicate.
+P213	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/06_clarification.rq
+P214	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P215	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P216	SELECT ?newEvent ?oldEvent WHERE {?new wfkg:clarifies ?old; wfkg:eventId ?newEvent . ?old wfkg:eventId ?oldEvent} ORDER BY ?newEvent
+P217	Bản nguồn ghi nhận 1 dòng tại demo/results/06_clarification.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P218	
+P219	Hình Q6: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P220	Query 7 – Chọn phiên bản temporal và reporting period (baseline YEAR)
+P221	Mục đích: ba relation theo validity chọn phiên bản mới nhất trước khi xét hiệu lực; IndustryExposure dùng baseline periodType=YEAR, chọn theo reporting period/version và staleness tối đa 365 ngày, không bắt buộc validFrom. Graph phải được prefilter đúng reporting scope đã khóa; consolidated và standalone không cạnh tranh trong cùng phép chọn. Sửa identity nghiệp vụ phải dùng version registry, không để hai key cũ/mới cùng hoạt động. Giới hạn: truy vấn dưới đây chỉ minh họa khi endpoint, validFrom và positionTitle của business key không đổi giữa các phiên bản; không xử lý identity correction. Khi các trường này được sửa, phải ánh xạ version registry và chọn latest theo business key ổn định trong EVENT_SCHEMA.md trước inference; không dùng kết quả query này làm executor tổng quát.
+P222	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/07_temporal_versions.rq
+P223	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P224	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P225	SELECT ?kind ?cutoff ?relation ?availableAt ?validTo ?periodEnd ?eligible WHERE {
+P226	 {
+P227	 VALUES (?cutoff ?cutoffDay ?oldestPeriod) {
+P228	 ("2026-08-26T14:16:00+07:00"^^xsd:dateTime "2026-08-26"^^xsd:date "2025-08-26"^^xsd:date)
+P229	 ("2026-08-26T16:16:00+07:00"^^xsd:dateTime "2026-08-26"^^xsd:date "2025-08-26"^^xsd:date) }
+P230	 VALUES (?kind ?left ?right) {
+P231	 (wfkg:LeadershipPosition wfkg:positionHolder wfkg:positionAtCompany)
+P232	 (wfkg:SubsidiaryRelation wfkg:subsidiaryCompany wfkg:parentCompany)
+P233	 (wfkg:IndexMembership wfkg:memberStock wfkg:memberIndex) }
+P234	 ?relation a ?kind; ?left ?a; ?right ?b; wfkg:validFrom ?start; wfkg:availableAt ?availableAt .
+P235	 OPTIONAL {?relation wfkg:positionTitle ?title}
+P236	 FILTER(?availableAt <= ?cutoff)
+P237	 FILTER NOT EXISTS {
+P238	 ?new a ?kind; ?left ?a; ?right ?b; wfkg:validFrom ?start; wfkg:availableAt ?newAt .
+P239	 OPTIONAL {?new wfkg:positionTitle ?newTitle}
+P240	 FILTER((!BOUND(?title) && !BOUND(?newTitle)) || ?title = ?newTitle)
+P241	 FILTER(?newAt <= ?cutoff && (?newAt > ?availableAt || (?newAt = ?availableAt && STR(?new) < STR(?relation)))) }
+P242	 OPTIONAL {?relation wfkg:validTo ?validTo}
+P243	 BIND(?start <= ?cutoffDay && (!BOUND(?validTo) || ?cutoffDay <= ?validTo) AS ?eligible)
+P244	 } UNION {
+P245	 VALUES (?cutoff ?cutoffDay ?oldestPeriod) {
+P246	 ("2026-08-26T14:16:00+07:00"^^xsd:dateTime "2026-08-26"^^xsd:date "2025-08-26"^^xsd:date)
+P247	 ("2026-08-26T16:16:00+07:00"^^xsd:dateTime "2026-08-26"^^xsd:date "2025-08-26"^^xsd:date) }
+P248	 BIND(wfkg:IndustryExposure AS ?kind)
+P249	 ?relation a wfkg:IndustryExposure; wfkg:exposureBank ?bank; wfkg:exposureIndustry ?industry; wfkg:periodType ?pt; wfkg:periodEnd ?periodEnd; wfkg:availableAt ?availableAt .
+P250	 FILTER(?pt = "YEAR")
+P251	 FILTER(?availableAt <= ?cutoff && ?periodEnd <= ?cutoffDay)
+P252	 FILTER NOT EXISTS {
+P253	 ?new a wfkg:IndustryExposure; wfkg:exposureBank ?bank; wfkg:exposureIndustry ?industry; wfkg:periodType ?pt; wfkg:periodEnd ?np; wfkg:availableAt ?na .
+P254	 FILTER(?na <= ?cutoff && ?np <= ?cutoffDay && (?np > ?periodEnd || (?np = ?periodEnd && (?na > ?availableAt || (?na = ?availableAt && STR(?new)<STR(?relation)))))) }
+P255	 BIND(?periodEnd >= ?oldestPeriod AS ?eligible)
+P256	 }
+P257	} ORDER BY ?kind ?cutoff ?relation
+P258	Query đã được sửa từ periodType=QUARTER sang YEAR theo baseline. CSV, graph fixture và runner không có trong thư mục này; kết quả sau sửa và số dòng chưa được chạy/xác minh. Không dùng con số 8 dòng của truy vấn cũ làm kết quả baseline.
+P259	Query 8 – Reaction sau khi đủ dữ liệu
+P260	Mục đích và kết quả cần kiểm tra: Hai Reaction riêng theo Candidate, cùng bộ observation/window [0,0]; không cộng lặp CAR khi tổng hợp path. Đây là giá synthetic.
+P261	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/08_reaction.rq
+P262	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P263	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P264	SELECT ?eventId ?reactionId ?ar ?car ?impactScore ?reactionWeight ?signedWeight ?availableAt WHERE {
+P265	 ?c wfkg:forEvent ?e; wfkg:hasReaction ?r . ?e wfkg:eventId ?eventId .
+P266	 ?r wfkg:reactionId ?reactionId; wfkg:abnormalReturn ?ar; wfkg:cumulativeAbnormalReturn ?car; wfkg:impactScore ?impactScore; wfkg:reactionWeight ?reactionWeight; wfkg:signedWeight ?signedWeight; wfkg:availableAt ?availableAt . } ORDER BY ?eventId
+P267	Bản nguồn ghi nhận 2 dòng tại demo/results/08_reaction.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P268	
+P269	Hình Q8: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P270	Query 9 – Tin trùng không nhân bản Candidate/Reaction
+P271	Mục đích và kết quả cần kiểm tra: Event đầu có hai Article nhưng chỉ một Candidate; Event làm rõ có một Article và một Candidate. Snapshot sau window có một Reaction cho mỗi Candidate.
+P272	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/09_duplicate.rq
+P273	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P274	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P275	SELECT ?eventId (COUNT(DISTINCT ?a) AS ?articles) (COUNT(DISTINCT ?c) AS ?candidates) (COUNT(DISTINCT ?r) AS ?reactions) WHERE {
+P276	 ?e wfkg:eventId ?eventId; wfkg:hasEventStockCandidate ?c . ?a wfkg:reports ?e . OPTIONAL {?c wfkg:hasReaction ?r}
+P277	 } GROUP BY ?eventId ORDER BY ?eventId
+P278	Bản nguồn ghi nhận 2 dòng tại demo/results/09_duplicate.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P279	
+P280	Hình Q9: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P281	Query 10 – Provenance giá và phiên quan sát
+P282	Mục đích và kết quả cần kiểm tra: Mỗi Reaction truy được Stock và benchmark tại 26/08, 27/08 cùng adjustedClose, availableAt và sourceReference; phép tính lại được kiểm tra bởi runner.
+P283	Graph: snapshot trước window (pending) cho Query 5; snapshot sau window (completed) cho các query còn lại. Nguồn: demo/queries/10_full_provenance_prices.rq
+P284	PREFIX wfkg: <https://example.org/wfkg/v1#>
+P285	PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+P286	SELECT ?reactionId ?kind ?observationId ?tradingDate ?adjustedClose ?returnValue ?availableAt ?source ?quality WHERE {
+P287	 ?r wfkg:reactionId ?reactionId .
+P288	 { ?r wfkg:derivedFromObservation ?o . BIND("STOCK" AS ?kind) }
+P289	 UNION { ?r wfkg:derivedFromIndexObservation ?o . BIND("BENCHMARK" AS ?kind) }
+P290	 ?o wfkg:observationId ?observationId; wfkg:tradingDate ?tradingDate; wfkg:adjustedClose ?adjustedClose; wfkg:returnValue ?returnValue; wfkg:availableAt ?availableAt; wfkg:sourceReference ?source; wfkg:dataQualityFlag ?quality .
+P291	 } ORDER BY ?reactionId ?kind ?tradingDate
+P292	Bản nguồn ghi nhận 8 dòng tại demo/results/10_full_provenance_prices.csv; CSV không có trong thư mục này nên chưa xác minh lại. Hình minh họa được giữ nguyên từ bản nguồn; dữ liệu là fixture synthetic, không phải dữ liệu thị trường.
+P293	
+P294	Hình Q10: SYNTHETIC TEST ONLY. Kết quả fixture không chứng minh RQ1–RQ3. Minh họa lịch sử, chưa tái chạy trên contract 1.0.4.
+P295	3.2. Kế hoạch triển khai vertical slice Phase 2
+P296	Sau khi freeze ontology v1.0, Phase 2 triển khai một vertical slice end-to-end trên tập nhỏ 100–300 bài trước khi mở rộng dữ liệu. Trình tự thực hiện gồm:
+P297	1. Crawl khoảng 100–300 bài báo và lưu bản nguồn cùng thời điểm khả dụng.
+P298	2. Trích xuất Evidence có vị trí văn bản, nguồn và availableAt.
+P299	3. Trích xuất, chuẩn hóa và canonicalize Event; xử lý tin trùng, cập nhật và làm rõ.
+P300	4. Entity linking Company, CorporateLeader và Industry về đúng thực thể chuẩn.
+P301	5. Sinh EventStockCandidate theo các relation path Event → Stock và lưu giải thích.
+P302	6. Ghép dữ liệu thị trường của Stock với benchmark theo đúng phiên giao dịch và cutoff.
+P303	7. Tính AR/CAR trên các event window đã định nghĩa theo trading day.
+P304	8. Tạo EventStockReaction khi Candidate, dữ liệu Stock và benchmark đều hợp lệ, đầy đủ.
+P305	9. Tính reactionWeight và signedWeight theo methodVersion; lưu provenance của đầu vào.
+P306	10. Demo SPARQL/API cùng relationPath có thể giải thích và thực hiện đánh giá RQ1–RQ3.
+P307	Mục tiêu của vertical slice là chứng minh pipeline chạy đúng và tái lập được từ nguồn tin đến Candidate, Reaction và kết quả truy vấn; chưa mở rộng dữ liệu trước khi hoàn tất kiểm tra end-to-end trên tập nhỏ.
+P308	3.3. Kiểm thử tự động và phạm vi phủ
+P309	Bộ contract 1.0.4 đã chạy ba kiểm tra độc lập. Audit tools/audit_schema_diagram.py: 337 assertion PASS, 0 FAIL, 57 NOT CHECKED, exit code 0; parse 44 SELECT constraints và xác nhận SHA256 ba input không đổi. Bộ tools/test_baseline_shacl.py: 31/31 test qua, bao gồm regression REACTION_READY typed string không có Reaction và cutoff khác Event.availableAt. Bộ tools/test_schema_diagram_audit.py: 8/8 test qua, bao gồm mutation sai vai trò công ty mẹ/con. Behavioral SHACL chạy inference=none. Các kiểm tra là synthetic structural regression, không tái tạo demo/hình lịch sử, không chứng minh calendar thật, NLP, immutability, metric executor hay RQ1–RQ3. Số audit là assertion có phạm vi, không phải phần trăm hoàn tất góp ý. PDF được xuất từ DOCX hiện hành bằng Microsoft Word; trạng thái kiểm tra layout được ghi trong PHASE1_ACCEPTANCE.md.
+P310	Phạm vi còn cần kiểm chứng trong Phase 2 gồm snapshot trước/sau window, daily effective date theo calendar thật, frozen cutoff/Evidence selection, strength assignment, duplicate và temporal/reporting-period selection trên nguồn thật. Các test SHACL tổng hợp vừa nêu chỉ kiểm chứng các ràng buộc cấu trúc tương ứng, không thay thế pipeline. Cả hai Candidate demo lịch sử đều DIRECT trên TCB: không đủ kết luận lợi ích các path gián tiếp hoặc chất lượng ranking. Các quan hệ updates/contradicts/supersedes vẫn là đặc tả, không gán thêm cho case khi chưa có bằng chứng.
+P311	3.4. Tái lập
+P312	Từ folder chứa TTL/SHACL/Draw.io, chạy python tools/audit_schema_diagram.py; thêm --verbose để xem chi tiết PASS hoặc --json để in JSON ra stdout. Dependency và giới hạn kiểm tra nằm trong tools/README.md. Script trả 0 nếu không phát hiện FAIL trong phạm vi hỗ trợ (vẫn có thể có NOT CHECKED), 1 nếu có khác biệt và 2 nếu không hoàn tất do lỗi input/định dạng/parser. Script không ghi lại artifact hoặc tự tạo file kết quả. Các demo query vẫn cần graph snapshot và runner riêng: Query 5 dành cho snapshot pending, query còn lại dùng snapshot được chỉ định. Gói này không phải pipeline demo/evaluation hoàn chỉnh; calendar thị trường thật, NLP, multi-window và thực nghiệm RQ thuộc Phase 2. Để chạy behavioral regression với interpreter đã kiểm tra: py -3.13 -B tools/test_baseline_shacl.py; audit: py -3.13 -B tools/audit_schema_diagram.py. Dependency rdflib/pyshacl và phạm vi test nằm trong tools/README.md. Regression audit vai trò có trong gói: py -3.13 -B tools/test_schema_diagram_audit.py. PHASE1_ACCEPTANCE.md đối chiếu từng yêu cầu thầy, lệnh tái chạy, kết quả hiện hành và phần việc Phase 2 còn lại.
+P313	
+P314	PHỤ LỤC — ĐỐI CHIẾU VÀ TRẠNG THÁI 9 GÓP Ý
+P315	Phụ lục này là bản chốt triển khai sau khi đối chiếu báo cáo đã gửi và file góp ý. TTL/SHACL là nguồn sự thật về schema; báo cáo và Draw.io phải dùng cùng namespace, tên lớp, tên property và bốn baseline path dưới đây.
+T30R01C01P1	Góp ý
+T30R01C02P1	Quyết định cuối
+T30R01C03P1	Trạng thái xử lý
+T30R02C01P1	1. Đồng bộ artifact
+T30R02C02P1	Namespace canonical: https://example.org/wfkg/v1#. Tên chính thức: EventStockCandidate, EventStockReaction, hasEventStockCandidate, forEvent, candidateStock, hasReaction, onCandidate, relatedToIndustry, MarketIndexObservation. TTL/SHACL là source of truth. relationPath trong baseline là route code và bằng impactType.
+T30R02C03P1	Namespace và bốn routes đã đồng bộ. Tab 00 sửa owner relation thành mẹ; tab 03 tách ticker string/Stock URI và linking/RDF; tab 02 tách datatype availableAt khỏi cạnh entity, bổ sung GovernmentOrganization. Audit vẫn chỉ bảo đảm các assertion được công bố.
+T30R03C01P1	2. Daily effective date
+T30R03C02P1	Chọn phiên giao dịch đầu tiên có giờ mở cửa strictly later than Event.availableAt. Trước giờ mở cửa dùng phiên đó; đúng giờ mở cửa, trong phiên hoặc sau giờ đóng cửa dùng phiên kế tiếp theo calendar/exchange đã khóa. Case 14:16 ngày 26/08 dùng 27/08 theo calendar fixture, không dùng close 26/08 làm Reaction.
+T30R03C03P1	Quy tắc strict-open đã ghi rõ trong bản này. Ngày 27/08 là kết quả của calendar fixture, chưa được xác minh bằng lịch/provider thị trường thật.
+T30R04C01P1	3. Confidence
+T30R04C02P1	Candidate lưu sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, methodVersion và inferenceCutoff. Score được freeze, không cập nhật ngược khi Evidence mới xuất hiện.
+T30R04C03P1	Đã khóa component/freeze, complete-Evidence selection và đầu vào linking/relation confidence cho bốn route. Behavioral test phát hiện thiếu linkingConfidence, sai confidenceScore/candidateScore. Calibration và selection trên dữ liệu thật thuộc Phase 2.
+T30R05C01P1	4. Hai loại score
+T30R05C02P1	candidateScore = confidenceScore × relationStrength dùng tại inference. reactionWeight = impactScore × confidenceScore × relationStrength chỉ dùng sau window. Canonical property: reactionWeight; không dùng tên property cũ làm alias trong ontology, query, Draw.io hoặc code mới.
+T30R05C03P1	Đã tách score và khóa strength bốn path. SHACL regression kiểm tra score, impactScore, direction và weight trên fixture tổng hợp; không chứng minh chống leakage của ranker hoặc scoring trên dữ liệu thật.
+T30R06C01P1	5. Market provenance
+T30R06C02P1	MarketIndexObservation cần adjustedClose, returnValue, availableAt và sourceReference. Reaction truy được observation của mọi phiên trong event window và phiên predecessor cần để tính lợi suất.
+T30R06C03P1	Đặc tả có stock/index provenance. Behavioral test phát hiện thiếu adjustedClose benchmark và sai return/CAR trên fixture tổng hợp; chưa kiểm chứng calendar coverage hoặc AR/CAR trên dữ liệu thật. Giới hạn audit sourceReference không thay đổi.
+T30R07C01P1	6. Event Dictionary
+T30R07C02P1	EVENT_DICTIONARY.yaml là dictionary machine-readable, hiện có 14 eventType, required/optional roles, canonicalKey/identity rule, expectedDirection, ví dụ và confusable cases.
+T30R07C03P1	Dictionary 1.0.4 có 14 eventType cùng vocabulary/normalization cho role tham gia key và chính sách HOLD khi chưa chuẩn hóa. Chất lượng annotation, extraction và identity resolution phải đánh giá ở Phase 2.
+T30R08C01P1	7. Data rules
+T30R08C02P1	Article chưa extract Event phải ở staging hoặc cho phép 0..* ở staging. IndustryExposure chọn bản mới nhất đã available, có staleness rule; thử exposureStrength thay hằng số 0,5.
+T30R08C03P1	Audit đối chiếu reports [0..*] với direct SHACL cardinality trong appendix. Latest eligible exposure, staleness và curated gate là rule đặc tả; chưa kiểm chứng bằng pipeline/calendar thực tế.
+T30R09C01P1	8. Evaluation
+T30R09C02P1	Tách vertical slice/final evaluation; gán nhãn relevance độc lập direct/indirect và uncertainty; 25% double-label; khóa tie-break, macro Event và metric edge cases trong EVALUATION_PROTOCOL.md.
+T30R09C03P1	Protocol khóa stock frame/universe, out-of-universe invalidation, cutoff trước day 0, route-level projection trước top-K và macro Event. 25% double-label, paired bootstrap và ba component ablations giữ sourceConfidence=0,5. Chưa chạy dữ liệu/metric executor Phase 2.
+T30R10C01P1	9. Draw.io
+T30R10C02P1	Bổ sung property temporal/provenance và Candidate/Reaction; loại/đánh dấu các đường suy luận ngoài baseline.
+T30R10C03P1	Đã sửa cả tab 00 và tab 03; bổ sung audit/test kiểm tra relation owner đúng parentCompany. Appendix có các property thầy nêu. Sơ đồ vẫn minh họa, không thay thế TTL/SHACL; NOT CHECKED và giới hạn layout được công bố.
+P316	Các điểm vẫn cần kiểm chứng bằng dữ liệu/code Phase 2
+P317	• Rule giờ mở cửa và danh sách ngày giao dịch phải lấy từ market calendar cụ thể.
+P318	• IndustryExposure cần nguồn thật để xác định periodEnd, staleness và exposureStrength.
+P319	• Confidence demo là fixture kiểm thử. Mô hình extractor/linker, calibration và dữ liệu nguồn thật phải được định phiên bản khi triển khai Phase 2 theo SCORING_SPEC.md.
+P320	• Các metric RQ1–RQ3 chưa thể kết luận từ fixture synthetic hoặc hai Event demo.
+P321	• File TTL/SHACL implementation đã được cập nhật cùng bộ artifact này và phải được dùng làm source of truth khi code Phase 2.
+P322	Các đường suy luận ngoài bốn baseline phải được đánh dấu rõ: FUTURE EXTENSION — NOT IMPLEMENTED IN PHASE 2 BASELINE. Trong baseline 1.0.4, relationPath phải bằng impactType. Draw.io được đối chiếu theo contract TTL/SHACL và chỉ minh họa bốn baseline path; TTL/SHACL vẫn là source of truth.
+P323	
+P324	PHỤ LỤC — DATA RULES ĐÃ CHỐT
+P325	IndustryExposure selection contract: periodEnd và periodType là reporting-period semantics. Baseline khóa periodType=YEAR trong methodVersion/run manifest; validFrom/validTo chỉ được lưu khi nguồn thực sự cung cấp semantics hiệu lực, không bắt buộc validFrom cho mọi IndustryExposure.
+P326	Tại cutoff t, trong cùng Bank–Industry, reporting scope (consolidated hoặc standalone) và periodType đã khóa theo methodVersion, chỉ xét IndustryExposure có availableAt ≤ t và periodEnd ≤ date(t). Chọn periodEnd lớn nhất, sau đó availableAt lớn nhất, rồi IRI tăng dần; áp dụng staleness tối đa 365 ngày. Nếu không đạt thì không sinh INDIRECT_INDUSTRY. validFrom/validTo chỉ có ý nghĩa khi nguồn thực sự cung cấp; không tự tạo ngày hiệu lực từ kỳ báo cáo. Quy tắc chi tiết nằm trong EVENT_SCHEMA.md.
+P327	NewsArticle ingestion contract: reports có thể là 0..* ở raw/staging. Sau relevance/extraction gate, curated profile mới được đưa vào inference graph và phải có ít nhất một Event. Không dùng SHACL curated profile để loại bài chưa qua extraction khỏi staging.
+P328	Market provenance contract: Reaction phải liên kết toàn bộ observation trong event window và observation của phiên t−1 cần để tính return tại ngày đầu cửa sổ; returnValue chỉ là cache kiểm tra nhanh, không thay thế adjustedClose provenance.
+P329	PHỤ LỤC — QUY TẮC DICTIONARY VÀ ĐÁNH GIÁ
+P330	EVENT_DICTIONARY.yaml là danh mục machine-readable. Key dựa trên danh tính sự kiện/statement nghiệp vụ; không dùng ngày bài đăng lại, ngày ingest, URL hoặc articleId để chia một Event thành nhiều Event. Khi thiếu thành phần định danh, dùng quy tắc identity resolution của dictionary; không tự điền ngày hiện tại. Updates/clarifies là quan hệ giữa Event, không phải lý do gộp cùng canonical Event.
+P331	Relevance 0/1/2 phản ánh mức độ liên quan kinh tế theo Evidence, không đồng nhất với DIRECT/INDIRECT. Độ chắc chắn của người gán nhãn được lưu riêng; item chưa phân xử không được đưa vào gold test. Expected direction dựa trên thông tin trước cutoff; thiếu căn cứ dùng UNKNOWN, không dùng CAR tương lai.
+P332	Quy tắc tie-break, mẫu số Precision@K, Event không có positive, bootstrap theo Event và cách tách canonicalization clustering khỏi relation classification được khóa tại EVALUATION_PROTOCOL.md. Có tối thiểu 25% double-label độc lập. Mọi thành phần được tune trước test; fixture không thuộc final evaluation.

@@ -1,0 +1,6 @@
+{
+  "method": "whitespace normalization and exact known repeated footer removal; not layout equivalence",
+  "missing": [],
+  "units": 1236,
+  "nonempty": 1196
+}

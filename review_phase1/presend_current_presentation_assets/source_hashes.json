@@ -1,0 +1,19 @@
+{
+  "ANNOTATION_GUIDELINE.md": "c2ef21854ff3636ab7d86352ba0117a5a3fac1213220a985ab828d4d0b5bcea2",
+  "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx": "ffeb82089a907b4d8c388f5384f3612f8678a6b367a0c4cd83aa741020d5e916",
+  "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.pdf": "784fc179637f4cb804219ee84a8a68ce97a1a38182981ab2b149a6b58d10e183",
+  "EVALUATION_PROTOCOL.md": "d7937d6f69fdf8626bb778b0f2ff5dc36cfd721a86d1d110da9c8f1e675efe0e",
+  "EVENT_DICTIONARY.yaml": "b01e6cfda780360061f5efd29c83a7369584ce766ad880d32bf64516d080e91d",
+  "EVENT_SCHEMA.md": "e8e7bd4f05bd8b1865c28cf0d7be061c84284803493ca62937516334e78f866f",
+  "master_thesis_v1_synced_01-10.drawio": "30da7b105e958fcce86949410d017e3d8e8762be8248e79c5bf90f1cbc93ca46",
+  "ontology_v1.0.ttl": "ff0e7f8a9a49fe5b28bcc693bc1b6c6b7e14837829efaf8a6d48513df1890e11",
+  "PHASE1_ACCEPTANCE.md": "b7129f0e69ea4e7400ea421f8666b1056f8ef99da2b6884fca042ac2dae72ecd",
+  "SCORING_SPEC.md": "fcd60f30d3ce86b2764a896e3f1200046477d61ea31d83198bc34946729f85a3",
+  "shapes_v1.0.ttl": "0353e15a101bb1c127093ee58d231fe13dbe779357709fad80a37f4bee70d3f7",
+  "tools\\audit_schema_diagram.py": "e7fad4ccfab75a90aac0a6f1f73eb46eedc15c8ac6eba1884df19a55835d3121",
+  "tools\\README.md": "d483df5377ee2674c568e918106fe9b89fb887edaa4ff987679f733781ecb6da",
+  "tools\\test_baseline_shacl.py": "e2165aca8c464340e7ab3a662e9357ceb4885212d379ab37a184583efb8a3afb",
+  "tools\\test_schema_diagram_audit.py": "254a3443a0b0e574f86d54691c6142e357b150942373740451eead887135580d",
+  "tools\\verification_contract_1.0.4.json": "f81a561217272088438ad5c330361e1279467248c8d25a24a92ab33550140251",
+  "review_phase1\\backups\\before_scoring_vietnamese_20261004\\SCORING_SPEC.md": "fcd60f30d3ce86b2764a896e3f1200046477d61ea31d83198bc34946729f85a3"
+}

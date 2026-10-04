@@ -1,0 +1,34 @@
+[
+  [
+    "P012",
+    "RQ3 – Weighting và ranking: Trên cùng tập Candidate của KG đầy đủ, so sánh unweighted KG và weighted KG tại inferenceCutoff bằng candidateScore; market reaction chỉ được phân tích hồi cứu sau khi window đóng bằng reactionWeight. Khi nhiều path cùng một Event–Stock, gom candidateScore bằng max trong cùng methodVersion/cutoff; reactionWeight báo riêng theo path, không cộng lặp CAR. Đánh giá nDCG@5/@10 theo nhãn chuyên gia 0/1/2, Precision@K và ba ablation riêng cho extractionConfidence, linkingConfidence và relationConfidence (mỗi lần chỉ thay một component bằng 1; sourceConfidence luôn giữ 0,5). Nhãn phải độc lập với công thức score để tránh đánh giá vòng tròn. Per-impactType phải chiếu predictions theo route trước aggregation/top-K, không lọc bằng gold sau dự đoán; common universe và nhãn độc lập được khóa trong EVALUATION_PROTOCOL.md."
+  ],
+  [
+    "P042",
+    "Event phải có ít nhất một Evidence hỗ trợ qua chiều nghịch của supports và ít nhất một NewsArticle reports. occurredAt có thể chưa biết; không tự gán bằng publishedAt. Các quan hệ thuộc nhóm involves là tùy loại sự kiện, không yêu cầu mọi Event phải có đủ Company, Leader, Industry và GovernmentOrganization."
+  ],
+  [
+    "P092",
+    "Nếu cùng Event–Stock có nhiều đường giải thích, lưu Candidate riêng cho từng path để giữ expectedDirection, confidence và relationStrength riêng. Đây là các đường đánh giá khác nhau của cùng cặp Event–Stock; khi tổng hợp không đếm thành nhiều sự kiện độc lập. Thông tin mới sau cutoff không được tạo lại baseline Candidate của cùng Event tại cutoff muộn hơn. Substantive assertion mới tạo Event riêng theo mục 2.5; snapshot muộn cho cùng Event chỉ thuộc nhiệm vụ retrospective ngoài baseline và có configuration riêng. Giữ nguyên snapshot đã sử dụng."
+  ],
+  [
+    "P105",
+    "availableAt của Candidate không sớm hơn dữ liệu đầu vào; availableAt của Reaction không sớm hơn Candidate và toàn bộ quan sát được sử dụng. Dữ liệu sau sự kiện được dùng để đo Reaction khi đã khả dụng, nhưng không quay ngược để sinh hoặc sửa Candidate tại một cutoff trước đó. Hai mốc tách biệt: input sinh Candidate phải có availableAt ≤ inferenceCutoff; observation tính Reaction phải có availableAt ≤ Reaction.availableAt và window đã đóng. Không giới hạn observation hậu nghiệm bằng inferenceCutoff."
+  ],
+  [
+    "P121",
+    "Baseline được đề xuất để đánh giá: R(i,t) = adjustedClose(i,t)/adjustedClose(i,t−1) − 1; benchmark phải có adjustedClose cùng phiên và nhất quán cách điều chỉnh. AR(i,t) = R(i,t) − R(m,t); CAR(i,[a,b]) là tổng AR theo trading day. impactScore = min(1, abs(CAR)/tau), tau = 0,10. confidenceScore = 0,25 × (sourceConfidence + extractionConfidence + linkingConfidence + relationConfidence) trong baseline đều trọng số; mọi component, tau, epsilon, window và version phải được lưu để tái lập. candidateScore = confidenceScore × relationStrength; reactionWeight = impactScore × candidateScore. Phase 2 thử tau = 0,05/0,10/0,20, các event window và exposureStrength variant trên tập phát triển/validation rồi khóa trước test. SHACL 1.0.4 kiểm tra baseline tau=0,10 và epsilon=0; thử tau/epsilon khác phải dùng shape/configuration được định phiên bản riêng, không chỉ đổi methodVersion."
+  ],
+  [
+    "P128",
+    "RQ2 – Event–Stock inference: So sánh keyword/co-occurrence (ticker hoặc alias trong bài), DIRECT-only (Event → Company → Stock) và KG đầy đủ (bốn impactType) trên cùng Event, universe cổ phiếu và cutoff. Đánh giá precision/recall ở mức cặp Event–Stock, Recall@5/@10 và Precision@5/@10; báo cáo riêng cổ phiếu ngoài direct mention và từng impactType. Demo chỉ có hai Candidate DIRECT cùng cổ phiếu TCB nên chưa chứng minh lợi ích đường gián tiếp hoặc cải thiện ranking. Stock frame và resolved universe theo Event được freeze độc lập trước predictions; method phải giới hạn generation/ranking trong universe này. Prediction ngoài universe làm run invalid, không lọc hậu nghiệm rồi tính lại top-K. Event không có Candidate vẫn được giữ để tính miss/recall theo gold. Ba method dùng chung extractor/registry. Keyword quét toàn văn Article hỗ trợ Event đã available tại cutoff, match alias/ticker chính xác theo registry và union Stock, score=1; prediction bucket DIRECT chỉ là quy ước, indirect abstain. DIRECT-only và KG bốn đường dùng score=1 cho RQ2; RQ3 mới so với candidateScore trên cùng paths. Matching/route projection khóa chi tiết trong EVALUATION_PROTOCOL.md. Cả ba method, kể cả keyword, dùng cùng complete-assignment gate tại cutoff: thiếu assignment thì đều trả empty ranking, gold Event vẫn giữ trong universe."
+  ],
+  [
+    "P130",
+    "Phase 2 bắt đầu bằng vertical slice 100–300 bài để smoke/debug end-to-end; lát cắt này không dùng để kết luận RQ hoặc thay cho final_evaluation. Development, validation và final_evaluation được tách riêng theo EVALUATION_PROTOCOL.md, không để cùng canonical Event qua nhiều tập. Gold data gán nhãn Evidence, Event, entity IRI, duplicate/update và Event–Stock; một phần được double-label và phân xử bất đồng. RQ1 dùng metric cho Evidence span, extraction, entity linking, canonicalization và Event relation classification; cùng protocol, cutoff và universe được khóa trước khi mở test. Giữ 22 lớp hiện tại, không mở rộng lớp chỉ để tăng phạm vi."
+  ],
+  [
+    "P309",
+    "Bộ contract 1.0.4 đã chạy ba kiểm tra độc lập. Audit tools/audit_schema_diagram.py: 337 assertion PASS, 0 FAIL, 57 NOT CHECKED, exit code 0; parse 44 SELECT constraints và xác nhận SHA256 ba input không đổi. Bộ tools/test_baseline_shacl.py: 31/31 test qua, bao gồm regression REACTION_READY typed string không có Reaction và cutoff khác Event.availableAt. Bộ tools/test_schema_diagram_audit.py: 8/8 test qua, bao gồm mutation sai vai trò công ty mẹ/con. Behavioral SHACL chạy inference=none. Các kiểm tra là synthetic structural regression, không tái tạo demo/hình lịch sử, không chứng minh calendar thật, NLP, immutability, metric executor hay RQ1–RQ3. Số audit là assertion có phạm vi, không phải phần trăm hoàn tất góp ý. PDF được xuất từ DOCX hiện hành bằng Microsoft Word; trạng thái kiểm tra layout được ghi trong PHASE1_ACCEPTANCE.md."
+  ]
+]

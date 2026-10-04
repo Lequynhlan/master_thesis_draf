@@ -1,0 +1,1357 @@
+
+=== PDF PAGE 1 ===
+Document-Level Event Argument Extraction by Conditional Generation
+Sha Li and Heng Ji and Jiawei Han
+University of Illinois at Urbana-Champaign, IL, USA
+{shal2, hengji, hanj}@illinois.edu
+Abstract
+Event extraction has long been treated as a
+sentence-level task in the IE community. We
+argue that this setting does not match hu-
+man information seeking behavior and leads
+to incomplete and uninformative extraction
+results.
+We propose a document-level neu-
+ral event argument extraction model by for-
+mulating the task as conditional generation
+following event templates.
+We also com-
+pile a new document-level event extraction
+benchmark dataset WIKIEVENTS which in-
+cludes complete event and coreference anno-
+tation. On the task of argument extraction, we
+achieve an absolute gain of 7.6% F1 and 5.7%
+F1 over the next best model on the RAMS
+and WIKIEVENTS datasets respectively. On
+the more challenging task of informative ar-
+gument extraction, which requires implicit
+coreference reasoning, we achieve a 9.3% F1
+gain over the best baseline. To demonstrate
+the portability of our model, we also create
+the ﬁrst end-to-end zero-shot event extraction
+framework and achieve 97% of fully super-
+vised model’s trigger extraction performance
+and 82% of the argument extraction perfor-
+mance given only access to 10 out of the 33
+types on ACE. 1
+1
+Introduction
+By converting a large amount of unstructured text
+into trigger-argument structures, event extraction
+models provide unique value in assisting us process
+volumes of documents to form insights. While
+real-world events are often described throughout a
+news document (or even span multiple documents),
+the scope of operation for existing event extraction
+models have long been limited to the sentence level.
+Early work on event extraction originally posed
+the task as document level role ﬁlling (Grishman
+and Sundheim, 1996) on a set of narrow scenarios
+1The programs, data and resources are publicly avail-
+able for research purpose at https://github.com/
+raspberryice/gen-arg.
+Prosecutors say he drove the truck to Geary Lake in Kansas, that 
+4,000 pounds of ammonium nitrate laced with nitromethane were 
+loaded into the truck there, and that it was driven to Oklahoma City 
+and detonated. 
+Elliott testiﬁed that on April 15, McVeigh came into the body shop 
+and reserved the truck, to be picked up at 4pm two days later.  
+Elliott said that McVeigh gave him the $280.32 in exact change after 
+declining to pay an additional amount for insurance.
+Figure 1:
+Two examples of cross-sentence infer-
+ence for argument extraction from our WIKIEVENTS
+dataset. The PaymentBarter argument of the Transac-
+tion.ExchangeBuySell event triggered by “reserved” in
+the ﬁrst sentence can only be found in the next sentence.
+The Attack.ExplodeDetonate event triggered by “deto-
+nated” in the third sentence has an uninformative ar-
+gument “he”, which needs to be resolved to the name
+mention “McVeigh” in the previous sentences.
+and evaluated on small datasets. The release of
+ACE2, a large scale dataset with complete event
+annotation, opened the possibility of applying pow-
+erful machine learning models which led to sub-
+stantial improvement in event extraction. The suc-
+cess of such models and the widespread adoption
+of ACE as the training dataset established sentence-
+level event extraction as the mainstream task deﬁn-
+tion.
+This formulation signiﬁes a misalignment be-
+tween the information seeking behavior in real life
+and the exhaustive annotation process in creating
+the datasets. An information seeking session (Mai,
+2016) can be divided into 6 stages: task initia-
+tion, topic selection, pre-focus exploration, focus
+information, information collection and search clo-
+sure (Kuhlthau, 1991). Given a target event ontol-
+ogy, we can safely assume that topic selection is
+complete and users start from skimming the docu-
+ments before they discover events of interest, focus
+on such events and then aggregate all relevant in-
+formation for the events. In both the “pre-focus
+2https://www.ldc.upenn.edu/
+collaborations/past-projects/ace
+arXiv:2104.05919v1  [cs.CL]  13 Apr 2021
+
+
+=== PDF PAGE 2 ===
+exploration” and “information collection” stages,
+users naturally cross sentence boundaries.
+Empirically, using sentence boundaries as event
+scopes conveniently simpliﬁes the problem, but
+also introduces fundamental ﬂaws: the resulting
+extractions are incomplete and uninformative. We
+show two examples of this phenomenon in Figure
+1. The ﬁrst example exempliﬁes the case of implicit
+arguments across sentences. The sentence that con-
+tains the PaymentBarter argument “$280.32" is not
+the sentence that contains the trigger “reserve" for
+the ExchangeBuySell event. Without a document-
+level model, such arguments would be missed and
+result in incomplete extraction. In the second exam-
+ple, the arguments are present in the same sentence,
+but written as pronouns. Such extraction would be
+uninformative to the reader without cross-sentence
+coreference resolution.
+We propose a new end-to-end document-level
+event argument extraction model by framing the
+problem as conditional generation given a template.
+Conditioned on the unﬁlled template and a given
+context, the model is asked to generate a ﬁlled-
+in template with arguments as shown in Figure 2.
+Our model does not require entity recognition nor
+coreference resolution as a preprocessing step and
+can work with long contexts beyond single sen-
+tences. Since templates are usually provided as
+part of the event ontology deﬁnition, this requires
+no additional human effort. Compared to recent
+efforts (Du and Cardie, 2020; Feng et al., 2020;
+Chen et al., 2020) that retarget question answering
+(QA) models for event extraction, our generation-
+based model can easily handle the case of missing
+arguments and multiple arguments in the same role
+without the need of tuning thresholds and can ex-
+tract all arguments in a single pass.
+In order to evaluate the performance of
+document-level event extraction, we collect and
+annotate a new benchmark dataset WIKIEVENTS.
+This document-level evaluation also allows us to
+move beyond the nearest mention of the argument
+and instead seek the most informative mention3
+in the entire document context. In particular, only
+34.5% of the arguments detected in the same sen-
+tence as the trigger can be considered informative.
+We present this new task of document-level infor-
+mative argument extraction and show that while
+this task requires much more cross-sentence infer-
+3We prefer name mentions over nominal mentions and
+only use pronoun mentions when no other mentions exist.
+ence, our model can still perform reliably well.
+Since we provide the ontology information
+(which roles are needed for the event) through the
+template as an external condition, our model has
+excellent portability to unseen event types. By
+pairing up our argument extraction model with a
+keyword-based zero-shot trigger extraction model,
+we enable zero-shot transfer for new event types.
+The major contributions of this paper can be
+summarized as follows:
+1. We address the document-level argument ex-
+traction task with an end-to-end neural event
+argument extraction model by conditional text
+generation. Our model does not rely on entity
+extraction nor entity/event coreference reso-
+lution. Compared to QA-based approaches,
+it can easily handle missing arguments and
+multiple arguments in the same role.
+2. We present the ﬁrst document-level event ex-
+traction benchmark dataset with complete
+event and coreference annotation. We also
+introduce the new document-level informative
+argument extraction task, which evaluates the
+ability of models to learn entity-event rela-
+tions over long ranges.
+3. We release the ﬁrst end-to-end zero-shot event
+extraction framework by combining our argu-
+ment extraction model with a zero-shot event
+trigger classiﬁcation model.
+2
+Method
+The event extraction task consists of two subtasks:
+trigger extraction and argument extraction. The
+set of possible event types and roles for each event
+type are given by the event ontology as part of the
+dataset. One template for each event type is usually
+pre-deﬁned in the ontology. 4
+We ﬁrst introduce our document-level argument
+extraction model in Section 2.1 and then intro-
+duce our zero-shot keyword-based trigger extrac-
+tion model in Section 2.2.
+2.1
+Argument Extraction Model
+We use a conditional generation model for argu-
+ment extraction, where the condition is an unﬁlled
+template and a context. The template is a sentence
+4ACE does not come with templates, but since the event
+types are subsets of the RAMS AIDA ontology and the
+KAIROS ontology, we reused templates from the these ontolo-
+gies.
+
+
+=== PDF PAGE 3 ===
+Encoder
+Elliott
+Decoder
+bought
+Output
+Arg 1 
+Giver:
+ Elliot  
+Arg 2 
+Recipient: 
+McVeigh 
+Arg 3 
+AcquiredEntity:
+truck
+Arg 4 
+PaymentBarter:
+$280.32
+Arg 6 Place:
+body shop
+Elliott bought, sold or traded truck to McVeigh in exchange for 
+$280.32 for the beneﬁt of <arg> at body shop place
+<arg1> bought, sold, or traded <arg3> to <arg2> in exchange 
+for <arg4> for the beneﬁt of <arg5> at <arg6> place
+Template
+Prosecutors say he drove the truck to Geary Lake in Kansas, 
+that 4,000 pounds of ammonium nitrate laced with 
+nitromethane were loaded into the truck there, and that it was 
+driven to Oklahoma City and detonated. 
+Elliott said that McVeigh gave him the $280.32 in exact 
+change after declining to pay an additional amount for 
+insurance.
+Elliott testiﬁed that on April 15, McVeigh came into the body 
+shop and <tgr> reserved <tgr> the truck, to be picked up at 
+4pm two days later.  
+Document
+<s>
+<s></s>
+</s>
+Document
+Template
+Figure 2: Our argument extraction model using conditional generation. On the left we show an example document,
+template and the desired output for the instance. Each example document may contain multiple event triggers
+and we use special ⟨tgr⟩tokens to markup the target event trigger for argument extraction (the highlighted word
+“reserved"). The input to the model is the concatenation of the template and the document. The decoded tokens
+are either from the template or the document. The color of the generated tokens indicate its copy source. After the
+ﬁlled template is generated, we extract the spans to produce the ﬁnal output.
+that describes the event with ⟨arg⟩placeholders.
+The generated output is a ﬁlled template where
+placeholders are replaced by concrete arguments.
+An example of the unﬁlled template from the on-
+tology and the ﬁlled template for the event type
+Transaction.ExchangeBuySell 5 can be seen in Fig-
+ure 2. Notably, one template per event type is given
+in the ontology, and does not require further human
+curation as opposed to the question designing pro-
+cess in question answering (QA) models (Du and
+Cardie, 2020; Feng et al., 2020).
+Our base model is an encoder-decoder language
+model (BART (Lewis et al., 2020), T5 (Raffel et al.,
+2020). The generation process models the condi-
+tional probability of selecting a new token given
+the previous tokens and the input to the encoder.
+p(x | c) =
+|x|
+Y
+i=1
+p (xi | x<i, c)
+(1)
+In the encoder, bidirectional attention layers are
+used to enable interaction between every pair of
+tokens and produce the encoding for the context c.
+Each layer of the decoder performs cross-attention
+over the output of the encoder in addition to the
+attention over the previous decoded tokens.
+To utilize the encoder-decoder LM for argu-
+ment extraction, we construct an input sequence
+of ⟨s⟩template ⟨s⟩⟨/s⟩document ⟨/s⟩. All argu-
+ment names (arg1, arg2, etc.) in the template are
+replaced by a special placeholder token ⟨arg⟩. The
+5This type is used for a transaction transferring or obtain-
+ing money, ownership, possession, or control of something,
+applicable to any type, nature, or method of acquisition includ-
+ing barter.
+ground truth sequence is the ﬁlled template where
+the placeholder token is replaced by the argument
+span whenever possible. In the case where there are
+multiple arguments for the same slot, we connect
+the arguments with the word “and".
+The generation probability is computed by tak-
+ing the dot product between the decoder output and
+the embeddings of tokens from the input.
+p(xi = w|x<i, c, t) =
+(
+Softmax
+ hT
+i Emb(w)
+
+w ∈Vc
+0
+w /∈Vc
+(2)
+To prevent the model from hallucinating argu-
+ments, we restrict the vocabulary of words to Vc:
+the set of tokens in the input.
+The model is trained by minimizing the negative
+loglikelihood over all (content, template, output)
+instances in the dataset D:
+L(D) = −
+|D|
+X
+i=1
+log pθ
+
+xi | ci
+(3)
+The event ontology often imposes entity type
+constraints on the arguments. When using the tem-
+plate only, the model has no access to such con-
+straints and can generate seemingly ﬂuent and sen-
+sible responses with the wrong arguments. Inspired
+by (Shwartz et al., 2020), we use clariﬁcation state-
+ments to add back constraints without breaking the
+end-to-end property of the model.
+In the example presented in Table 1, we can see
+that the greedy decoding selects “tax plan" as the
+second Participant argument for the PublicState-
+ment event. Apart from the preposition “with",
+
+
+=== PDF PAGE 4 ===
+Context
+Original
+After
+When outlining her tax reform policy , Clinton has made
+clear that she wants to tax the wealthy and make sure they
+“pay their fair share ." She has proposed (PublicStatement)
+a tax plan that would require millionaires and billionaires
+to pay more taxes than middle-class and lower -income
+individuals.
+She
+communicated
+with
+tax plan about ⟨arg ⟩at ⟨
+arg ⟩place.
+She
+is a per-
+son/organization/country.
+tax
+plan
+is
+a
+per-
+son/organization/country.
+She communicated with
+⟨arg ⟩about tax plan at ⟨
+arg ⟩place. She is a per-
+son/organization/country.
+Table 1: Example of adding type constraints through clariﬁcation. The Participant argument of PublicStatement
+event can only be a person, organization or geo-political entity. The Topic argument can be any type of entity.
+there is nothing in the template indicating that this
+slot should be ﬁlled in with a person instead of a
+topic. To remedy this mistake, we append “clariﬁ-
+cations" for its argument ﬁllers in the form of type
+statements: ⟨arg ⟩is a ⟨type ⟩. We then rerank
+the candidate outputs by the language modeling
+probability of the ﬁlled template and clariﬁcations.
+When there are multiple valid types, we take the
+maximum probability of the valid type statements.
+log p(x|c) =
+X
+i
+log p(xi|x<i, c)+max
+e∈Er log p(ze|x, c) (4)
+Er is the set of valid entity types for the role r
+according to the ontology and ze is the type state-
+ment. Since “tax plan is a person." goes against
+commonsense, the probability of generating this
+sentence will be low. In this way, we can prune
+responses with conﬂicting entity types.
+2.2
+Keyword-Based Trigger Extraction
+Model
+Our argument extraction model relies on detected
+event triggers (type and offset) as input. Any trigger
+extraction model could be used in practice, but here
+we describe a trigger extraction model designed to
+work with only keyword-level supervision. For
+example for the “StartPosition" event, we use 3
+keywords “hire, employ and appoint" as initial su-
+pervision with no mention level annotation. 6 This
+module allows quick transfer to new event types of
+interest.
+We treat the trigger extraction task as sequence
+labeling and our model is an adaptation of Tap-
+Net (Yoon et al., 2019; Hou et al., 2020), which
+was designed for few-shot classiﬁcation and later
+extended to Conditional Random Field (CRF) mod-
+els. Compared with (Hou et al., 2020), we do not
+collapse the entries of the transition matrix, making
+it possible for our model to learn different proba-
+bilities for each event type. Since our model takes
+6In a fully supervised setting, it might be desirable to use a
+supervised trigger extraction model for optimal performance.
+class keywords as input, we refer to this model as
+TAPKEY.
+For each event type, we ﬁrst obtain a class repre-
+sentation vector ck based on given keywords using
+the masked category prediction method in (Meng
+et al., 2020). This class representation vector is
+an average over the BERT vector representations
+of the keywords, with some ﬁltering applied to
+remove ambiguous occurrences. Details of the ﬁl-
+tering process are included in Appendix A.
+Following the linear-chain CRF model, the prob-
+ability of a tagged sequence is:
+log p(y|h; θ) ∝
+X
+i
+ϕ(yi|hi) +
+X
+i
+ψ(yi|yi−1, hi)
+(5)
+hi is the output of the embedding network (in our
+case, BERT-large) corresponding to xi.
+The label space for yi is the set of IO tags. We
+choose to use this simpliﬁed tagging scheme be-
+cause it has fewer parameters and the fact that con-
+secutive triggers of the same event are very rare.
+The feature function ϕ(·) is deﬁned as
+ϕ(yi = k|hi) = Softmax
+ M(hi)T M(φk)
+
+(6)
+φk is a normalized reference vector for class k and
+M is a projection matrix, both of which are param-
+eters of the model. M is not a learned parameter,
+but solved by taking the QR decomposition of a
+modiﬁed reference vector matrix. Speciﬁcally, M
+satisﬁes the following equation:
+MT (ck −λˆφk) = 0
+(7)
+We refer to the TapNet (Yoon et al., 2019) paper
+for details and also provide a simpliﬁed derivation
+in Appendix A.
+The transition score ψ(·) between tags is param-
+eterized using two diagonal matrices W and Wo:
+ψ(yi = k|yi−1 = l, hi) =
+
+
+
+M(φk)WM(hi)
+k = l̸ = 0
+M(φk)WoM(hi)
+k or l = 0
+0
+k̸ = l
+(8)
+
+
+=== PDF PAGE 5 ===
+Train
+Dev
+Test
+# Event types
+49
+35
+34
+# Arg types
+57
+32
+44
+# Docs
+206
+20
+20
+# Sentences
+5262
+378
+492
+# Events
+3241
+345
+365
+Table 2: Statistics for the WIKIEVENTS dataset.
+0
+10
+20
+30
+40
+50
+Event Types
+0
+200
+400
+600
+Frequency
+0
+20
+40
+Argument Types
+0
+200
+400
+600
+Figure 3: Distribution of event types and argument
+types in the WIKIEVENTS dataset.
+In the training stage, the model parameters
+{φ, W, θf} are learned by minimizing the negative
+log probability of the sequences.
+L = −1
+N
+X
+log p(y|h; θ) + α∥ΦT Φ −I∥2
+(9)
+The matrix Φ of all reference vectors is initialized
+as a diagonal matrix and the second term regular-
+izes the vectors to be close to orthonormal during
+training. α is a hyperparameter.
+In the zero-shot setting, we ﬁrst train on pseudo
+labeled data before we apply the model. In the
+pseudo labeling stage, we directly use the cosine
+similarity between class vectors and the embed-
+dings of the tokens from the language model to
+assign labels to text. We only use labels with high
+conﬁdent for both event I tags and O tags. The
+remainder of the tokens will be tagged as X for
+unknown. Then we train the model on the token
+classiﬁcation task. Since none of the parameters in
+the model are class-speciﬁc, the model can be used
+in a zero-shot transfer setting.
+3
+Benchmark Dataset WIKIEVENTS
+3.1
+Evaluation Tasks
+Our dataset evaluates two tasks: argument extrac-
+tion and informative argument extraction.
+For argument extraction, we use head word F1
+(Head F1) and coreferential mention F1 (Coref F1)
+as metrics. We consider an argument span to be cor-
+rectly identiﬁed if the offsets match the reference.
+If the argument role also matches, we consider the
+argument is correctly classiﬁed. Since annotators
+0
+50
+100
+150
+200
+250
+300
+Nearest Arg Distance
+100
+101
+102
+103
+# of Arguments
+0
+250
+500
+750
+1000
+1250
+1500
+1750
+2000
+Informative Arg Distance
+Figure 4: Distribution of distance between event trig-
+ger and arguments. Distance is measured in number of
+words.
+are asked to annotate the head word when possi-
+ble, we refer to this metric as Head F1. For Coref
+F1, the model is given full credit if the extracted
+argument is coreferential with the gold-standard
+argument as used in (Ji and Grishman, 2008).
+For downstream applications such as knowledge
+base construction and question answering, argu-
+ment ﬁllers that are pronouns will not be useful to
+the user. Running an additional coreference resolu-
+tion model to resolve them will inevitably introduce
+propagation errors. Hence, we propose a new task:
+document-level informative argument extraction.
+We deﬁne name mentions to be more informative
+than nominal mentions, and pronouns to be the
+least informative. When the mention type is the
+same, we select the longest mention as the most
+informative one. Under this task, the model will
+only be given credit if the extracted argument is the
+most informative mention in the entire document.
+3.2
+Dataset Creation
+We collect English Wikipedia articles that de-
+scribe real world events and then follow the
+reference links to crawl related news articles. We
+ﬁrst manually identify category pages such as
+https://en.wikipedia.org/wiki/Category:
+Improvised_explosive_device_bombings_in_
+the_United_States and then for each event page
+(i.e. https://en.wikipedia.org/wiki/Boston_
+Marathon_bombing), we record all the links in its
+“Reference" section and use an article scraping
+tool7 to extract the full text of the webpage.
+We follow the recently established ontology
+from the KAIROS project8 for event annotation.
+This ontology deﬁnes 67 event types in a three
+level hierarchy. In comparison, the commonly used
+7https://github.com/codelucas/
+newspaper
+8https://www.ldc.upenn.edu/collaborations/current-
+projects
+
+
+=== PDF PAGE 6 ===
+ACE ontology has 33 event types deﬁned in two
+levels.
+We hired graduate students as annotators and
+provided example sentences for uncommon event
+types. A total of 26 annotators were involved in the
+process. We used the BRAT9 interface for online
+annotation.
+The annotation process is divided into 2 stages:
+event mention (trigger and argument) annotation
+and event coreference annotation. In addition to
+coreferential mention clusters, we also provide the
+most informative mention for each cluster. Details
+about the data collection and annotation process
+can be found in Appendix B.
+3.3
+Dataset Analysis
+Overall statistics of the dataset are listed in Table
+2. Compared to ACE, our WIKIEVENTS dataset
+has a much richer event ontology, especially for
+argument roles. The observed distributions of event
+types and argument roles are shown in Figure 3.
+We further examine the distance between the
+event trigger and arguments in Figure 4. When con-
+sidering the nearest argument mention, the distribu-
+tion of the arguments is very concentrated towards
+0, showing that this annotation standard favors lo-
+cal extractions. In the case of extracting informa-
+tive mentions, we have a relatively ﬂat long tail
+distribution with the average distance being 68.82
+words (compared to 4.75 words for the nearest men-
+tion). In particular, only 34.5% of the arguments
+detected in the same sentence as the trigger can be
+considered informative. This conﬁrms the need for
+document level inference in the search of informa-
+tive argument ﬁllers.
+4
+Experiments
+Our experiments fall under three settings: (1)
+document-level event argument extraction; (2)
+document-level informative argument extraction
+and (3) zero-shot event extraction.
+For document-level event argument extraction
+we follow the conventional approach of regarding
+the argument mention with closest proximity to the
+trigger as the ground truth. In the second setting
+we consider the most informative mention of the
+argument as the ground truth.
+The zero-shot setting examines the portability
+of the model to new event types. Under this set-
+ting we consider a portion of the event types to be
+9https://brat.nlplab.org/
+Split
+Event Types
+# Sents
+# Events
+Full Training
+33
+17172
+4202
+Freq
+10
+17172
+3398
+Ontology
+8
+17172
+1311
+Dev
+-
+923
+450
+Test
+-
+832
+403
+Table 3: Dataset statistics for ACE under multiple set-
+tings. In the Freq split, we keep the 10 most frequent
+event types. In the Ontology split, we keep 1 event sub-
+type per general type in LIFE, MOVEMENT, TRANS-
+ACTION, BUSINESS, CONFLICT, CONTACT, PER-
+SONNEL and JUSTICE. 13
+known and only annotation for these event types
+will be seen. We used two settings for selecting
+known types: 10 most frequent events types and 8
+event types, one from each parent type of the event
+ontology. The evaluation is done on the complete
+set of event types. We refer the reader to Appendix
+C for implementation details and hyperparameter
+settings.
+4.1
+Datasets
+In addition to our dataset WIKIEVENTS, we also
+report the performance on the Automatic Content
+Extraction (ACE) 2005 dataset10 and the Roles
+Across Multiple Sentences (RAMS) dataset11.
+We follow preprocessing from (Lin et al., 2020;
+Wadden et al., 2019) for the ACE dataset. 12 Statis-
+tics of the ACE data splits can be found in Table 3.
+RAMS (Ebner et al., 2020) is a recently released
+dataset with cross-sentence argument annotation.
+A 5-sentence window is provided for each event
+trigger and the closest argument span is annotated
+for each role. We follow the ofﬁcial data splits
+from Version 1.0.
+4.2
+Document-Level Event Argument
+Extraction
+Table 4 shows the performance for argument extrac-
+tion on RAMS. On the RAMS dataset, we mainly
+compare with Two-step (Zhang et al., 2020), which
+is the current SOTA on this dataset. To handle long
+contexts, it breaks down the argument extraction
+into two steps: head detection and expansion.
+In Table 5 we show the results for the
+WIKIEVENTS dataset. We compare with a pop-
+10https://www.ldc.upenn.edu/
+collaborations/past-projects/ace
+11http://nlp.jhu.edu/rams
+12Note that our preprocessing procedure is slightly different
+from (Du and Cardie, 2020) as we kept pronouns as valid
+event triggers and arguments.
+
+
+=== PDF PAGE 7 ===
+Model
+Span F1
+Head F1
+Seq
+40.5
+48.0
+Two-step
+41.8
+49.7
+BART-Gen
+48.64
+57.32
+Table 4: Supervised argument extraction results (%)
+on RAMS test set. Both the Seq and Two-step model
+use type-constrained decoding to improve performance.
+The ofﬁcial scorer was used to compute results.
+Model
+Arg Identiﬁcation
+Arg Classiﬁcation
+Head F1
+Coref F1
+Head F1
+Coref F1
+BERT-CRF
+69.83
+72.24
+54.48
+56.72
+BERT-QA
+61.05
+64.59
+56.16
+59.36
+BERT-QA-Doc
+39.15
+51.25
+34.77
+45.96
+BART-Gen
+71.75
+72.29
+64.57
+65.11
+Table
+5:
+Argument
+extraction
+results
+(%)
+on
+WIKIEVENTS test set.
+ularly used BERT-CRF baseline (Shi and Lin,
+2019) that performs trigger extraction on sentence-
+level and BERT-QA (Du and Cardie, 2020) ran on
+sentence-level and document-level.
+4.3
+Document-Level Informative Argument
+Extraction
+We test on WIKIEVENTS using the informative ar-
+gument as the training data and also compare with
+the BERT-CRF and BERT-QA baselines. Results
+are shown in Table 6.
+Comparing the results in Tables 5 and 6, we have
+the following ﬁndings:
+1. Informative argument extraction is a much
+more difﬁcult task compared to nearest argu-
+ment extraction. This is exempliﬁed by the
+large performance gap for all models.
+2. While CRF models are good at identifying
+spans, the performance is hindered by clas-
+siﬁcation. The arguments follow a long tail
+distribution and since CRF models learn each
+argument tag separately, it cannot leverage the
+similarity between argument roles to improve
+the performance on rarely seen roles.
+3. QA models, on the other hand, suffer from
+poor argument identiﬁcation. When the QA
+model produces multiple answers for the same
+role, these answer spans are often close to
+each other or overlap. We show a concrete
+example in the qualitative analysis.
+4. Directly applying the BERT-QA model to doc-
+ument level does not work. The QA model
+Model
+Arg-I
+Arg-C
+Head F1
+Coref F1
+Head F1
+Coref F1
+BERT-CRF
+52.71
+58.12
+43.29
+47.70
+BERT-QA
+46.88
+49.89
+43.44
+46.45
+BERT-QA-Doc
+26.29
+31.54
+24.46
+29.26
+BART-Gen
+56.10
+62.48
+51.03
+57.04
+Table 6: Informative argument extraction results on
+WIKIEVENTS test set.
+gets easily distracted by the additional con-
+text and does not know which event to focus
+on. We think that this is not a fundamental
+limitation of the QA approach, but a sign that
+repurposing QA models for document-level
+event extraction needs more investigation.
+4.4
+Zero-Shot Event Extraction
+We show results for the zero-shot transfer setting in
+Table 8. Since the baseline BERT-CRF model (Shi
+and Lin, 2019) cannot handle new labels directly,
+we exclude it from comparison. In addition to
+BERT-QA, we also replace our TAPKEY trigger
+extraction model with a Prototype Network(Snell
+et al., 2017)14. We replace the prototypes with the
+class vectors to enable zero-shot learning. Com-
+plete results for trigger extraction are included in
+Appendix D.
+The performance of BERT-QA is greatly limited
+by the trigger identiﬁcation step. Both the Proto-
+type network and our model TAPKEY can leverage
+the keyword information to assist transfer. Remark-
+ably, TAPKEY has only 3 points drop in F1 using
+only 30% of the training data compared to the full
+set. The argument extraction component is more
+sensitive to the reduction in training data, but still
+performs relatively well. We notice that when a
+template is completely new, the model might alter
+the template structure during generation.
+4.5
+Qualitative Analysis
+We show a comparison of our model’s extractions
+with baselines in Table 7 for the argument extrac-
+tion task on WIKIEVENTS. Our model is able to
+effectively capture all arguments, while the CRF
+model struggles with rare event types and the QA
+model is hindered by over-generation.
+An example of informative argument extraction
+from our model is displayed in Figure 6. Our model
+14When 0 event types are seen, we set the transformation
+function in the Prototype Network to be an identity function;
+in other cases, we use a two layer MLP.
+
+
+=== PDF PAGE 8 ===
+Context
+Role
+Ours
+BERT-CRF
+BERT-QA
+I have been in touch
+(E1:Contact.Contact.Correspondence) with the NDS
+ofﬁcial in the province and they told me that over 100
+members of the NDS were killed(E2:Life.Die) in the big
+explosion , " the former provincial ofﬁcial said . Sharif
+Hotak , a member of the provincial council in Maidan
+Wardak said he saw (E3:Cognitive.IdentifyCategorize)
+bodies of 35 Afghan forces in the hospital."
+E1: Participant
+I
+I
+NDS
+NDS ofﬁcial
+ofﬁcial
+I
+ofﬁcial
+NDS ofﬁcial
+E2: Victim
+members
+members
+members
+E3: Identiﬁer
+he
+N/A
+N/A
+E3: IdentiﬁedObject
+bodies
+N/A
+N/A
+E3: Place
+hospital
+N/A
+N/A
+Table 7: An example of document-level argument extraction task on WIKIEVENTS. This excerpt contains 3
+events: Contact, Die and IdentifyCategorize. For the Contact event E1, BERT-QA over-generates answers for
+the participant span. For the Die event, all three models can correctly extract the Victim argument. For the
+IdentifyCategorize event which is relatively rare, only our model can successfully extract all arguments.
+An injured [Life.Injure.InjuryCausedByViolentEvents] opposition activist is assisted after clashes with riot police at the Central 
+University of Venezuela during a protest against the government of Nicolas Maduro in Caracas on May 4, 2017.
+Victim
+Injurer
+Place
+"With much pain I inform of the death by bullet of Melvin Guaitan, a humble worker from Sucre municipality [in east Caracas].
+Melvin was killed [Life.Die.DeathCausedByViolentEvents]… during the protests tonight.
+Victim
+Victim
+Instrument
+MOSCOW (Sputnik) — Anti-government protests started in Venezuela at the beginning of April after the country’s Supreme Court 
+decided to restrict the power of the state’s National Assembly.
+Despite the fact that the court's decision was canceled, supporters of the opposition-controlled parliament took to the streets striving 
+for the court members’ dismissal [Personnel.EndPosition.FiringLayoff].
+Place
+Employee
+PlaceOfEmployment
+Figure 5: An example of our model’s argument extraction output on the SM-KBP dataset. Arguments highlighted
+in orange are newly found by our model compared to the baseline system OneIE (Lin et al., 2020).
+A Bangkok  military court  has indicted two men accused of 
+carrying out the August 17 bombing at a popular shrine that killed 
+20 people. 
+The court on Tuesday indicted Bilal Mohammed and Mieraili Yusufu 
+on 10 counts connected to the blast, including conspiracy to 
+explode bombs and commit premeditated murder. 
+Thailand authorities have not oﬃcially named the bombing of 
+Erawan Shrine an act of terror, and accordingly neither suspect was 
+charged speciﬁcally with terrorism .
+Thai Authorities Indict 2 over August Shrine Attack
+Figure 6: An example of our model’s prediction of
+informative arguments. Only arguments for the bold-
+faced event triggers are shown. Notably, our model
+can correctly identify “Bilal Mohammed and Mieralli
+Yusufu" as the as the Defendant for all the ChargeIn-
+dict events and “Erawan Shrine" as the place of attack.
+is able to choose the informative mentions of the
+Defendant of indiction and Place of attack even
+when the trigger is a few sentences away.
+We also applied our model as part of a pipeline
+multimedia multilingual knowledge extraction sys-
+tem (Li et al., 2020) for the NIST streaming
+multimedia knowledge base population task (SM-
+KBP2020)15. Our model was able to discover 53%
+new arguments compared to the original system,
+especially for those that were further away from
+the event trigger. The overall system achieved top
+15https://tac.nist.gov/2020/KBP/SM-KBP/
+1 performance. We show some examples in Figure
+5.
+4.6
+Remaining Challenges
+Ontological Constraints Some of the roles are
+mutually exclusive, such as the Origin/Destination
+in the Transport event and the Recipient/Yielder
+in the Surrender event. In the following example,
+“Japan" was extracted as both part of the Recip-
+ient and the Yielder of the Surrender event: “If
+South Korea drifts into the orbit of the US and
+Japan, China’s inﬂuence on the Korean peninsula
+could be badly compromised." At a military pa-
+rade in Beijing to mark the 70th anniversary of
+the surrender of Japan last September, ...". Such
+constraints might be incorporated into the decoding
+process of the model.
+Commonsense Knowledge In the following in-
+stance with implicit arguments: “Whether the U.S.
+extradites Gulen or not this will be a political deci-
+sion, ”Bozdag said.“ If he is not extradited, Turkey
+will have been sacriﬁced for a terrorist.” A recent
+opinion poll showed two thirds of Turks agree with
+their president that Gulen was behind the coup
+plot.", our model mistakenly labels “U.S." as the
+Destination of the extradition and “Turkey" as the
+
+
+=== PDF PAGE 9 ===
+# Seen Event Types
+Model
+TI F1
+TC F1
+AI Head F1
+AC Head F1
+0
+Prototype
+3.19
+2.22
+-
+-
+TAPKEY
+55.19
+52.10
+-
+-
+10 most frequent
+BERT-QA
+57.06
+53.83
+39.37
+38.27
+Prototype + BART-Gen
+69.48
+66.06
+46.08
+41.93
+TAPKEY + BART-Gen
+72.31
+69.23
+48.18
+44.19
+1 per general type
+BERT-QA
+27.56
+25.32
+24.87
+24.29
+Prototype + BART-Gen
+68.29
+65.85
+39.51
+34.63
+TAPKEY + BART-Gen
+72.23
+68.55
+39.80
+35.11
+Full
+TAPKEY + BART-Gen
+74.36
+71.13
+55.22
+53.71
+Table 8: Zero-shot event extraction results (%) on ACE. “10 most frequent event types" corresponds to the Freq
+data split and “1 per general type" corresponds to the Ontology data split. Fully supervised results are provided
+for reference.
+Source even though the Extraditer is correctly iden-
+tiﬁed as “U.S.". Commonsense knowledge such
+as “The extraditer, if being a country, is usually is
+same as the source of extradition" would be helpful
+to ﬁx this error.
+5
+Related Work
+5.1
+Document-Level Event Extraction
+Document-level event extraction can be traced back
+role ﬁlling tasks from the MUC conferences (Grish-
+man and Sundheim, 1996) that required retrieving
+participating entities and attribute values for spe-
+ciﬁc scenarios. The KBP slot ﬁlling challenge16 is
+akin to this task, but centered upon entities.
+In general, document-level argument extraction
+is an under-explored topic, mainly due to the lack of
+datasets. There have been a few datasets published
+speciﬁcally for implicit semantic role labeling,
+such as the SemEval 2010 Task 10 (Ruppenhofer
+et al., 2010), the Beyond NomBank dataset (Gerber
+and Chai, 2010) and ON5V (Moor et al., 2013).
+However, these datasets were small in size and
+only covered a small set of carefully selected pred-
+icates. Recently, (Ebner et al., 2020) published
+the RAMS dataset, which contains annotation for
+cross-sentence implicit arguments covering a wide
+range of event types. Albeit, this dataset only an-
+notates one event per document, motivating us to
+create a new benchmark with complete event and
+coreference annotation.
+The GRIT model (Du et al., 2021) is a genera-
+tive model designed for the MUC task which can
+be seen as ﬁlling in predeﬁned tables. In compar-
+ison, we treat the template (for example "<arg1>
+attacked <arg2> using <arg3> at <arg4> place") as
+16https://tac.nist.gov/2017/KBP/index.
+html
+part of the model input along with the document
+context. This allows us to share model parameters
+across all event types and enables zero-shot transfer
+to new event types.
+5.2
+Zero-shot Event Extraction
+Early attempts at zero-shot or few-shot event extrac-
+tion rely on preprocessing such as semantic role la-
+beling(SRL) (Peng et al., 2016) or abstract meaning
+representation (AMR) (Huang et al., 2018) to de-
+tect trigger mentions and argument mentions before
+performing classiﬁcation on the detected spans.
+Another line of work only examines the subtask
+of trigger detection, essentially reducing the task to
+few-shot classiﬁcation. Both (Lai et al., 2020) and
+(Deng et al., 2020) extend upon the prototype net-
+work model (Snell et al., 2017) for classiﬁcation.
+Recent work on zero-shot event extraction has
+posed the problem as question answering (Chen
+et al., 2020; Du and Cardie, 2020; Feng et al., 2020)
+with different ways of designing the questions.
+6
+Conclusion & Future Work
+In this paper, we advocate document-level event
+extraction and propose the ﬁrst document-level
+neural event argument extraction model. We also
+release the ﬁrst document-level event extraction
+benchmark dataset WIKIEVENTS with complete
+event and coreference annotation. On both the
+conventional argument extraction task and the new
+informative argument extraction task, our proposed
+model surpasses CRF-based and QA-based base-
+lines by a wide margin. Additionally, we demon-
+strate the portability of our model by applying it
+to the zero-shot setting. Going forward, we would
+like to incorporate more ontological knowledge to
+produce more accurate extractions.
+
+
+=== PDF PAGE 10 ===
+Acknowledgement
+The authors would like to thank Tuan Lai and Zhen-
+hailong Wang for their help in the data processing
+and annotation organization effort. We also thank
+all the annotators who have contributed to the anno-
+tations of our training data (in alphabetical order):
+Daniel Campos, Anthony Cuff, Yi R. Fung, Xiao-
+dan Hu, Emma Bonnette Hamel, Samual Kriman,
+Meha Goyal Kumar, Manling Li, Tuan M. Lai,
+Ying Lin, Sarah Moeller, Ashley Nobi, Xiaoman
+Pan, Nikolaus Parulian, Adams Pollins, Rachel
+Rosset, Haoyu Wang, Qingyun Wang, Zhenhailong
+Wang, Spencer Whitehead, Lucia Yao, Pengfei Yu,
+Qi Zeng, Haoran Zhang, Hongming Zhang, Zixuan
+Zhang.
+This research is based upon work supported by
+U.S. DARPA KAIROS Program No. FA8750-19-
+2-1004, U.S. DARPA AIDA Program No. FA8750-
+18-2-0014, National Science Foundation IIS-19-
+56151, IIS-17-41317, and IIS 17-04532, and Air
+Force No. FA8650-17-C-7715. The views and
+conclusions contained herein are those of the au-
+thors and should not be interpreted as necessarily
+representing the ofﬁcial policies, either expressed
+or implied, of DARPA, or the U.S. Government.
+The U.S. Government is authorized to reproduce
+and distribute reprints for governmental purposes
+notwithstanding any copyright annotation therein.
+References
+Yunmo Chen, Tongfei Chen, Seth Ebner, Aaron Steven
+White, and Benjamin Van Durme. 2020. Reading
+the manual: Event extraction as deﬁnition compre-
+hension. In Proceedings of the Fourth Workshop on
+Structured Prediction for NLP, pages 74–83, Online.
+Association for Computational Linguistics.
+Shumin Deng, Ningyu Zhang, Jiaojian Kang, Yichi
+Zhang, Wei Zhang, and Huajun Chen. 2020. Meta-
+learning with dynamic-memory-based prototypical
+network for few-shot event detection. WSDM.
+Xinya Du and Claire Cardie. 2020.
+Event extrac-
+tion by answering (almost) natural questions.
+In
+Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 671–683, Online. Association for Computa-
+tional Linguistics.
+Xinya Du, Alexander M. Rush, and Claire Cardie.
+2021. Grit: Generative role-ﬁller transformers for
+document-level event entity extraction.
+Seth Ebner, Patrick Xia, Ryan Culkin, Kyle Rawlins,
+and Benjamin Van Durme. 2020. Multi-sentence ar-
+gument linking. In Proceedings of the 58th Annual
+Meeting of the Association for Computational Lin-
+guistics, pages 8057–8077, Online. Association for
+Computational Linguistics.
+Rui Feng, Jie Yuan, and Chao Zhang. 2020. Probing
+and ﬁne-tuning reading comprehension models for
+few-shot event extraction. In ArXiv.
+Matthew Gerber and Joyce Chai. 2010. Beyond Nom-
+Bank: A study of implicit arguments for nominal
+predicates. In Proceedings of the 48th Annual Meet-
+ing of the Association for Computational Linguis-
+tics, pages 1583–1592, Uppsala, Sweden. Associa-
+tion for Computational Linguistics.
+Ralph Grishman and Beth Sundheim. 1996. Message
+Understanding Conference- 6: A brief history. In
+COLING 1996 Volume 1: The 16th International
+Conference on Computational Linguistics.
+Yutai Hou, Wanxiang Che, Yongkui Lai, Zhihan Zhou,
+Yijia Liu, Han Liu, and Ting Liu. 2020. Few-shot
+slot tagging with collapsed dependency transfer and
+label-enhanced task-adaptive projection network. In
+Proceedings of the 58th Annual Meeting of the Asso-
+ciation for Computational Linguistics, pages 1381–
+1393, Online. Association for Computational Lin-
+guistics.
+Lifu Huang, Heng Ji, Kyunghyun Cho, Ido Dagan, Se-
+bastian Riedel, and Clare Voss. 2018.
+Zero-shot
+transfer learning for event extraction. In Proceed-
+ings of the 56th Annual Meeting of the Association
+for Computational Linguistics (Volume 1: Long Pa-
+pers), pages 2160–2170, Melbourne, Australia. As-
+sociation for Computational Linguistics.
+Heng Ji and Ralph Grishman. 2008. Reﬁning event ex-
+traction through cross-document inference. In Pro-
+ceedings of ACL-08: HLT, pages 254–262, Colum-
+bus, Ohio. Association for Computational Linguis-
+tics.
+Carol C Kuhlthau. 1991. Inside the search process: In-
+formation seeking from the user’s perspective. Jour-
+nal of the American society for information science,
+42(5):361–371.
+Viet Dac Lai, Thien Huu Nguyen, and Franck Der-
+noncourt. 2020. Extensively matching for few-shot
+learning event detection. In Proceedings of the First
+Joint Workshop on Narrative Understanding, Story-
+lines, and Events, pages 38–45, Online. Association
+for Computational Linguistics.
+Mike
+Lewis,
+Yinhan
+Liu,
+Naman
+Goyal,
+Mar-
+jan Ghazvininejad, Abdelrahman Mohamed, Omer
+Levy, Veselin Stoyanov, and Luke Zettlemoyer.
+2020. BART: Denoising sequence-to-sequence pre-
+training for natural language generation, translation,
+and comprehension. In Proceedings of the 58th An-
+nual Meeting of the Association for Computational
+Linguistics, pages 7871–7880, Online. Association
+for Computational Linguistics.
+
+
+=== PDF PAGE 11 ===
+Manling Li, Ying Lin, Tuan Manh Lai, Xiaoman Pan,
+Haoyang Wen, Sha Li, Zhenhailong Wang, Pengfei
+Yu, Lifu Huang, Di Lu, Qingyun Wang, Haoran
+Zhang, Qi Zeng, Chi Han, Zixuan Zhang, Yujia Qin,
+Xiaodan Hu, Nikolaus Parulian, Daniel Campos,
+Heng Ji, Brian Chen, Xudong Lin, Alireza Zareian,
+Amith Ananthram, Emily Allaway, Shih-Fu Chang,
+Kathleen McKeown, Yixiang Yao, Yifan Wang,
+Michael Spector, Mitchell DeHaven, Daniel Napier-
+ski, Marjorie Freedman, Pedro Szekely, Haidong
+Zhu, Ram Nevatia, Yang Bai, Yifan Wang, Ali
+Sadeghian, Haodi Ma, and Daisy Zhe Wang. 2020.
+Gaia at sm-kbp 2020 - a dockerlized multi-media
+multi-lingual knowledge extraction, clustering, tem-
+poral tracking and hypothesis generation system. In
+Proc. Text Analysis Conference (TAC2020).
+Ying Lin, Heng Ji, Fei Huang, and Lingfei Wu. 2020.
+A joint neural model for information extraction with
+global features. In Proceedings of the 58th Annual
+Meeting of the Association for Computational Lin-
+guistics, pages 7999–8009, Online. Association for
+Computational Linguistics.
+Jens-Erik Mai. 2016. Looking for information: A sur-
+vey of research on information seeking, needs, and
+behavior. Emerald Group Publishing.
+Yu Meng, Yunyi Zhang, Jiaxin Huang, Chenyan Xiong,
+Heng Ji, Chao Zhang, and Jiawei Han. 2020. Text
+classiﬁcation using label names only: A language
+model self-training approach. In Proceedings of the
+2020 Conference on Empirical Methods in Natural
+Language Processing (EMNLP), pages 9006–9017,
+Online. Association for Computational Linguistics.
+Tatjana Moor, Michael Roth, and Anette Frank. 2013.
+Predicate-speciﬁc annotations for implicit role bind-
+ing: Corpus annotation, data analysis and evalua-
+tion experiments. In Proceedings of the 10th Inter-
+national Conference on Computational Semantics
+(IWCS 2013) – Short Papers, pages 369–375, Pots-
+dam, Germany. Association for Computational Lin-
+guistics.
+Haoruo Peng, Yangqiu Song, and Dan Roth. 2016.
+Event detection and co-reference with minimal su-
+pervision. In Proceedings of the 2016 Conference
+on Empirical Methods in Natural Language Process-
+ing, pages 392–402, Austin, Texas. Association for
+Computational Linguistics.
+Colin Raffel, Noam Shazeer, Adam Roberts, Katherine
+Lee, Sharan Narang, Michael Matena, Yanqi Zhou,
+W. Li, and Peter J. Liu. 2020. Exploring the limits
+of transfer learning with a uniﬁed text-to-text trans-
+former. J. Mach. Learn. Res., 21:140:1–140:67.
+Josef Ruppenhofer, Caroline Sporleder, Roser Morante,
+Collin Baker, and Martha Palmer. 2010. SemEval-
+2010 task 10: Linking events and their participants
+in discourse. In Proceedings of the 5th International
+Workshop on Semantic Evaluation, pages 45–50, Up-
+psala, Sweden. Association for Computational Lin-
+guistics.
+Peng Shi and Jimmy Lin. 2019. Simple bert models for
+relation extraction and semantic role labeling.
+Vered Shwartz, Peter West, Ronan Le Bras, Chandra
+Bhagavatula, and Yejin Choi. 2020. Unsupervised
+commonsense question answering with self-talk. In
+Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 4615–4629, Online. Association for Computa-
+tional Linguistics.
+Jake Snell,
+Kevin Swersky,
+and Richard Zemel.
+2017. Prototypical networks for few-shot learning.
+NeurIPS.
+David Wadden, Ulme Wennberg, Yi Luan, and Han-
+naneh Hajishirzi. 2019. Entity, relation, and event
+extraction with contextualized span representations.
+In Proceedings of the 2019 Conference on Empirical
+Methods in Natural Language Processing and the
+9th International Joint Conference on Natural Lan-
+guage Processing (EMNLP-IJCNLP), pages 5784–
+5789, Hong Kong, China. Association for Computa-
+tional Linguistics.
+Sung Whan Yoon, Jun Seo, and Jaekyun Moon.
+2019. Tapnet: Neural network augmented with task-
+adaptive projection for few-shot learning. In ICML.
+Zhisong Zhang, Xiang Kong, Zhengzhong Liu, Xuezhe
+Ma, and Eduard Hovy. 2020. A two-step approach
+for implicit event argument detection. In Proceed-
+ings of the 58th Annual Meeting of the Association
+for Computational Linguistics, pages 7479–7485,
+Online. Association for Computational Linguistics.

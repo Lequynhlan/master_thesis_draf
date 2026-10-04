@@ -1,0 +1,60 @@
+# QUERY-ID: Q1_source_article
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT ?articleId ?sourceName ?publishedAt WHERE {
+  ?article a wfkg:NewsArticle ;
+      wfkg:articleId ?articleId ;
+      wfkg:publishedBy/wfkg:sourceName ?sourceName ;
+      wfkg:publishedAt ?publishedAt ;
+      wfkg:reports <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12> .
+}
+ORDER BY ?publishedAt
+
+# QUERY-ID: Q2_dividend_event
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT ?eventType ?canonicalKey ?availableAt ?effectiveTradingDate WHERE {
+  <https://example.org/wfkg/v1#article_vnba_hdb_dividend_2026_10_01>
+      wfkg:reports ?event .
+  ?event a wfkg:Event ;
+      wfkg:eventType ?eventType ;
+      wfkg:canonicalKey ?canonicalKey ;
+      wfkg:availableAt ?availableAt ;
+      wfkg:effectiveTradingDate ?effectiveTradingDate .
+}
+
+# QUERY-ID: Q3_issuer_ticker_and_assertion
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT ?companyName ?ticker ?description WHERE {
+  <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12>
+      wfkg:involvesCompany ?company .
+  ?company wfkg:fullName ?companyName ; wfkg:hasStock/wfkg:tickerSymbol ?ticker .
+  <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12>
+      wfkg:description ?description .
+}
+
+# QUERY-ID: Q4_evidence_count
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT (COUNT(DISTINCT ?evidence) AS ?count) WHERE {
+  ?evidence a wfkg:Evidence ;
+      wfkg:extractedFrom <https://example.org/wfkg/v1#article_vnba_hdb_dividend_2026_10_01> ;
+      wfkg:supports <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12> .
+}
+
+# QUERY-ID: Q5_candidate_count
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT (COUNT(DISTINCT ?candidate) AS ?count) WHERE {
+  OPTIONAL {
+    <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12>
+        wfkg:hasEventStockCandidate ?candidate .
+    ?candidate a wfkg:EventStockCandidate .
+  }
+}
+
+# QUERY-ID: Q6_reaction_count
+PREFIX wfkg: <https://example.org/wfkg/v1#>
+SELECT (COUNT(DISTINCT ?reaction) AS ?count) WHERE {
+  OPTIONAL {
+    <https://example.org/wfkg/v1#event_hdb_stock_dividend_record_2026_10_12>
+        wfkg:hasEventStockCandidate/wfkg:hasReaction ?reaction .
+    ?reaction a wfkg:EventStockReaction .
+  }
+}

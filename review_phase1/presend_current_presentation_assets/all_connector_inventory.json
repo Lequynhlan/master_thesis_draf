@@ -1,0 +1,691 @@
+[
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-12",
+    "source": "NewsArticle",
+    "target": "NewsSource",
+    "labels": [
+      "",
+      "wfkg:publishedBy"
+    ],
+    "rdf_properties": [
+      "publishedBy"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-14",
+    "source": "Evidence",
+    "target": "NewsArticle",
+    "labels": [
+      "",
+      "wfkg:extractedFrom"
+    ],
+    "rdf_properties": [
+      "extractedFrom"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-16",
+    "source": "Evidence",
+    "target": "Event",
+    "labels": [
+      "",
+      "wfkg:supports"
+    ],
+    "rdf_properties": [
+      "supports"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-19",
+    "source": "NewsArticle",
+    "target": "Event",
+    "labels": [
+      "",
+      "wfkg:reports"
+    ],
+    "rdf_properties": [
+      "reports"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-21",
+    "source": "Event",
+    "target": "CorporateLeader",
+    "labels": [
+      "",
+      "wfkg: involvesLeader"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-23",
+    "source": "Event",
+    "target": "Company (công ty con)",
+    "labels": [
+      "",
+      "wfkg: involvesCompany"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-25",
+    "source": "Event",
+    "target": "Industry",
+    "labels": [
+      "",
+      "wfkg:relatedToIndustry"
+    ],
+    "rdf_properties": [
+      "relatedToIndustry"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-27",
+    "source": "Event",
+    "target": "GovernmentOrganization",
+    "labels": [
+      "",
+      "wfkg:issuedBy"
+    ],
+    "rdf_properties": [
+      "issuedBy"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-29",
+    "source": "Industry",
+    "target": "IndustryGroup",
+    "labels": [
+      "",
+      "wfkg:belongsToGroup"
+    ],
+    "rdf_properties": [
+      "belongsToGroup"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-31",
+    "source": "Company (công ty con)",
+    "target": "CompanyAlias",
+    "labels": [
+      "",
+      "wfkg:hasAlias"
+    ],
+    "rdf_properties": [
+      "hasAlias"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-35",
+    "source": "Company (công ty con)",
+    "target": "FinancialMetric",
+    "labels": [
+      "",
+      "wfkg:hasFinancialMetric"
+    ],
+    "rdf_properties": [
+      "hasFinancialMetric"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-39",
+    "source": "Event",
+    "target": "EventStockCandidate",
+    "labels": [
+      "",
+      "wfkg: hasEventStockCandidate"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-42",
+    "source": "EventStockCandidate",
+    "target": "Stock",
+    "labels": [
+      "",
+      "wfkg:candidateStock"
+    ],
+    "rdf_properties": [
+      "candidateStock"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-44",
+    "source": "Company (công ty con)",
+    "target": "Stock",
+    "labels": [
+      "",
+      "wfkg:hasStock"
+    ],
+    "rdf_properties": [
+      "hasStock"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-50",
+    "source": "MarketIndex",
+    "target": "MarketIndexObservation",
+    "labels": [
+      "",
+      "wfkg:hasIndexObservation"
+    ],
+    "rdf_properties": [
+      "hasIndexObservation"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-54",
+    "source": "Event",
+    "target": "FinancialMetric",
+    "labels": [
+      "",
+      "wfkg: referencesMetric"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-56",
+    "source": "Company (công ty con)",
+    "target": "Industry",
+    "labels": [
+      "",
+      "wfkg:belongsToIndustry"
+    ],
+    "rdf_properties": [
+      "belongsToIndustry"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-59",
+    "source": "Stock",
+    "target": "MarketObservation",
+    "labels": [
+      "",
+      "wfkg: hasMarketObservation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-61",
+    "source": "EventStockReaction",
+    "target": "MarketObservation",
+    "labels": [
+      "",
+      "wfkg: derivedFromObservation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-63",
+    "source": "EventStockReaction",
+    "target": "MarketIndex",
+    "labels": [
+      "",
+      "wfkg: benchmarkIndex"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-65",
+    "source": "EventStockReaction",
+    "target": "MarketIndexObservation",
+    "labels": [
+      "",
+      "wfkg: derivedFromIndexObservation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "R3vZ3JpwLF3V6DxzlldD-70",
+    "source": "Bank",
+    "target": "Company (công ty con)",
+    "labels": [
+      "",
+      "rdfs:subClassOf"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "AeGlUdh9yx_V7kRAxIzU-2",
+    "source": "EventStockCandidate",
+    "target": "EventStockReaction",
+    "labels": [
+      "",
+      "wfkg:hasReaction"
+    ],
+    "rdf_properties": [
+      "hasReaction"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "AeGlUdh9yx_V7kRAxIzU-4",
+    "source": "EventStockReaction",
+    "target": "EventStockCandidate",
+    "labels": [
+      "",
+      "wfkg:onCandidate"
+    ],
+    "rdf_properties": [
+      "onCandidate"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-3",
+    "source": "Company (công ty mẹ)",
+    "target": "SubsidiaryRelation",
+    "labels": [
+      "",
+      "wfkg:hasSubsidiaryRelation"
+    ],
+    "rdf_properties": [
+      "hasSubsidiaryRelation"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-6",
+    "source": "SubsidiaryRelation",
+    "target": "Company (công ty mẹ)",
+    "labels": [
+      "",
+      "wfkg:parentCompany"
+    ],
+    "rdf_properties": [
+      "parentCompany"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-9",
+    "source": "SubsidiaryRelation",
+    "target": "Company (công ty con)",
+    "labels": [
+      "",
+      "wfkg:subsidiaryCompany"
+    ],
+    "rdf_properties": [
+      "subsidiaryCompany"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-11",
+    "source": "CorporateLeader",
+    "target": "LeadershipPosition",
+    "labels": [
+      "",
+      "",
+      "wfkg:hasLeadershipPosition"
+    ],
+    "rdf_properties": [
+      "hasLeadershipPosition"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-12",
+    "source": "LeadershipPosition",
+    "target": "Company (công ty con)",
+    "labels": [
+      "",
+      "wfkg: positionAtCompany"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-17",
+    "source": "Stock",
+    "target": "IndexMembership",
+    "labels": [
+      "",
+      "wfkg: hasIndexMembership"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-19",
+    "source": "IndexMembership",
+    "target": "MarketIndex",
+    "labels": [
+      "",
+      "wfkg:memberIndex"
+    ],
+    "rdf_properties": [
+      "memberIndex"
+    ]
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-21",
+    "source": "Bank",
+    "target": "IndustryExposure",
+    "labels": [
+      "",
+      "wfkg: hasIndustryExposure"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "00-WFKG Ontology",
+    "edge": "2411blnfpnkDnIr3tklR-22",
+    "source": "IndustryExposure",
+    "target": "Industry",
+    "labels": [
+      "",
+      "wfkg:  exposureIndustry"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-34",
+    "source": "TRÍCH XUẤT CÓ BẰNG CHỨNG  NewsArticle → Evidence → Event",
+    "target": "CHUẨN HÓA THỰC THỂ  Company / Bank / Stock / Industry",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-35",
+    "source": "CHUẨN HÓA THỰC THỂ  Company / Bank / Stock / Industry",
+    "target": "SINH EVENT–STOCK CANDIDATE  Event → EventStockCandidate → Stock Bốn impactType; input.availableAt ≤ inferenceCutoff",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-36",
+    "source": "SINH EVENT–STOCK CANDIDATE  Event → EventStockCandidate → Stock Bốn impactType; input.availableAt ≤ inferenceCutoff",
+    "target": "GHÉP QUAN SÁT THỊ TRƯỜNG  Window đã đóng; đủ Stock + benchmark observation.availableAt ≤ Reaction.availableAt Không giới hạn giá hậu nghiệm bởi inferenceCutoff",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-37",
+    "source": "GHÉP QUAN SÁT THỊ TRƯỜNG  Window đã đóng; đủ Stock + benchmark observation.availableAt ≤ Reaction.availableAt Không giới hạn giá hậu nghiệm bởi inferenceCutoff",
+    "target": "TÍNH VÀ GIẢI THÍCH EVENT–STOCK REACTION EventStockCandidate → EventStockReaction AR/CAR + marketReactionDirection + impactScore + reactionWeight + provenance",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-38",
+    "source": "TIN TỨC TIẾNG VIỆT  Bài báo + nguồn + đoạn bằng chứng",
+    "target": "TRÍCH XUẤT CÓ BẰNG CHỨNG  NewsArticle → Evidence → Event",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-39",
+    "source": "DỮ LIỆU THỊ TRƯỜNG  Giá cổ phiếu + VN30 theo phiên",
+    "target": "GHÉP QUAN SÁT THỊ TRƯỜNG  Window đã đóng; đủ Stock + benchmark observation.availableAt ≤ Reaction.availableAt Không giới hạn giá hậu nghiệm bởi inferenceCutoff",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-40",
+    "source": "TỪ ĐIỂN THỰC THỂ  Ngân hàng + mã CK + alias + ngành",
+    "target": "CHUẨN HÓA THỰC THỂ  Company / Bank / Stock / Industry",
+    "labels": [
+      ""
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "01-Tổng quan đề tài",
+    "edge": "mZ28CVNe_N0uJWWchiWa-42",
+    "source": "TÍNH VÀ GIẢI THÍCH EVENT–STOCK REACTION EventStockCandidate → EventStockReaction AR/CAR + marketReactionDirection + impactScore + reactionWeight + provenance",
+    "target": "ĐẦU RA CỦA PIPELINE wfkg:EventStockCandidate • candidateId, impactType, relationPath, expectedDirection • sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence • confidenceScore, relationStrength, candidateScore • inferenceCutoff, methodVersion, candidateStatus wfkg:EventStockReaction • chỉ tạo sau khi đủ market data, benchmark và event window • AR/CAR, impactScore, reactionWeight, signedWeight • provenance",
+    "labels": [
+      "Kết quả có thể truy vết"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "02-Tin tức đến sự kiện",
+    "edge": "_DqDvpdGpuATSC4ekHHC-8",
+    "source": "NGUỒN TIN  NewsSource",
+    "target": "BÀI BÁO  NewsArticle",
+    "labels": [
+      "Article publishedBy Source"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "02-Tin tức đến sự kiện",
+    "edge": "_DqDvpdGpuATSC4ekHHC-9",
+    "source": "BÀI BÁO  NewsArticle",
+    "target": "ĐOẠN BẰNG CHỨNG  Evidence",
+    "labels": [
+      "Evidence extractedFrom Article"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "02-Tin tức đến sự kiện",
+    "edge": "_DqDvpdGpuATSC4ekHHC-10",
+    "source": "ĐOẠN BẰNG CHỨNG  Evidence",
+    "target": "SỰ KIỆN  Event",
+    "labels": [
+      "Evidence supports Event"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "02-Tin tức đến sự kiện",
+    "edge": "_DqDvpdGpuATSC4ekHHC-11",
+    "source": "SỰ KIỆN  Event",
+    "target": "THỰC THỂ LIÊN QUAN  Company / Leader Industry / GovOrg",
+    "labels": [
+      "involves / relatedToIndustry Event —issuedBy→ GovOrg"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-8",
+    "source": "“Techcombank” “Ngân hàng Kỹ thương”",
+    "target": "DOANH NGHIỆP CHUẨN  Company: Techcombank",
+    "labels": [
+      "",
+      "entity linking (luồng xử lý)"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-10",
+    "source": "DOANH NGHIỆP CHUẨN  Company: Techcombank",
+    "target": "MÃ GIAO DỊCH  Stock: TCB / HOSE",
+    "labels": [
+      "",
+      "hasStock"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-17",
+    "source": "DOANH NGHIỆP  Company / Bank",
+    "target": "NGÀNH  Industry",
+    "labels": [
+      "",
+      "belongsToIndustry"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-19",
+    "source": "NGÀNH  Industry",
+    "target": "NHÓM NGÀNH  IndustryGroup",
+    "labels": [
+      "",
+      "belongsToGroup"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-34",
+    "source": "QUAN HỆ CÔNG TY CON  SubsidiaryRelation",
+    "target": "CÔNG TY MẸ  Company / Bank",
+    "labels": [
+      "",
+      "parentCompany"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-26",
+    "source": "LÃNH ĐẠO  CorporateLeader",
+    "target": "NHIỆM KỲ LÃNH ĐẠO  LeadershipPosition  positionTitle",
+    "labels": [
+      "",
+      "hasLeadershipPosition"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-28",
+    "source": "NHIỆM KỲ LÃNH ĐẠO  LeadershipPosition  positionTitle",
+    "target": "DOANH NGHIỆP  Company",
+    "labels": [
+      "",
+      "positionAtCompany"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "A1VN0XJZ2zYTKMQ9EYZ1-32",
+    "source": "CÔNG TY MẸ  Company / Bank",
+    "target": "QUAN HỆ CÔNG TY CON  SubsidiaryRelation",
+    "labels": [
+      "",
+      "hasSubsidiaryRelation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "03-Chuẩn hóa thực thể",
+    "edge": "baseline-subsidiary-company-edge",
+    "source": "QUAN HỆ CÔNG TY CON  SubsidiaryRelation",
+    "target": "CÔNG TY CON  Company",
+    "labels": [
+      "",
+      "subsidiaryCompany"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-6",
+    "source": "SỰ KIỆN  Event",
+    "target": "ỨNG VIÊN EVENT–STOCK |  EventStockCandidate",
+    "labels": [
+      "hasEventStockCandidate",
+      "hasEventStockCandidate"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-8",
+    "source": "ỨNG VIÊN EVENT–STOCK |  EventStockCandidate",
+    "target": "CỔ PHIẾU  Stock",
+    "labels": [
+      "candidateStock",
+      "candidateStock"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-13",
+    "source": "KẾT QUẢ QUAN SÁT |  EventStockReaction",
+    "target": "QUAN SÁT CỔ PHIẾU adjustedClose, volume, returnValue, availableAt, sourceReference",
+    "labels": [
+      "derivedFromObservation",
+      "derivedFromObservation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-15",
+    "source": "KẾT QUẢ QUAN SÁT |  EventStockReaction",
+    "target": "CHỈ SỐ ĐỐI CHỨNG  MarketIndex: VN30",
+    "labels": [
+      "benchmarkIndex [F]",
+      "benchmarkIndex [F]"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-17",
+    "source": "KẾT QUẢ QUAN SÁT |  EventStockReaction",
+    "target": "QUAN SÁT CHỈ SỐ adjustedClose, returnValue, availableAt, sourceReference",
+    "labels": [
+      "derivedFromIndexObservation",
+      "derivedFromIndexObservation"
+    ],
+    "rdf_properties": []
+  },
+  {
+    "tab": "04-Event-Stock trực tiếp",
+    "edge": "izqzSf6VaLfidQc68PAD-23",
+    "source": "ỨNG VIÊN EVENT–STOCK |  EventStockCandidate",
+    "target": "KẾT QUẢ QUAN SÁT |  EventStockReaction",
+    "labels": [
+      "",
+      "hasReaction"
+    ],
+    "rdf_properties": []
+  }
+]

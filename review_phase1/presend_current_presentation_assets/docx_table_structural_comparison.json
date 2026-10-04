@@ -1,0 +1,1992 @@
+[
+  {
+    "where": "T04R02",
+    "owner": "NewsSource",
+    "property": "sourceId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T04R03",
+    "owner": "NewsSource",
+    "property": "sourceName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T04R04",
+    "owner": "NewsSource",
+    "property": "sourceType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T04R05",
+    "owner": "NewsSource",
+    "property": "reliabilityScore",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R02",
+    "owner": "NewsArticle",
+    "property": "articleId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R03",
+    "owner": "NewsArticle",
+    "property": "title",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R04",
+    "owner": "NewsArticle",
+    "property": "url",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R05",
+    "owner": "NewsArticle",
+    "property": "publishedAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R06",
+    "owner": "NewsArticle",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R07",
+    "owner": "NewsArticle",
+    "property": "publishedBy",
+    "printed_type": "NewsSource",
+    "owl_ranges": [
+      "NewsSource"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T05R08",
+    "owner": "NewsArticle",
+    "property": "reports",
+    "printed_type": "Event",
+    "owl_ranges": [
+      "Event"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R02",
+    "owner": "Evidence",
+    "property": "evidenceId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R03",
+    "owner": "Evidence",
+    "property": "evidenceText",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R04",
+    "owner": "Evidence",
+    "property": "startOffset",
+    "printed_type": "xsd:integer",
+    "owl_ranges": [
+      "integer"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R05",
+    "owner": "Evidence",
+    "property": "endOffset",
+    "printed_type": "xsd:integer",
+    "owl_ranges": [
+      "integer"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R06",
+    "owner": "Evidence",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R07",
+    "owner": "Evidence",
+    "property": "extractedFrom",
+    "printed_type": "NewsArticle",
+    "owl_ranges": [
+      "NewsArticle"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T06R08",
+    "owner": "Evidence",
+    "property": "supports",
+    "printed_type": "Event",
+    "owl_ranges": [
+      "Event"
+    ],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R02",
+    "owner": "Event",
+    "property": "eventId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R03",
+    "owner": "Event",
+    "property": "canonicalKey",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R04",
+    "owner": "Event",
+    "property": "eventType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R05",
+    "owner": "Event",
+    "property": "description",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R06",
+    "owner": "Event",
+    "property": "occurredAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R07",
+    "owner": "Event",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R08",
+    "owner": "Event",
+    "property": "effectiveTradingDate",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R09",
+    "owner": "Event",
+    "property": "severityScore",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R10",
+    "owner": "Event",
+    "property": "involves",
+    "printed_type": "Thực thể tài chính",
+    "owl_ranges": [],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R11",
+    "owner": "Event",
+    "property": "involvesCompany",
+    "printed_type": "Company",
+    "owl_ranges": [
+      "Company"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R12",
+    "owner": "Event",
+    "property": "involvesLeader",
+    "printed_type": "CorporateLeader",
+    "owl_ranges": [
+      "CorporateLeader"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R13",
+    "owner": "Event",
+    "property": "relatedToIndustry",
+    "printed_type": "Industry",
+    "owl_ranges": [
+      "Industry"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R14",
+    "owner": "Event",
+    "property": "issuedBy",
+    "printed_type": "GovernmentOrganization",
+    "owl_ranges": [
+      "GovernmentOrganization"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R15",
+    "owner": "Event",
+    "property": "referencesMetric",
+    "printed_type": "FinancialMetric",
+    "owl_ranges": [
+      "FinancialMetric"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R16",
+    "owner": "Event",
+    "property": "relatedEvent",
+    "printed_type": "Event",
+    "owl_ranges": [
+      "Event"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R17",
+    "owner": "Event",
+    "property": "clarifies",
+    "printed_type": "Event",
+    "owl_ranges": [],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R18",
+    "owner": "Event",
+    "property": "updates",
+    "printed_type": "Event",
+    "owl_ranges": [],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R19",
+    "owner": "Event",
+    "property": "contradicts",
+    "printed_type": "Event",
+    "owl_ranges": [],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R20",
+    "owner": "Event",
+    "property": "supersedes",
+    "printed_type": "Event",
+    "owl_ranges": [],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T07R21",
+    "owner": "Event",
+    "property": "hasEventStockCandidate",
+    "printed_type": "EventStockCandidate",
+    "owl_ranges": [
+      "EventStockCandidate"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T08R02",
+    "owner": "GovernmentOrganization",
+    "property": "organizationId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T08R03",
+    "owner": "GovernmentOrganization",
+    "property": "organizationName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T09R02",
+    "owner": "CorporateLeader",
+    "property": "personId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T09R03",
+    "owner": "CorporateLeader",
+    "property": "fullName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T09R04",
+    "owner": "CorporateLeader",
+    "property": "hasLeadershipPosition",
+    "printed_type": "LeadershipPosition",
+    "owl_ranges": [
+      "LeadershipPosition"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R02",
+    "owner": "Company",
+    "property": "companyId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R03",
+    "owner": "Company",
+    "property": "fullName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R04",
+    "owner": "Company",
+    "property": "shortName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R05",
+    "owner": "Company",
+    "property": "companyType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R06",
+    "owner": "Company",
+    "property": "hasAlias",
+    "printed_type": "CompanyAlias",
+    "owl_ranges": [
+      "CompanyAlias"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R07",
+    "owner": "Company",
+    "property": "hasStock",
+    "printed_type": "Stock",
+    "owl_ranges": [
+      "Stock"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R08",
+    "owner": "Company",
+    "property": "belongsToIndustry",
+    "printed_type": "Industry",
+    "owl_ranges": [
+      "Industry"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R09",
+    "owner": "Company",
+    "property": "hasFinancialMetric",
+    "printed_type": "FinancialMetric",
+    "owl_ranges": [
+      "FinancialMetric"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T10R10",
+    "owner": "Company",
+    "property": "hasSubsidiaryRelation",
+    "printed_type": "SubsidiaryRelation",
+    "owl_ranges": [
+      "SubsidiaryRelation"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T11R02",
+    "owner": "Bank",
+    "property": "hasIndustryExposure",
+    "printed_type": "IndustryExposure",
+    "owl_ranges": [
+      "IndustryExposure"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T12R02",
+    "owner": "CompanyAlias",
+    "property": "aliasId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T12R03",
+    "owner": "CompanyAlias",
+    "property": "aliasName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T12R04",
+    "owner": "CompanyAlias",
+    "property": "aliasType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T13R02",
+    "owner": "Stock",
+    "property": "stockId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T13R03",
+    "owner": "Stock",
+    "property": "tickerSymbol",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T13R04",
+    "owner": "Stock",
+    "property": "exchange",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T13R05",
+    "owner": "Stock",
+    "property": "hasIndexMembership",
+    "printed_type": "IndexMembership",
+    "owl_ranges": [
+      "IndexMembership"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T13R06",
+    "owner": "Stock",
+    "property": "hasMarketObservation",
+    "printed_type": "MarketObservation",
+    "owl_ranges": [
+      "MarketObservation"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T14R02",
+    "owner": "Industry",
+    "property": "industryId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T14R03",
+    "owner": "Industry",
+    "property": "industryCode",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T14R04",
+    "owner": "Industry",
+    "property": "industryName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T14R05",
+    "owner": "Industry",
+    "property": "taxonomyName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T14R06",
+    "owner": "Industry",
+    "property": "belongsToGroup",
+    "printed_type": "IndustryGroup",
+    "owl_ranges": [
+      "IndustryGroup"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T15R02",
+    "owner": "IndustryGroup",
+    "property": "industryGroupId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T15R03",
+    "owner": "IndustryGroup",
+    "property": "industryGroupName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T15R04",
+    "owner": "IndustryGroup",
+    "property": "taxonomyName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R02",
+    "owner": "FinancialMetric",
+    "property": "metricId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R03",
+    "owner": "FinancialMetric",
+    "property": "metricType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R04",
+    "owner": "FinancialMetric",
+    "property": "metricValue",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R05",
+    "owner": "FinancialMetric",
+    "property": "unit",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R06",
+    "owner": "FinancialMetric",
+    "property": "periodStart",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R07",
+    "owner": "FinancialMetric",
+    "property": "periodEnd",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R08",
+    "owner": "FinancialMetric",
+    "property": "periodType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R09",
+    "owner": "FinancialMetric",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T16R10",
+    "owner": "FinancialMetric",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R02",
+    "owner": "MarketObservation",
+    "property": "observationId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R03",
+    "owner": "MarketObservation",
+    "property": "tradingDate",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R04",
+    "owner": "MarketObservation",
+    "property": "adjustedClose",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R05",
+    "owner": "MarketObservation",
+    "property": "volume",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R06",
+    "owner": "MarketObservation",
+    "property": "returnValue",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R07",
+    "owner": "MarketObservation",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T17R08",
+    "owner": "MarketObservation",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T18R02",
+    "owner": "MarketIndex",
+    "property": "indexId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T18R03",
+    "owner": "MarketIndex",
+    "property": "indexCode",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T18R04",
+    "owner": "MarketIndex",
+    "property": "indexName",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T18R05",
+    "owner": "MarketIndex",
+    "property": "hasIndexObservation",
+    "printed_type": "MarketIndexObservation",
+    "owl_ranges": [
+      "MarketIndexObservation"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R02",
+    "owner": "MarketIndexObservation",
+    "property": "observationId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R03",
+    "owner": "MarketIndexObservation",
+    "property": "tradingDate",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R04",
+    "owner": "MarketIndexObservation",
+    "property": "returnValue",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R05",
+    "owner": "MarketIndexObservation",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R06",
+    "owner": "MarketIndexObservation",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T19R07",
+    "owner": "MarketIndexObservation",
+    "property": "adjustedClose",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R02",
+    "owner": "EventStockCandidate",
+    "property": "candidateId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R03",
+    "owner": "EventStockCandidate",
+    "property": "impactType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R04",
+    "owner": "EventStockCandidate",
+    "property": "relationPath",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R05",
+    "owner": "EventStockCandidate",
+    "property": "candidateReason",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R06",
+    "owner": "EventStockCandidate",
+    "property": "expectedDirection",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R07",
+    "owner": "EventStockCandidate",
+    "property": "relationStrength",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R08",
+    "owner": "EventStockCandidate",
+    "property": "confidenceScore",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R09",
+    "owner": "EventStockCandidate",
+    "property": "candidateStatus",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R10",
+    "owner": "EventStockCandidate",
+    "property": "inferenceCutoff",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R11",
+    "owner": "EventStockCandidate",
+    "property": "generatedAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R12",
+    "owner": "EventStockCandidate",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R13",
+    "owner": "EventStockCandidate",
+    "property": "methodVersion",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R14",
+    "owner": "EventStockCandidate",
+    "property": "forEvent",
+    "printed_type": "Event",
+    "owl_ranges": [
+      "Event"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R15",
+    "owner": "EventStockCandidate",
+    "property": "candidateStock",
+    "printed_type": "Stock",
+    "owl_ranges": [
+      "Stock"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R16",
+    "owner": "EventStockCandidate",
+    "property": "hasReaction",
+    "printed_type": "EventStockReaction",
+    "owl_ranges": [
+      "EventStockReaction"
+    ],
+    "printed_cardinality": "0..*",
+    "direct_shacl_cardinality": "0..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R17",
+    "owner": "EventStockCandidate",
+    "property": "sourceConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R18",
+    "owner": "EventStockCandidate",
+    "property": "extractionConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R19",
+    "owner": "EventStockCandidate",
+    "property": "linkingConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R20",
+    "owner": "EventStockCandidate",
+    "property": "relationConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T20R21",
+    "owner": "EventStockCandidate",
+    "property": "candidateScore",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R02",
+    "owner": "EventStockReaction",
+    "property": "reactionId",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R03",
+    "owner": "EventStockReaction",
+    "property": "windowStartOffset",
+    "printed_type": "xsd:integer",
+    "owl_ranges": [
+      "integer"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R04",
+    "owner": "EventStockReaction",
+    "property": "windowEndOffset",
+    "printed_type": "xsd:integer",
+    "owl_ranges": [
+      "integer"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R05",
+    "owner": "EventStockReaction",
+    "property": "abnormalReturn",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R06",
+    "owner": "EventStockReaction",
+    "property": "cumulativeAbnormalReturn",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R07",
+    "owner": "EventStockReaction",
+    "property": "marketReactionDirection",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R08",
+    "owner": "EventStockReaction",
+    "property": "impactScore",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R09",
+    "owner": "EventStockReaction",
+    "property": "reactionWeight",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R10",
+    "owner": "EventStockReaction",
+    "property": "signedWeight",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R11",
+    "owner": "EventStockReaction",
+    "property": "methodVersion",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R12",
+    "owner": "EventStockReaction",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R13",
+    "owner": "EventStockReaction",
+    "property": "onCandidate",
+    "printed_type": "EventStockCandidate",
+    "owl_ranges": [
+      "EventStockCandidate"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R14",
+    "owner": "EventStockReaction",
+    "property": "benchmarkIndex",
+    "printed_type": "MarketIndex",
+    "owl_ranges": [
+      "MarketIndex"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R15",
+    "owner": "EventStockReaction",
+    "property": "derivedFromObservation",
+    "printed_type": "MarketObservation",
+    "owl_ranges": [
+      "MarketObservation"
+    ],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T21R16",
+    "owner": "EventStockReaction",
+    "property": "derivedFromIndexObservation",
+    "printed_type": "MarketIndexObservation",
+    "owl_ranges": [
+      "MarketIndexObservation"
+    ],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R02",
+    "owner": "LeadershipPosition",
+    "property": "positionTitle",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R03",
+    "owner": "LeadershipPosition",
+    "property": "validFrom",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R04",
+    "owner": "LeadershipPosition",
+    "property": "validTo",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R05",
+    "owner": "LeadershipPosition",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R06",
+    "owner": "LeadershipPosition",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R07",
+    "owner": "LeadershipPosition",
+    "property": "relationConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R08",
+    "owner": "LeadershipPosition",
+    "property": "dataQualityFlag",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R09",
+    "owner": "LeadershipPosition",
+    "property": "positionHolder",
+    "printed_type": "CorporateLeader",
+    "owl_ranges": [
+      "CorporateLeader"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T22R10",
+    "owner": "LeadershipPosition",
+    "property": "positionAtCompany",
+    "printed_type": "Company",
+    "owl_ranges": [
+      "Company"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R02",
+    "owner": "SubsidiaryRelation",
+    "property": "validFrom",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R03",
+    "owner": "SubsidiaryRelation",
+    "property": "validTo",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R04",
+    "owner": "SubsidiaryRelation",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R05",
+    "owner": "SubsidiaryRelation",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R06",
+    "owner": "SubsidiaryRelation",
+    "property": "relationConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R07",
+    "owner": "SubsidiaryRelation",
+    "property": "dataQualityFlag",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R08",
+    "owner": "SubsidiaryRelation",
+    "property": "subsidiaryCompany",
+    "printed_type": "Company",
+    "owl_ranges": [
+      "Company"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T23R09",
+    "owner": "SubsidiaryRelation",
+    "property": "parentCompany",
+    "printed_type": "Company",
+    "owl_ranges": [
+      "Company"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R02",
+    "owner": "IndexMembership",
+    "property": "validFrom",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R03",
+    "owner": "IndexMembership",
+    "property": "validTo",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R04",
+    "owner": "IndexMembership",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R05",
+    "owner": "IndexMembership",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R06",
+    "owner": "IndexMembership",
+    "property": "relationConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R07",
+    "owner": "IndexMembership",
+    "property": "dataQualityFlag",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R08",
+    "owner": "IndexMembership",
+    "property": "memberStock",
+    "printed_type": "Stock",
+    "owl_ranges": [
+      "Stock"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T24R09",
+    "owner": "IndexMembership",
+    "property": "memberIndex",
+    "printed_type": "MarketIndex",
+    "owl_ranges": [
+      "MarketIndex"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R02",
+    "owner": "IndustryExposure",
+    "property": "exposureRatio",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R03",
+    "owner": "IndustryExposure",
+    "property": "exposureStrength",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R04",
+    "owner": "IndustryExposure",
+    "property": "periodEnd",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R05",
+    "owner": "IndustryExposure",
+    "property": "periodType",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R06",
+    "owner": "IndustryExposure",
+    "property": "reportedCategory",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R07",
+    "owner": "IndustryExposure",
+    "property": "validFrom",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R08",
+    "owner": "IndustryExposure",
+    "property": "validTo",
+    "printed_type": "xsd:date",
+    "owl_ranges": [
+      "date"
+    ],
+    "printed_cardinality": "0..1",
+    "direct_shacl_cardinality": "0..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R09",
+    "owner": "IndustryExposure",
+    "property": "availableAt",
+    "printed_type": "xsd:dateTime",
+    "owl_ranges": [
+      "dateTime"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R10",
+    "owner": "IndustryExposure",
+    "property": "sourceReference",
+    "printed_type": "IRI (tài nguyên nguồn)",
+    "owl_ranges": [],
+    "printed_cardinality": "1..*",
+    "direct_shacl_cardinality": "1..*",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R11",
+    "owner": "IndustryExposure",
+    "property": "relationConfidence",
+    "printed_type": "xsd:decimal",
+    "owl_ranges": [
+      "decimal"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R12",
+    "owner": "IndustryExposure",
+    "property": "dataQualityFlag",
+    "printed_type": "xsd:string",
+    "owl_ranges": [
+      "string"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R13",
+    "owner": "IndustryExposure",
+    "property": "exposureBank",
+    "printed_type": "Bank",
+    "owl_ranges": [
+      "Bank"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  },
+  {
+    "where": "T25R14",
+    "owner": "IndustryExposure",
+    "property": "exposureIndustry",
+    "printed_type": "Industry",
+    "owl_ranges": [
+      "Industry"
+    ],
+    "printed_cardinality": "1",
+    "direct_shacl_cardinality": "1..1",
+    "comparison": "PASS"
+  }
+]

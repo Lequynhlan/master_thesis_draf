@@ -1,0 +1,2468 @@
+
+=== PDF PAGE 1 ===
+Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics
+Volume 1: Long Papers, pages 5755 - 5772
+May 22-27, 2022 c⃝2022 Association for Computational Linguistics
+Uniﬁed Structure Generation for Universal Information Extraction
+Yaojie Lu1,4,∗, Qing Liu1,4,∗, Dai Dai3, Xinyan Xiao3, Hongyu Lin1,†,
+Xianpei Han1,2,5, Le Sun1,2,†, Hua Wu3
+1Chinese Information Processing Laboratory
+2State Key Laboratory of Computer Science
+Institute of Software, Chinese Academy of Sciences, Beijing, China
+3Baidu Inc., Beijing, China
+4University of Chinese Academy of Sciences, Beijing, China
+5Beijing Academy of Artiﬁcial Intelligence, Beijing, China
+{yaojie2017,liuqing2020,hongyu,xianpei,sunle}@iscas.ac.cn
+{daidai,xiaoxinyan,wu_hua}@baidu.com
+Abstract
+Information extraction suffers from its varying
+targets, heterogeneous structures, and demand-
+speciﬁc schemas. In this paper, we propose a
+uniﬁed text-to-structure generation framework,
+namely UIE, which can universally model dif-
+ferent IE tasks, adaptively generate targeted
+structures, and collaboratively learn general
+IE abilities from different knowledge sources.
+Speciﬁcally, UIE uniformly encodes different
+extraction structures via a structured extraction
+language, adaptively generates target extrac-
+tions via a schema-based prompt mechanism
+– structural schema instructor, and captures
+the common IE abilities via a large-scale pre-
+trained text-to-structure model. Experiments
+show that UIE achieved the state-of-the-art per-
+formance on 4 IE tasks, 13 datasets, and on
+all supervised, low-resource, and few-shot set-
+tings for a wide range of entity, relation, event
+and sentiment extraction tasks and their uniﬁ-
+cation. These results veriﬁed the effectiveness,
+universality, and transferability of UIE1.
+1
+Introduction
+Information extraction (IE) aims to identify and
+structure user-speciﬁed information from unstruc-
+tured texts (Andersen et al., 1992; Grishman, 2019).
+IE tasks are highly diversiﬁed due to its varying
+targets (entity, relation, event, sentiment, etc.), het-
+erogeneous structures (spans, triplets, records, etc.),
+and demand-speciﬁc schemas (Grishman and Sund-
+heim, 1996; Mitchell et al., 2005; Ji and Grishman,
+2011).
+Currently,
+most
+IE
+approaches
+are
+task-
+specialized, which leads to dedicated architec-
+tures, isolated models, and specialized knowl-
+∗Part of this work was done when Yaojie Lu and Qing
+Liu interned at Baidu.
+†Corresponding authors.
+1https://universal-ie.github.io
+Entity PER: Steve ORG: Apple
+Relation (Work for, Steve, Apple)
+Event (Start-Position: become …）
+Sentiment Positive: excited
+Text
+Unified
+Generation
+Task
+Schema
+Instance
+Entity
+PER: _ ORG:_
+Relation
+(_, Work for, _)
+Event
+Sentiment
+Positive {
+Opinion: _;
+Target: _
+}
+In 1997, Steve was excited to become the CEO of Apple. 
+In 1997, Steve was excited to become the CEO of Apple. 
+Type
+Start
+Position
+employee 
+employer
+…
+Positive
+Opinion
+Target
+(a) Task-specialized IE
+(b) Universal IE
+Work For
+In 1997, Steve was excited to become the CEO of Apple. 
+Start-Position
+PER
+ORG
+In 1997, Steve was excited to become the CEO of Apple. 
+Entity
+Person
+Figure 1: From (a) Task-specialized IE: different tasks,
+different structures, different schemas to (b) Universal
+IE: uniﬁed modeling via structure generation.
+edge sources for different IE task. These task-
+specialized solutions greatly hinder the rapid ar-
+chitecture development, effective knowledge shar-
+ing, and quick cross-domain adaptation of IE sys-
+tems.
+First, it is very complicated to develop
+dedicated architectures for a large amount of IE
+tasks/settings/scenarios. Second, learning isolated
+models severely restricts the knowledge sharing
+between related tasks and settings. Finally, it is
+costly and time-consuming to construct data sets
+and knowledge sources specialized for different
+IE tasks. Therefore, it will be of great beneﬁt to
+develop a universal IE architecture that can uni-
+formly model different IE tasks, adaptively predict
+heterogeneous structures and effectively learn from
+various resources, which we referred to as Univer-
+sal IE.
+Fundamentally, all IE tasks can be modeled
+as text-to-structure transformations, with different
+5755
+
+
+=== PDF PAGE 2 ===
+tasks correspond to different structures. For ex-
+ample, as shown in Figure 1, an entity is a named
+span structure, an event is a schema-deﬁned record
+structure. These text-to-structure transformations
+in IE can be further decomposed into several atomic
+transformation operations: 1) Spotting, which lo-
+cates the desirable spans concerning to given spe-
+ciﬁc semantic types (Kripke and Munitz, 1971;
+Chen and Yuille, 2004). For example, locating
+span “Steve” as a Person entity and locating “ex-
+cited” as a sentiment expression. 2) Associating,
+which connects spans by assigning them with se-
+mantic roles in pre-deﬁned schemas (Onyshkevych,
+1994; Milward and Thomas, 2000). For example,
+associating “Steve” and “Apple” by assigning them
+as the Arg1 and the Arg2 of a Work-for relation. In
+this way, different IE tasks can be decomposed into
+a sequence of atomic text-to-structure transforma-
+tions, and all IE models share the same underlying
+spotting and associating abilities. For example, en-
+tity extraction can be viewed as spotting mention
+spans of corresponding entity types, while event
+detection can be reformulated as spotting triggers
+spans with event types. And the spotting abilities
+can be shared between these two tasks.
+Based on the above observations, we propose
+UIE, a uniﬁed text-to-structure generation architec-
+ture that can universally model different IE tasks,
+adaptively generate targeted structures, and collab-
+oratively learn general IE abilities from different
+knowledge sources. Speciﬁcally, to model hetero-
+geneous IE structures, we design a structural ex-
+traction language (SEL) that can effectively encode
+different IE structures into a uniform representa-
+tion, so that various IE tasks can be universally
+modeled in the same text-to-structure generation
+framework. To adaptively generate targeted struc-
+tures for different IE tasks, we propose structural
+schema instructor (SSI), a schema-based prompt
+mechanism which controls what to spot, what to
+associate, and what to generate in UIE. To learn
+common IE abilities for UIE, we pre-train UIE
+on large-scale, heterogeneous datasets mined from
+easily accessible web sources. The large-scale pre-
+trained UIE model provides a solid foundation for
+knowledge sharing and quick adaptation to new
+IE settings, and signiﬁcantly boosts the IE perfor-
+mance in all supervised, low-resource, and few-
+shot settings.
+We conduct experiments on 13 datasets of 4
+main IE tasks (entity/relation/event/sentiment ex-
+traction and their uniﬁcation), and supervised, low-
+resource, and few-shot settings. Experiment re-
+sults show that UIE achieves signiﬁcant improve-
+ments in all settings. On supervised settings, UIE
+achieved 1.42% F1 scores improvements over the
+state-of-the-art, task-specialized architectures on
+all datasets. On few-shot and low-resource settings,
+UIE exhibits strong on-demand adaptation ability:
+it outperforms baselines dramatically by a large
+margin. These results veriﬁed the effectiveness,
+universality, and transferability of UIE across dif-
+ferent IE tasks, settings, and scenarios.
+The main contributions of this paper are:
+1) We propose UIE, a uniﬁed text-to-structure
+generation architecture that can universally model
+different IE tasks, adaptively generate targeted
+structures, and collaboratively learn general IE abil-
+ities from different knowledge sources.
+2) We design a uniﬁed structure generation net-
+work, which encodes heterogeneous IE structures
+into a uniform representation via a structural extrac-
+tion language, and controls the UIE model which
+to spot, which to associate, and which to generate
+via structural schema instructor mechanism.
+3) We pre-train a large-scale text-to-structure
+generation model via a uniﬁed pre-training algo-
+rithm. To the best of our knowledge, this is the
+ﬁrst text-to-structure pre-trained extraction model,
+which can beneﬁt future IE studies.
+2
+Uniﬁed Structure Generation for
+Universal Information Extraction
+Information extraction tasks can be formulated as
+text-to-structure problems, where different IE tasks
+correspond to different structures. This paper aims
+to uniformly model the text-to-structure transforma-
+tions of different IE tasks via a single framework,
+i.e., different structure transformations will share
+the same underlying operations and different trans-
+formation abilities in a universal model. Formally,
+given a speciﬁc pre-deﬁned schema s and texts x,
+a universal IE model needs to generate a structure
+that contains the desirable structural information in
+the text x indicated by the schema s.
+Generally, there are two main challenges here.
+Firstly, due to the diversity of IE tasks, there are
+many different target structures to extract, e.g., en-
+tity, relation, event, etc. Secondly, IE tasks are
+often demand-speciﬁc which are deﬁned using dif-
+ferent schemas, therefore we need to adaptively
+control the extraction process.
+5756
+
+
+=== PDF PAGE 3 ===
+(
+(Spot Name: Info Span
+(Asso Name: Info Span)
+(Asso Name: Info Span)
+)
+)
+(a) Structured extraction language (SEL) for Universal IE.
+(
+(person: Steve
+(work for: Apple)
+)
+(start-position: became
+(employee: Steve)
+(employer: Apple)
+(time: 1997)
+)
+(organization: Apple)
+(time: 1997)
+)
+(b) The SEL representation of the extraction structure of
+“Steve became CEO of Apple in 1997.”, where the relation
+structure is marked blue, the event structure is marked red,
+and the rest are entities.
+Figure 2:
+Illustrations of structured extraction lan-
+guage.
+In this section, we describe how to jointly formu-
+late, learn, and conduct various IE tasks in a uniﬁed
+text-to-structure generation architecture, named
+UIE. Speciﬁcally, we ﬁrst design structured ex-
+traction language (SEL) to uniformly encode het-
+erogeneous extraction structures, i.e., encode entity,
+relation, event into a uniﬁed representation. Then
+we describe structural schema instructor (SSI), a
+schema-based prompt mechanism that controls the
+UIE model which to spot, which to associate, and
+which to generate for different extraction settings.
+The details are as follows.
+2.1
+Structured Extraction Language for
+Uniform Structure Encoding
+This section describes how to encode heteroge-
+neous IE structures into a uniform representation.
+Based on the above discussions, IE structure gen-
+eration can be decomposed into two atomic opera-
+tions:
+1. Spotting indicates locating target information
+pieces from the sentence, e.g., the entity and the
+trigger word in the event.
+2. Associating indicates connecting different in-
+formation pieces based on the desirable associ-
+ations, e.g., the relation between entity pair or
+the role between event and its argument.
+Then different IE structures can be represented as
+a combination of atomic structure generation oper-
+ations.
+Concretely, we design a uniﬁed structured ex-
+traction language (SEL), which encodes different
+IE structures via the spotting-associating structure.
+As shown in Figure 2a, each SEL expression con-
+tains three types of semantic units: 1) SPOTNAME
+represents there is a speciﬁc information piece with
+the type of spot name existing in the source text;
+2) ASSONAME indicates there exists a speciﬁc in-
+formation piece in the source text that is with the
+AssoName association to its upper-level Spotted in-
+formation in the structure; 3) INFOSPAN represents
+the text span corresponding to the speciﬁc spotting
+or associating information piece in the source text.
+Furthermore, “:” in the SEL indicates the mapping
+from InfoSpan to its spotting or associating names,
+and the two structure indicators “(” and “)” are
+used to form the hierarchical structure between the
+extracted information.
+Using SEL, Figure 2b shows how to represent en-
+tity, relation, and event structures. There are three
+entities and each entity is represented as a spot-
+ting structure such as “person:Steve”, “organiza-
+tion:Apple”, and “time:1997”; one relation which
+is represented as an association structure between
+“Steve” and “Apple” with association name work
+for; and one event which is represented as an associ-
+ation structure, where the trigger is a spotting struc-
+ture “start-position:became”, and its arguments are
+associated with the trigger: Steve as employee, Ap-
+ple as employer, 1997 as time.
+We can see that, SEL have the advantages that:
+1) uniformly encodes varying IE structures, there-
+fore different IE tasks can be modeled as the same
+text-to-structure generation process; 2) efﬁciently
+represents all extraction results of a sentence in the
+same structure, thus can perform joint extraction
+naturally; 3) the output structure of generation is
+very compact, which greatly reduce the complexity
+of decoding.
+For example, the two different tasks entity recog-
+nition and event detection can be revisited using the
+same “(SpotName: InfoSpan)” grammar. While
+both relation extraction and event extraction can
+be formulated using the grammar “(SpotName: In-
+foSpan (AssoName: InfoSpan), ...)”, even they are
+with totally different binary “entity-relation-entity”
+and N-ary “event-arguments” structures. Such a
+uniﬁed structured extraction language enables UIE
+to learn from and adapt to different IE tasks without
+designing task-specialized architectures, because
+these IE tasks are all universally formulated as the
+transformation from texts to SEL representations.
+5757
+
+
+=== PDF PAGE 4 ===
+UIE
+[spot] person [asso] work for [text]
+Steve became CEO of Apple in 1997.
+[spot] start-position … [asso] employee …[text]
+Steve became CEO of Apple in 1997.
+[spot] person [spot] organization [spot] time [text]
+Steve became CEO of Apple in 1997.
+((person: Steve
+(work for: Apple)))
+((start position: became
+(employee: Steve)
+(employer: Apple) …
+(organization: Apple))
+((person: Steve)
+(organization: Apple)
+(time: 1997)))
+SSI + Text → SEL
+Structural Schema Instructor
+Structured Extraction Language
+Figure 3: The overall framework of UIE.
+2.2
+Structural Schema Instructor for
+Controllable IE Structure Generation
+Using SEL, UIE can uniformly generate differ-
+ent IE structures. However, because different IE
+tasks have different schemas, one challenge here
+is how to adaptively control which information
+we want to generate during extraction. For ex-
+ample, given a sentence “Steve became CEO of
+Apple in 1997.”, an entity recognition system will
+generate “((person: Steve) (organization: Apple)
+(Time: 1997))”, and an event extraction system
+will generate “(start position: became (employee:
+Steve) (employer: Apple))”. To this end, we pro-
+pose structural schema instructor (SSI), a schema-
+based prompt mechanism that controls which kinds
+of information need to be spotted and associated.
+Figure 3 shows the overall framework of UIE.
+Formally, UIE takes the given structural schema
+instructor (s) and the text sequence (x) as input, and
+generates the linearized SEL (y) which contains the
+extracted information from x based on schema s:
+y = UIE(s ⊕x)
+(1)
+where x = [x1, ..., x|x|] is the text sequence, s =
+[s1, ..., s|s|] is the structural schema instructor, and
+y = [y1, ..., y|y|] is a SEL sequence that can be eas-
+ily converted into the extracted information record.
+2.2.1
+Structural Schema Instructor
+To describe the extraction target of a task, the struc-
+tural schema instructor constructs a schema-based
+prompt and uses it as a preﬁx during generation.
+Speciﬁcally, corresponding to the spotting-
+association structure, the structural schema instruc-
+tor contains three types of token segments: 1) SPOT-
+NAME: the targeted spotting name in the speciﬁc
+information extraction task, such as “person“ in
+the NER task; 2) ASSONAME: the targeted asso-
+ciation name, such as “work for” in the relation
+extraction task; 3) Special Symbols ([spot], [asso],
+[text]) which are added before each SPOTNAME,
+ASSONAME, and input text sequence. All tokens
+in SSI are concatenated and put before the original
+text sequences. As shown in Figure 3, the entire
+input for UIE is in the form of:
+s ⊕x = [s1, s2, ..., s|s|, x1, x2, ..., x|x|]
+= [[spot], ...[spot]...,
+[asso], ..., [asso]...,
+[text], x1, x2, ..., x|x|]
+(2)
+For example, the SSI “[spot] person [spot] com-
+pany [asso] work for [text]” indicates extracting
+records of the relation schema “the person works
+for the company” from the sentence. Given the SSI
+s, UIE ﬁrst encodes the text x, then generates the
+target record y in linearized SEL using an encoder-
+decoder-style architecture.
+We found that the schema-based prompt can: 1)
+effectively guide the SEL generation of UIE, so that
+the general IE ability can be transferred to new IE
+tasks; 2) adaptively control which to spot, which to
+associate, and which to generate, so that semantic
+knowledge across different labels and tasks can be
+better shared.
+2.2.2
+Structure Generation with UIE
+Given SSI s and text x as input, UIE extracts tar-
+geted information by generating a linearized SEL.
+We formulate this text-to-SEL generation process
+using an encoder-decoder-style architecture. Given
+the raw text sequence x and the schema instruc-
+tor s, UIE ﬁrst compute the hidden representation
+H = [s1, ..., s|s|, x1, ..., x|x|] of each token:
+H = Encoder(s1, ..., s|s|, x1, ..., x|x|)
+(3)
+where Encoder(·) is a Transformer encoder. Then
+UIE will decode the input text into a linearized
+SEL in an auto-regressive style. At the step i of de-
+coding, UIE generates the i-th token yi in the SEL
+5758
+
+
+=== PDF PAGE 5 ===
+sequence and the decoder state hd
+i as following:
+yi, hd
+i = Decoder([H; hd
+1, ..., hd
+i−1])
+(4)
+Decoder(·) is a transformer decoder, which pre-
+dicts the conditional probability p(yi|y<i, x, s) of
+token yi. Finally, Decoder(·) ﬁnishes prediction
+when outputting the end symbol <eos>, then we
+convert the predicted SEL expression into the ex-
+tracted information record.
+Compared with previous IE studies which treat
+labels as speciﬁc symbols, the text-to-structure
+generation paradigm treats labels as natural lan-
+guage tokens. By verbalizing and generating labels
+and structures, our method can effectively trans-
+fer knowledge from pre-trained language models
+such as BART (Lewis et al., 2020), T5 (Raffel et al.,
+2020), and related tasks can easily share knowledge
+because their labels have similar semantics (e.g.,
+location and place) and share common label-text
+associations (e.g., victim for different event types).
+3
+Pre-training and Fine-tuning for UIE
+In this section, we describe: 1) how to pre-train a
+large-scale UIE model which captures common IE
+abilities for different IE tasks; 2) how to adapt UIE
+to different IE tasks in different settings via quick
+ﬁne-tuning. Speciﬁcally, we ﬁrst collect several
+large-scale datasets from the Web, including struc-
+tured (e.g., knowledge bases), unstructured (e.g.,
+raw texts), and parallel (e.g., Wikipedia-Wikidata
+links) data, then we uniformly pre-train our UIE
+model on these heterogeneous datasets. Finally,
+we adapt the pre-trained UIE model to the speciﬁc
+downstream IE tasks via on-demand ﬁne-tuning.
+We found that the pre-trained UIE model provides
+a solid foundation for capturing, sharing, and trans-
+ferring knowledge between different IE tasks, and
+new IE tasks can be effectively solved because UIE
+learns general IE ability.
+3.1
+Pre-training Corpus Construction
+UIE needs to encode the text, map text to structure,
+and decode valid structure. Therefore, we collect
+a large-scale pre-training corpus from easily ac-
+cessible web data sources (more details are in the
+appendix):
+Dpair is the text-structure parallel data, where
+each instance is a parallel pair (token sequence x,
+structured record y). We collect large-scale paral-
+lel text-structure pairs by aligning Wikidata with
+English Wikipedia. Dpair is used to pre-train the
+text-to-structure transformation ability of UIE.
+Drecord is the structure dataset where each in-
+stance is structured record y. We collect structured
+records from ConceptNet (Speer et al., 2017) and
+Wikidata. Drecord is used to pre-train the structure
+decoding ability of UIE.
+Dtext is the unstructured text dataset, and we use
+all plain texts in English Wikipedia. Dtext is used
+to pre-train the semantic encoding ability of UIE.
+3.2
+Pre-training
+We pre-train UIE using three sequence generation
+tasks with above mentioned pre-training datasets.
+Text-to-Structure Pre-training using Dpair.
+To
+capture the fundamental text-to-structure mapping
+ability, we pre-train UIE using Dpair = {(x, y)}.
+Speciﬁcally, for each parallel pair (x, y), we extract
+the spot type ss+ and the associating type sa+ in
+the record y as the positive schema s+ = ss+ ∪sa+.
+However, we found that if we only feed UIE with
+a positive schema, it will only simply remember
+the triplet in the pre-training data. To learn gen-
+eral mapping ability, we also automatically con-
+struct negative schemas for each pair, i.e., we
+ﬁrst sample negative spots ss- and negative as-
+sociation set sa-, then concatenate meta-schema
+smeta = s+ ∪ss- ∪sa-, and construct the ﬁnal ex-
+traction target. For example, person and work for is
+the positive schema in the record “((person: Steve
+(work for: Apple)))”, and we sample vehicle and
+located in as the negative schema to construct meta-
+schema. Finally, the objective of text-to-structure
+pre-training is:
+LPair =
+X
+(x,y)∈Dpair
+−log p(y|x, smeta; θe, θd) (5)
+where θe and θd are the parameter of encoder and
+decoder, respectively.
+Structure Generation Pre-training with Drecord.
+To pre-train the ability of generating valid struc-
+tures deﬁned by SEL and schemas, we pre-train
+UIE on Drecord. We pre-train UIE decoder as an
+structured language model, where each record in
+Drecord is an expression of SEL:
+LRecord =
+X
+y∈Drecord
+−log p(yi|y<i; θd)
+(6)
+By pre-training for structure generation, the de-
+coder can capture the regularity of SEL and the
+interactions between different labels.
+5759
+
+
+=== PDF PAGE 6 ===
+Retroﬁtting Semantic Representation using
+Dtext.
+During text-to-structure pre-training, we
+continually pre-train UIE also with the masked lan-
+guage model tasks (Raffel et al., 2020) on Dtext to
+retroﬁt semantic representations of UIE. Speciﬁ-
+cally, we add span corruption based mask language
+modeling objective in the pre-training stage:
+LText =
+X
+x∈Dtext
+−log p(x′′|x′; θe, θd)
+(7)
+where x′ is the corrupted source text and x′′ is
+corrupted target spans. We found this pre-training
+can effectively alleviate the catastrophic forgetting
+of token semantics especially on SPOTNAME and
+ASSONAME tokens.
+Final Pre-training Criteria.
+We initialize UIE-
+base and UIE-large with T5-v1.1-base and T5-v1.1-
+large (Raffel et al., 2020), and the model architec-
+tures are shown in Table 7. The ﬁnal objective is
+the combine of the above tasks:
+L = LPair + LRecord + LText
+(8)
+For implementation, we uniformly represent all
+pre-training data as triplets. For text data (x) in
+Dtext, we build a triplet (None, x′, x′′) where x′ is
+the corrupted source text and x′′ is corrupted spans.
+For text-record data (x, y) in Dpair, we construct (s,
+x, y) by sampling the meta-schema s for each text-
+record pair. For record data (y) in Drecord, we take
+(None, None, y) as the input triplet. We randomly
+pack instances for different tasks in one batch, and
+details are shown in Algorithm 1 in the appendix.
+3.3
+On-Demand Fine-tuning
+Given the pre-trained UIE model, we can quickly
+adapt it to different IE tasks and settings through
+model ﬁne-tuning. Given a labeled corpus Dtask =
+{(s, x, y)}, we ﬁne-tune the UIE model using
+teacher-forcing cross-entropy loss:
+LFT =
+X
+(s,x,y)∈DTask
+−log p(y|x, s; θe, θd)
+(9)
+To alleviate the exposure bias (Ranzato et al.,
+2016; Zhang et al., 2020) of the auto-regressive
+model during decoding, we also design a Rejection
+Mechanism for effective ﬁne-tuning. Speciﬁcally,
+given an instance (s, x, y), we ﬁrst encode y us-
+ing SEL language, then we randomly insert several
+[NULL] unit with negative SPOTNAME and AS-
+SONAME: (SPOTNAME, [NULL]) and (ASSON-
+AME, [NULL]) into the ground-truth SEL with the
+SSI
+<spot> person ... <spot> facility <asso> ... <text>
+Text
+Steve became CEO of Apple in 1997.
+SEL
+((person: Steve (work for: Apple)) (start-position: ...
++ RM
+((person: Steve (work for: Apple)) (facility: [NULL]) ...
+Table 1: An example of rejection mechanism (RM),
+here “(facility: [NULL])” is the injected rejection noise
+during learning stage, and the [NULL]-valued span will
+be ignored during inference stage.
+probability of pϵ. For example, in Table 1, facility
+is the negative spot in the schema prompt, i.e., there
+is no facility entity in the sentence “Steve became
+CEO of Apple in 1997”. Therefore, we randomly
+inject the noise of “(facility: [NULL])” into the
+target record during model learning. In this way,
+the UIE can effectively learn to reject misleading
+generation by generating [NULL] token.
+4
+Experiments
+To verify the effectiveness of UIE, we conducted
+experiments on different IE tasks and settings.
+4.1
+Experimental Settings
+Datasets.
+We conduct experiments on 13 IE
+benchmarks across 4 well-representative IE tasks
+(including entity extraction, relation extraction,
+event extraction, structured sentiment extraction)
+and their combinations (e.g., joint entity-relation
+extraction). The used datasets includes ACE04
+(Mitchell et al., 2005), ACE05 (Walker et al.,
+2006); CoNLL03 (Tjong Kim Sang and De Meul-
+der, 2003), CoNLL04 (Roth and Yih, 2004), Sci-
+ERC (Luan et al., 2018), NYT (Riedel et al., 2010),
+CASIE (Satyapanich et al., 2020), SemEval-14
+(Pontiki et al., 2014), SemEval-15 (Pontiki et al.,
+2015), SemEval-16 (Pontiki et al., 2016), see Ta-
+ble 8 for detail. We employ the end-to-end setting
+for all extraction tasks, which takes the raw text as
+input and directly generates the target structure.
+Evaluation.
+We use the same evaluation metrics
+as all previous methods, and details of metrics are
+shown in the appendix. For each ﬁne-tuning ex-
+periment, we report the average performance on
+3 random seeds. Because UIE only generates text
+spans, we map spans to offsets by ﬁnding the ﬁrst
+matched offsets that are not already matched in the
+same SEL hierarchical level (details in appendix).
+We found this simple heuristic rule is very effective
+(<0.5% error offsets) and more complicated map-
+ping approaches (such as attention-weight guided
+span mapping) are left as the future work.
+5760
+
+
+=== PDF PAGE 7 ===
+Dataset
+Domain
+Metric
+Comparable SOTA
+SEL
+UIE
+ACE04
+News, Speech
+Entity F1
+(Yan et al., 2021b)
+86.84
+86.52
+86.89
+ACE05-Ent
+News, Speech
+Entity F1
+(Yan et al., 2021b)
+84.74
+85.52
+85.78
+CoNLL03
+News
+Entity F1
+(Wang et al., 2021a)
+93.21
+92.17
+92.99
+ACE05-Rel
+News, Speech
+Relation Strict F1
+(Zhong and Chen, 2021)
+65.60
+64.68
+66.06
+CoNLL04
+News
+Relation Strict F1
+(Wang and Lu, 2020)
+73.60
+73.07
+75.00
+NYT
+News
+Relation Triplet F1
+(Zheng et al., 2021)
+92.70
+93.54
+-
+SciERC
+Scientiﬁc
+Relation Strict F1
+(Zhong and Chen, 2021)
+35.60
+33.36
+36.53
+ACE05-Evt
+News, Speech
+Event Trigger F1
+(Lin et al., 2020)
+72.80
+72.63
+73.36
+Event Argument F1
+(Lin et al., 2020)
+54.80
+54.67
+54.79
+CASIE
+Cybersecurity
+Event Trigger F1
+(Lu et al., 2021)
+67.51
+68.98
+69.33
+Event Argument F1
+(Lu et al., 2021)
+59.45
+60.37
+61.30
+14-res
+Reviews
+Sentiment Triplet F1
+(Zhang et al., 2021)
+72.16
+73.78
+74.52
+14-lap
+Reviews
+Sentiment Triplet F1
+(Zhang et al., 2021)
+60.78
+63.15
+63.88
+15-res
+Reviews
+Sentiment Triplet F1
+(Xu et al., 2021)
+63.27
+66.10
+67.15
+16-res
+Reviews
+Sentiment Triplet F1
+(Xu et al., 2021)
+70.26
+73.87
+75.07
+Table 2: Overall results of UIE-large on different datasets. SEL refers to UIE without pre-training by directly using
+T5-v1.1-large as the backbone. Because NYT overlaps with pre-training data, we didn’t conduct UIE on NYT for
+fair comparsion. More results of UIE-base and the details of evaluation metric are shown in the appendix.
+4.2
+Experiments on Supervised Settings
+UIE provides a universal backbone for IE tasks.
+This section assesses the UIE performance in su-
+pervised settings. We compare UIE with the state-
+of-the-art, task-speciﬁc supervised models. For a
+fair comparison, we only compare the state-of-the-
+art without leveraging additional dataset-speciﬁc
+knowledge or larger-scale contexts. These exten-
+sions are good complementary of UIE, and can be
+left for further improvement. Table 2 shows the
+performance of UIE on the 13 IE datasets across
+4 tasks. We can observe that: 1) By modeling IE
+as text-to-structure generation and encoding with
+an effective SEL language, UIE provides an effec-
+tive universal architecture for IE. The UIE model
+achieves state-of-the-art performance on nearly all
+datasets and tasks, even without pre-training (SEL).
+2) The large-scale pre-trained model provides a
+solid foundation for universal IE. Compared with
+baselines, the pre-trained model achieves the per-
+formance of the state-of-the-art in most datasets
+and improves 1.42% F1 on average. 3) By uni-
+versally modeling IE tasks and pre-training using
+large-scale datasets, UIE can effectively capture,
+share, and transfer IE abilities. Pre-training im-
+proves all tasks at the same time, especially events
+and sentiment knowledge rarely appear in the pre-
+train dataset. It proves that SEL is a uniﬁed and
+cross-task transferable structured representation for
+IE, which allows UIE to share learned capabilities
+and information across different and various infor-
+mation extraction tasks.
+4.3
+Experiments on Low-resource Settings
+To verify the quick adaptation ability of UIE, we
+conducted low-resource experiments on six differ-
+ent partitions of the original training sets (1/5/10-
+shot, 1/5/10% ratio) across 4 tasks. For the few-
+shot experiments, we sample 1/5/10 sentences for
+each entity/relation/event/sentiment type in the
+training set. To avoid the inﬂuence of random sam-
+pling, we repeated each experiment 10 times with
+different samples and reported their averaged re-
+sults as previous works (Huang et al., 2021).
+We compare UIE with the following pre-trained
+model: 1) T5-v1.1-base is an initial model of UIE-
+base; 2) Fine-tuned T5-base is ﬁne-tuned with se-
+quence generation tasks such as summarization,
+which have been shown effective in many low-
+resource NLP tasks (Paolini et al., 2021); 3) UIE-
+base w/o SSI is the distant supervised version of
+UIE without SSI in the pre-training stage, which is
+used to verify the necessity of SSI when adapting
+UIE in low-resource settings. Table 3 shows the
+performance of 4 IE tasks under 6 low-resource
+settings. We observe that: 1) By guiding the gen-
+eration using schema-based prompts, SSI is an ef-
+fective way for adaptively controlling which to ex-
+5761
+
+
+=== PDF PAGE 8 ===
+Model
+1-Shot
+5-Shot
+10-Shot
+AVE-S
+1%
+5%
+10%
+AVE-R
+Entity
+(CoNLL03)
+Ent-F1
+T5-v1.1-base
+12.73
+30.17
+58.89
+33.93
+75.74
+85.71
+87.70
+83.05
+Fine-tuned T5-base
+24.93
+54.85
+65.31
+48.36
+78.51
+87.67
+88.91
+85.03
+UIE-base w/o SSI
+43.52
+64.76
+72.47
+60.25
+81.91
+88.41
+89.84
+86.72
+UIE-base
+46.43
+67.09
+73.90
+62.47
+82.84
+88.34
+89.63
+86.94
+Relation
+(CoNLL04)
+Rel-S F1
+T5-v1.1-base
+2.35
+7.99
+25.98
+12.11
+6.08
+32.38
+41.87
+26.78
+Fine-tuned T5-base
+4.24
+28.16
+41.44
+24.61
+12.89
+37.75
+49.95
+33.53
+UIE-base w/o SSI
+13.21
+40.35
+49.47
+34.34
+24.21
+48.70
+56.59
+43.17
+UIE-base
+22.05
+45.41
+52.39
+39.95
+30.77
+51.72
+59.18
+47.22
+Event Trigger
+(ACE05-Evt)
+Evt Tri F1
+T5-v1.1-base
+19.40
+43.35
+50.57
+37.77
+25.59
+49.47
+57.18
+44.08
+Fine-tuned T5-base
+30.18
+48.31
+51.27
+43.25
+31.08
+51.16
+57.76
+46.67
+UIE-base w/o SSI
+32.07
+48.11
+51.00
+43.73
+32.71
+53.20
+59.26
+48.39
+UIE-base
+38.14
+51.21
+53.23
+47.53
+41.53
+55.70
+60.29
+52.51
+Event Argument
+(ACE05-Evt)
+Evt Arg F1
+T5-v1.1-base
+2.75
+20.21
+27.53
+16.83
+3.59
+21.53
+30.90
+18.67
+Fine-tuned T5-base
+6.96
+25.07
+30.96
+21.00
+7.39
+24.97
+33.90
+22.09
+UIE-base w/o SSI
+9.31
+23.99
+30.31
+21.20
+9.57
+27.25
+34.18
+23.67
+UIE-base
+11.88
+27.44
+33.64
+24.32
+12.80
+30.43
+36.28
+26.50
+Sentiment
+(16res)
+Rel-S F1
+T5-v1.1-base
+0.04
+2.11
+12.66
+4.94
+3.50
+27.08
+45.97
+25.52
+Fine-tuned T5-base
+6.55
+21.06
+29.92
+19.18
+18.72
+39.63
+51.65
+36.67
+UIE-base w/o SSI
+7.79
+17.77
+32.07
+19.21
+19.14
+42.76
+53.44
+38.45
+UIE-base
+10.50
+26.24
+39.11
+25.28
+24.24
+49.31
+57.61
+43.72
+Table 3: Low-resource results on end-to-end IE tasks, where AVE-S(hot) and AVE-R(atio) are the averaged per-
+formance across 3 few-shot settings and 3 low-resource settings respectively.
+tract. Compared with the UIE model w/o SSI, UIE
+equipped with SSI achieves improvements of 4.16
+and 3.30 on average for n-shot and n-ratio experi-
+ments. 2) Our pre-training algorithms can learn
+general IE ability rather than capture task-speciﬁc
+information. Even the pre-training of UIE didn’t
+include event and sentiment knowledge, UIE still
+achieved signiﬁcantly better performance on these
+tasks compared to the baseline with only a small
+number of samples.
+4.4
+Ablations on Pre-training Tasks
+Task
+Entity
+Relation
+Event
+Sent.
+F1
+Ent
+Rel-S
+Evt-Tri
+Evt-Arg
+Rel-S
+UIE-base
+95.89
+75.97
+72.63
+57.27
+74.73
+w/o LPair
+95.83
+75.07
+71.20
+55.79
+74.27
+w/o LRecord
+95.69
+75.68
+71.99
+57.60
+74.43
+w/o LText
+95.66
+75.70
+70.89
+54.16
+74.28
+T5-v1.1-base
+95.29
+72.12
+70.50
+54.42
+72.03
+Table 4:
+Experiment results of UIE-base with dif-
+ferent learning tasks on the development set of four
+downstream datasets:
+entity (CoNLL03), relation
+(CoNLL04), event (ACE05-Evt) and sentiment (16res).
+To investigate the effect of different pre-training
+tasks, Table 4 shows ablation experiment results
+of UIE-base on four downstream tasks. We can
+∆P
+P
+R
+F
+UIE-base
++11.41
+79.54
+72.63
+75.91
+w/o rejection
+68.13
+67.85
+66.13
+UIE-base w/o SSI
++9.41
+78.96
+70.50
+74.49
+w/o rejection
+69.55
+63.69
+66.44
+T5-base
++17.95
+74.12
+61.72
+67.33
+w/o rejection
+56.17
+56.00
+55.94
+T5-v11
++13.88
+71.88
+51.23
+59.67
+w/o rejection
+58.00
+45.04
+50.38
+Table 5: Experiment results of 10-shot setting on the
+CoNLL 03 development set.
+see that: (1) The pre-training of SEL (LRecord)
+and sequence-to-structure mapping (LPair) is cru-
+cial for UIE, and such a structure generation
+pre-training is especially useful for small-scale
+datasets. In small datasets CoNLL04 and 16res,
+adding structure generation pre-training (from T5-
+v1.1-base to UIE-base w/o LText), the performance
+signiﬁcantly increases from 72.12 to 75.70 and
+72.03 to 74.28. (2) Retroﬁtting semantic using the
+mask language model task (LText) is more impor-
+tant for the complex extraction task. In the tasks
+with more semantic types such as event extraction
+(33 types), the performance drops signiﬁcantly af-
+ter removing the LText task, e.g., 72.63→70.89 and
+5762
+
+
+=== PDF PAGE 9 ===
+57.27→54.16. (3) The mapping pre-training with
+LPair enables the model to learn the ability of ex-
+traction. After ablating LPair, the extraction ability
+of UIE is signiﬁcantly decreased, i.e., the perfor-
+mance on the relation (-0.90), event (-1.43/-1.48),
+and sentiment (-0.46) tasks all see large decline.
+4.5
+Effects of Rejection Noise
+This section investigates the effect of the proposed
+rejection noise. Table 5 shows the results of the
+different pre-trained models on the development
+set of CoNLL 03 under the 10-shot setting. The
+mis-generated label has a negative inﬂuence on the
+precision of the proposed generation method lead-
+ing to a large number of error extraction results.
+The proposed rejection noise is useful for the gen-
+eration method, which leads to improvements of
+13.16 precision (P) on average.
+5
+Related Work
+Building and pre-training universal models of NLP
+tasks has attracted a lot of attention in recent years,
+e.g., contextualized representation (Devlin et al.,
+2019; Liu et al., 2019), text generation (Lewis et al.,
+2020; Raffel et al., 2020), multi-modal (Li et al.,
+2021b; Cho et al., 2021), and multi-lingual (Con-
+neau et al., 2020; Xue et al., 2021). This paper
+proposes and pre-trains the ﬁrst universal model
+for information extraction.
+IE is a long-researched area and many classi-
+cal neural architectures have been proposed, such
+as sequence tagging (Lample et al., 2016; Zheng
+et al., 2017; Lin et al., 2019), span classiﬁcation
+(Sohrab and Miwa, 2018; Lin et al., 2018; Wad-
+den et al., 2019), and MRC (Levy et al., 2017; Li
+et al., 2020; Du and Cardie, 2020). And several
+task-speciﬁc pre-training techniques are proposed
+on these architectures (Mengge et al., 2020; Wang
+et al., 2021b; Qin et al., 2021). More relevant to
+our work are generation-based IE methods, which
+generate text spans via tagging (Straková et al.,
+2019; Ma et al., 2019), index pointer (Ren et al.,
+2021; Yan et al., 2021b) or copy mechanism (Zeng
+et al., 2018), and these methods usually employ
+speciﬁc classiﬁers to represent labels. The gener-
+ation can be enhanced using label templates (Li
+et al., 2021a; Liu et al., 2021; Cui et al., 2021),
+schema (Lu et al., 2021; Ahmad et al., 2021), and
+augmented language methods (Paolini et al., 2021).
+Compared with previous IE studies which focus
+on developing more effective task-specialized mod-
+els, this paper aims to universally model various
+IE tasks in an uniﬁed text-to-structure framework,
+which can greatly beneﬁt the rapid development,
+effective knowledge sharing, and quick adaptation
+of IE systems.
+6
+Conclusion
+In this paper, we propose a uniﬁed text-to-structure
+generation framework – UIE, which can univer-
+sally model different IE tasks, adaptively generate
+targeted structures, and unﬁedly learn general IE
+abilities from different knowledge sources. Ex-
+perimental results show that UIE achieves very
+competitive performance in both supervised and
+low-resource settings, which veriﬁed its universal-
+ity, effectiveness, and transferability. A large-scale
+pre-trained text-to-structure model is also released,
+which will beneﬁt future studies. For future work,
+we want to extend UIE to KB-aware IE tasks such
+as entity linking (Cao et al., 2021), and document-
+aware IE tasks such as co-reference (Lee et al.,
+2017; Lu et al., 2022).
+Acknowledgements
+We sincerely thank the reviewers for their insight-
+ful comments and valuable suggestions. This re-
+search work is supported by the National Natu-
+ral Science Foundation of China under Grants no.
+U1936207, 62122077 and 62106251, the Project
+of the Chinese Language Committee under Grant
+no. YB2003C002.
+References
+Wasi Ahmad, Jianfeng Chi, Tu Le, Thomas Norton,
+Yuan Tian, and Kai-Wei Chang. 2021. Intent clas-
+siﬁcation and slot ﬁlling for privacy policies. In Pro-
+ceedings of the 59th Annual Meeting of the Associa-
+tion for Computational Linguistics and the 11th In-
+ternational Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 4402–
+4417, Online. Association for Computational Lin-
+guistics.
+Peggy M. Andersen, Philip J. Hayes, Steven P. Wein-
+stein, Alison K. Huettner, Linda M. Schmandt, and
+Irene B. Nirenburg. 1992. Automatic extraction of
+facts from press releases to generate news stories. In
+Third Conference on Applied Natural Language Pro-
+cessing, pages 170–177, Trento, Italy. Association
+for Computational Linguistics.
+Nicola De Cao, Gautier Izacard, Sebastian Riedel, and
+Fabio Petroni. 2021. Autoregressive entity retrieval.
+In International Conference on Learning Represen-
+tations.
+5763
+
+
+=== PDF PAGE 10 ===
+Xiangrong Chen and Alan L. Yuille. 2004. Detecting
+and reading text in natural scenes. In 2004 IEEE
+Computer Society Conference on Computer Vision
+and Pattern Recognition (CVPR 2004), with CD-
+ROM, 27 June - 2 July 2004, Washington, DC, USA,
+pages 366–373. IEEE Computer Society.
+Jaemin Cho, Jie Lei, Hao Tan, and Mohit Bansal. 2021.
+Unifying vision-and-language tasks via text gener-
+ation.
+In Proceedings of the 38th International
+Conference on Machine Learning, volume 139 of
+Proceedings of Machine Learning Research, pages
+1931–1942. PMLR.
+Alexis Conneau, Kartikay Khandelwal, Naman Goyal,
+Vishrav Chaudhary, Guillaume Wenzek, Francisco
+Guzmán, Edouard Grave, Myle Ott, Luke Zettle-
+moyer, and Veselin Stoyanov. 2020. Unsupervised
+cross-lingual representation learning at scale.
+In
+Proceedings of the 58th Annual Meeting of the Asso-
+ciation for Computational Linguistics, pages 8440–
+8451, Online. Association for Computational Lin-
+guistics.
+Leyang Cui, Yu Wu, Jian Liu, Sen Yang, and Yue
+Zhang. 2021. Template-based named entity recog-
+nition using BART. In Findings of the Association
+for Computational Linguistics: ACL-IJCNLP 2021,
+pages 1835–1845, Online. Association for Computa-
+tional Linguistics.
+Jacob Devlin, Ming-Wei Chang, Kenton Lee, and
+Kristina Toutanova. 2019.
+BERT: Pre-training of
+deep bidirectional transformers for language under-
+standing.
+In Proceedings of the 2019 Conference
+of the North American Chapter of the Association
+for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers),
+pages 4171–4186, Minneapolis, Minnesota. Associ-
+ation for Computational Linguistics.
+Xinya Du and Claire Cardie. 2020.
+Event extrac-
+tion by answering (almost) natural questions.
+In
+Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 671–683, Online. Association for Computa-
+tional Linguistics.
+Ralph Grishman. 2019.
+Twenty-ﬁve years of infor-
+mation extraction. Natural Language Engineering,
+25(6):677–692.
+Ralph Grishman and Beth Sundheim. 1996. Message
+Understanding Conference- 6: A brief history. In
+COLING 1996 Volume 1: The 16th International
+Conference on Computational Linguistics.
+Jiaxin Huang, Chunyuan Li, Krishan Subudhi, Damien
+Jose, Shobana Balakrishnan, Weizhu Chen, Baolin
+Peng, Jianfeng Gao, and Jiawei Han. 2021.
+Few-
+shot named entity recognition: An empirical base-
+line study.
+In Proceedings of the 2021 Confer-
+ence on Empirical Methods in Natural Language
+Processing, pages 10408–10423, Online and Punta
+Cana, Dominican Republic. Association for Compu-
+tational Linguistics.
+Heng Ji and Ralph Grishman. 2011. Knowledge base
+population: Successful approaches and challenges.
+In Proceedings of the 49th Annual Meeting of the
+Association for Computational Linguistics: Human
+Language Technologies, pages 1148–1158, Portland,
+Oregon, USA. Association for Computational Lin-
+guistics.
+Diederik P. Kingma and Jimmy Ba. 2015. Adam: A
+method for stochastic optimization.
+In The Third
+International Conference on Learning Representa-
+tions, San Diego.
+Saul Kripke and Milton K Munitz. 1971. Identity and
+necessity. 1971, pages 135–164.
+Guillaume Lample, Miguel Ballesteros, Sandeep Sub-
+ramanian, Kazuya Kawakami, and Chris Dyer. 2016.
+Neural architectures for named entity recognition.
+In Proceedings of the 2016 Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies,
+pages 260–270, San Diego, California. Association
+for Computational Linguistics.
+Kenton Lee, Luheng He, Mike Lewis, and Luke Zettle-
+moyer. 2017. End-to-end neural coreference reso-
+lution. In Proceedings of the 2017 Conference on
+Empirical Methods in Natural Language Processing,
+pages 188–197, Copenhagen, Denmark. Association
+for Computational Linguistics.
+Omer Levy, Minjoon Seo, Eunsol Choi, and Luke
+Zettlemoyer. 2017. Zero-shot relation extraction via
+reading comprehension. In Proceedings of the 21st
+Conference on Computational Natural Language
+Learning (CoNLL 2017), pages 333–342, Vancou-
+ver, Canada. Association for Computational Linguis-
+tics.
+Mike
+Lewis,
+Yinhan
+Liu,
+Naman
+Goyal,
+Mar-
+jan Ghazvininejad, Abdelrahman Mohamed, Omer
+Levy, Veselin Stoyanov, and Luke Zettlemoyer.
+2020. BART: Denoising sequence-to-sequence pre-
+training for natural language generation, translation,
+and comprehension. In Proceedings of the 58th An-
+nual Meeting of the Association for Computational
+Linguistics, pages 7871–7880, Online. Association
+for Computational Linguistics.
+Peng Li, Jing Jiang, and Yinglin Wang. 2010. Gener-
+ating templates of entity summaries with an entity-
+aspect model and pattern mining. In Proceedings
+of the 48th Annual Meeting of the Association for
+Computational Linguistics, pages 640–649, Upp-
+sala, Sweden. Association for Computational Lin-
+guistics.
+Sha Li, Heng Ji, and Jiawei Han. 2021a. Document-
+level event argument extraction by conditional gener-
+ation. In Proceedings of the 2021 Conference of the
+North American Chapter of the Association for Com-
+putational Linguistics: Human Language Technolo-
+gies, pages 894–908, Online. Association for Com-
+putational Linguistics.
+5764
+
+
+=== PDF PAGE 11 ===
+Wei Li, Can Gao, Guocheng Niu, Xinyan Xiao, Hao
+Liu, Jiachen Liu, Hua Wu, and Haifeng Wang.
+2021b.
+UNIMO: Towards uniﬁed-modal under-
+standing and generation via cross-modal contrastive
+learning. In Proceedings of the 59th Annual Meet-
+ing of the Association for Computational Linguistics
+and the 11th International Joint Conference on Nat-
+ural Language Processing (Volume 1: Long Papers),
+pages 2592–2607, Online. Association for Computa-
+tional Linguistics.
+Xiaoya Li, Jingrong Feng, Yuxian Meng, Qinghong
+Han, Fei Wu, and Jiwei Li. 2020. A uniﬁed MRC
+framework for named entity recognition.
+In Pro-
+ceedings of the 58th Annual Meeting of the Asso-
+ciation for Computational Linguistics, pages 5849–
+5859, Online. Association for Computational Lin-
+guistics.
+Hongyu Lin, Yaojie Lu, Xianpei Han, and Le Sun.
+2018. Nugget proposal networks for Chinese event
+detection. In Proceedings of the 56th Annual Meet-
+ing of the Association for Computational Linguistics
+(Volume 1: Long Papers), pages 1565–1574, Mel-
+bourne, Australia. Association for Computational
+Linguistics.
+Hongyu Lin, Yaojie Lu, Xianpei Han, and Le Sun.
+2019. Sequence-to-nuggets: Nested entity mention
+detection via anchor-region networks. In Proceed-
+ings of the 57th Annual Meeting of the Association
+for Computational Linguistics, pages 5182–5192,
+Florence, Italy. Association for Computational Lin-
+guistics.
+Ying Lin, Heng Ji, Fei Huang, and Lingfei Wu. 2020.
+A joint neural model for information extraction with
+global features. In Proceedings of the 58th Annual
+Meeting of the Association for Computational Lin-
+guistics, pages 7999–8009, Online. Association for
+Computational Linguistics.
+Qing Liu, Hongyu Lin, Xinyan Xiao, Xianpei Han,
+Le Sun, and Hua Wu. 2021.
+Fine-grained entity
+typing via label reasoning.
+In Proceedings of the
+2021 Conference on Empirical Methods in Natural
+Language Processing, pages 4611–4622, Online and
+Punta Cana, Dominican Republic. Association for
+Computational Linguistics.
+Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-
+dar Joshi, Danqi Chen, Omer Levy, Mike Lewis,
+Luke Zettlemoyer, and Veselin Stoyanov. 2019.
+Roberta: A robustly optimized BERT pretraining ap-
+proach. CoRR, abs/1907.11692.
+Yaojie Lu, Hongyu Lin, Jialong Tang, Xianpei Han,
+and Le Sun. 2022. End-to-end neural event corefer-
+ence resolution. Artiﬁcial Intelligence, 303:103632.
+Yaojie Lu, Hongyu Lin, Jin Xu, Xianpei Han, Jialong
+Tang, Annan Li, Le Sun, Meng Liao, and Shaoyi
+Chen. 2021. Text2Event: Controllable sequence-to-
+structure generation for end-to-end event extraction.
+In Proceedings of the 59th Annual Meeting of the
+Association for Computational Linguistics and the
+11th International Joint Conference on Natural Lan-
+guage Processing (Volume 1: Long Papers), pages
+2795–2806, Online. Association for Computational
+Linguistics.
+Yi Luan, Luheng He, Mari Ostendorf, and Hannaneh
+Hajishirzi. 2018.
+Multi-task identiﬁcation of enti-
+ties, relations, and coreference for scientiﬁc knowl-
+edge graph construction. In Proceedings of the 2018
+Conference on Empirical Methods in Natural Lan-
+guage Processing, pages 3219–3232, Brussels, Bel-
+gium. Association for Computational Linguistics.
+Dehong Ma, Sujian Li, Fangzhao Wu, Xing Xie,
+and Houfeng Wang. 2019. Exploring sequence-to-
+sequence learning in aspect term extraction. In Pro-
+ceedings of the 57th Annual Meeting of the Asso-
+ciation for Computational Linguistics, pages 3538–
+3547, Florence, Italy. Association for Computa-
+tional Linguistics.
+Xue Mengge, Bowen Yu, Zhenyu Zhang, Tingwen
+Liu, Yue Zhang, and Bin Wang. 2020. Coarse-to-
+Fine Pre-training for Named Entity Recognition. In
+Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 6345–6354, Online. Association for Computa-
+tional Linguistics.
+David Milward and James Thomas. 2000. From infor-
+mation retrieval to information extraction. In ACL-
+2000 Workshop on Recent Advances in Natural Lan-
+guage Processing and Information Retrieval, pages
+85–97, Hong Kong, China. Association for Compu-
+tational Linguistics.
+Alexis Mitchell, Stephanie Strassel, Shudong Huang,
+and Ramez Zakhary. 2005. Ace 2004 multilingual
+training corpus.
+Boyan Onyshkevych. 1994. Issues and methodology
+for template design for information extraction. In
+Human Language Technology:
+Proceedings of a
+Workshop held at Plainsboro, New Jersey, March 8-
+11, 1994.
+Giovanni Paolini, Ben Athiwaratkun, Jason Krone, Jie
+Ma, Alessandro Achille, RISHITA ANUBHAI, Ci-
+cero Nogueira dos Santos, Bing Xiang, and Stefano
+Soatto. 2021.
+Structured prediction as translation
+between augmented natural languages. In Interna-
+tional Conference on Learning Representations.
+Maria Pontiki, Dimitris Galanis, Haris Papageorgiou,
+Ion Androutsopoulos, Suresh Manandhar, Moham-
+mad AL-Smadi, Mahmoud Al-Ayyoub, Yanyan
+Zhao, Bing Qin, Orphée De Clercq, Véronique
+Hoste, Marianna Apidianaki, Xavier Tannier, Na-
+talia Loukachevitch, Evgeniy Kotelnikov, Nuria Bel,
+Salud María Jiménez-Zafra, and Gül¸sen Eryi˘git.
+2016.
+SemEval-2016 task 5: Aspect based senti-
+ment analysis. In Proceedings of the 10th Interna-
+tional Workshop on Semantic Evaluation (SemEval-
+2016), pages 19–30, San Diego, California. Associa-
+tion for Computational Linguistics.
+5765
+
+
+=== PDF PAGE 12 ===
+Maria Pontiki, Dimitris Galanis, Haris Papageorgiou,
+Suresh Manandhar, and Ion Androutsopoulos. 2015.
+SemEval-2015 task 12:
+Aspect based sentiment
+analysis.
+In Proceedings of the 9th International
+Workshop on Semantic Evaluation (SemEval 2015),
+pages 486–495, Denver, Colorado. Association for
+Computational Linguistics.
+Maria Pontiki, Dimitris Galanis, John Pavlopoulos,
+Harris Papageorgiou, Ion Androutsopoulos, and
+Suresh Manandhar. 2014. SemEval-2014 task 4: As-
+pect based sentiment analysis. In Proceedings of the
+8th International Workshop on Semantic Evaluation
+(SemEval 2014), pages 27–35, Dublin, Ireland. As-
+sociation for Computational Linguistics.
+Yujia Qin, Yankai Lin, Ryuichi Takanobu, Zhiyuan Liu,
+Peng Li, Heng Ji, Minlie Huang, Maosong Sun, and
+Jie Zhou. 2021. ERICA: Improving entity and re-
+lation understanding for pre-trained language mod-
+els via contrastive learning. In Proceedings of the
+59th Annual Meeting of the Association for Compu-
+tational Linguistics and the 11th International Joint
+Conference on Natural Language Processing (Vol-
+ume 1: Long Papers), pages 3350–3363, Online. As-
+sociation for Computational Linguistics.
+Colin Raffel, Noam Shazeer, Adam Roberts, Kather-
+ine Lee, Sharan Narang, Michael Matena, Yanqi
+Zhou, Wei Li, and Peter J. Liu. 2020.
+Exploring
+the limits of transfer learning with a uniﬁed text-to-
+text transformer. Journal of Machine Learning Re-
+search, 21(140):1–67.
+Marc’Aurelio Ranzato, Sumit Chopra, Michael Auli,
+and Wojciech Zaremba. 2016. Sequence level train-
+ing with recurrent neural networks.
+In 4th Inter-
+national Conference on Learning Representations,
+ICLR 2016, San Juan, Puerto Rico, May 2-4, 2016,
+Conference Track Proceedings.
+Liliang Ren, Chenkai Sun, Heng Ji, and Julia Hock-
+enmaier. 2021.
+HySPA: Hybrid span generation
+for scalable text-to-graph extraction. In Findings of
+the Association for Computational Linguistics: ACL-
+IJCNLP 2021, pages 4066–4078, Online. Associa-
+tion for Computational Linguistics.
+Sebastian Riedel, Limin Yao, and Andrew McCal-
+lum. 2010. Modeling relations and their mentions
+without labeled text.
+In Machine Learning and
+Knowledge Discovery in Databases, pages 148–163,
+Berlin, Heidelberg. Springer Berlin Heidelberg.
+Dan Roth and Wen-tau Yih. 2004. A linear program-
+ming formulation for global inference in natural lan-
+guage tasks. In Proceedings of the Eighth Confer-
+ence on Computational Natural Language Learn-
+ing (CoNLL-2004) at HLT-NAACL 2004, pages 1–8,
+Boston, Massachusetts, USA. Association for Com-
+putational Linguistics.
+Taneeya Satyapanich, Francis Ferraro, and Tim Finin.
+2020. Casie: Extracting cybersecurity event infor-
+mation from text. In Proceedings of the AAAI Con-
+ference on Artiﬁcial Intelligence, volume 34, pages
+8749–8757.
+Mohammad Golam Sohrab and Makoto Miwa. 2018.
+Deep exhaustive model for nested named entity
+recognition. In Proceedings of the 2018 Conference
+on Empirical Methods in Natural Language Process-
+ing, pages 2843–2849, Brussels, Belgium. Associa-
+tion for Computational Linguistics.
+Robyn Speer, Joshua Chin, and Catherine Havasi. 2017.
+Conceptnet 5.5: An open multilingual graph of gen-
+eral knowledge. In Proceedings of the AAAI Con-
+ference on Artiﬁcial Intelligence, volume 31, pages
+4444–4451.
+Jana Straková, Milan Straka, and Jan Hajic. 2019. Neu-
+ral architectures for nested NER through lineariza-
+tion.
+In Proceedings of the 57th Annual Meeting
+of the Association for Computational Linguistics,
+pages 5326–5331, Florence, Italy. Association for
+Computational Linguistics.
+Dianbo Sui, Yubo Chen, Kang Liu, Jun Zhao, Xian-
+grong Zeng, and Shengping Liu. 2020. Joint entity
+and relation extraction with set prediction networks.
+CoRR, abs/2011.01675.
+Bruno Taillé, Vincent Guigue, Geoffrey Scoutheeten,
+and Patrick Gallinari. 2020.
+Let’s Stop Incorrect
+Comparisons in End-to-end Relation Extraction! In
+Proceedings of the 2020 Conference on Empirical
+Methods in Natural Language Processing (EMNLP),
+pages 3689–3701, Online. Association for Computa-
+tional Linguistics.
+Erik F. Tjong Kim Sang and Fien De Meulder.
+2003.
+Introduction to the conll-2003 shared task:
+Language-independent named entity recognition. In
+Proceedings of CoNLL-2003, pages 142–147. Ed-
+monton, Canada.
+David Wadden, Ulme Wennberg, Yi Luan, and Han-
+naneh Hajishirzi. 2019. Entity, relation, and event
+extraction with contextualized span representations.
+In Proceedings of the 2019 Conference on Empirical
+Methods in Natural Language Processing and the
+9th International Joint Conference on Natural Lan-
+guage Processing (EMNLP-IJCNLP), pages 5784–
+5789, Hong Kong, China. Association for Computa-
+tional Linguistics.
+Christopher Walker, Stephanie Strassel, Julie Medero,
+and Kazuaki Maeda. 2006. Ace 2005 multilingual
+training corpus.
+Jue Wang and Wei Lu. 2020.
+Two are better than
+one: Joint entity and relation extraction with table-
+sequence encoders. In Proceedings of the 2020 Con-
+ference on Empirical Methods in Natural Language
+Processing (EMNLP), pages 1706–1721, Online. As-
+sociation for Computational Linguistics.
+Xinyu Wang, Yong Jiang, Nguyen Bach, Tao Wang,
+Zhongqiang Huang, Fei Huang, and Kewei Tu.
+5766
+
+
+=== PDF PAGE 13 ===
+2021a. Improving named entity recognition by ex-
+ternal context retrieving and cooperative learning.
+In Proceedings of the 59th Annual Meeting of the
+Association for Computational Linguistics and the
+11th International Joint Conference on Natural Lan-
+guage Processing (Volume 1: Long Papers), pages
+1800–1812, Online. Association for Computational
+Linguistics.
+Yucheng Wang, Bowen Yu, Yueyang Zhang, Tingwen
+Liu,
+Hongsong
+Zhu,
+and
+Limin
+Sun.
+2020.
+TPLinker: Single-stage joint extraction of entities
+and relations through token pair linking. In Proceed-
+ings of the 28th International Conference on Com-
+putational Linguistics, pages 1572–1582, Barcelona,
+Spain (Online). International Committee on Compu-
+tational Linguistics.
+Ziqi Wang, Xiaozhi Wang, Xu Han, Yankai Lin, Lei
+Hou, Zhiyuan Liu, Peng Li, Juanzi Li, and Jie Zhou.
+2021b. CLEVE: Contrastive Pre-training for Event
+Extraction. In Proceedings of the 59th Annual Meet-
+ing of the Association for Computational Linguistics
+and the 11th International Joint Conference on Nat-
+ural Language Processing (Volume 1: Long Papers),
+pages 6283–6297, Online. Association for Computa-
+tional Linguistics.
+Lu Xu, Yew Ken Chia, and Lidong Bing. 2021.
+Learning span-level interactions for aspect senti-
+ment triplet extraction. In Proceedings of the 59th
+Annual Meeting of the Association for Computa-
+tional Linguistics and the 11th International Joint
+Conference on Natural Language Processing (Vol-
+ume 1: Long Papers), pages 4755–4766, Online. As-
+sociation for Computational Linguistics.
+Lu Xu, Hao Li, Wei Lu, and Lidong Bing. 2020.
+Position-aware tagging for aspect sentiment triplet
+extraction. In Proceedings of the 2020 Conference
+on Empirical Methods in Natural Language Process-
+ing (EMNLP), pages 2339–2349, Online. Associa-
+tion for Computational Linguistics.
+Linting Xue, Noah Constant, Adam Roberts, Mi-
+hir Kale, Rami Al-Rfou, Aditya Siddhant, Aditya
+Barua, and Colin Raffel. 2021. mT5: A massively
+multilingual pre-trained text-to-text transformer. In
+Proceedings of the 2021 Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies,
+pages 483–498, Online. Association for Computa-
+tional Linguistics.
+Hang Yan, Junqi Dai, Tuo Ji, Xipeng Qiu, and Zheng
+Zhang. 2021a. A uniﬁed generative framework for
+aspect-based sentiment analysis. In Proceedings of
+the 59th Annual Meeting of the Association for Com-
+putational Linguistics and the 11th International
+Joint Conference on Natural Language Processing
+(Volume 1: Long Papers), pages 2416–2429, Online.
+Association for Computational Linguistics.
+Hang Yan, Tao Gui, Junqi Dai, Qipeng Guo, Zheng
+Zhang, and Xipeng Qiu. 2021b. A uniﬁed genera-
+tive framework for various NER subtasks. In Pro-
+ceedings of the 59th Annual Meeting of the Associa-
+tion for Computational Linguistics and the 11th In-
+ternational Joint Conference on Natural Language
+Processing (Volume 1: Long Papers), pages 5808–
+5822, Online. Association for Computational Lin-
+guistics.
+Bowen Yu, Zhenyu Zhang, Xiaobo Shu, Yubin Wang,
+Tingwen Liu, Bin Wang, and Sujian Li. 2020. Joint
+extraction of entities and relations based on a novel
+decomposition strategy. In Proc. of ECAI.
+Xiangrong Zeng, Daojian Zeng, Shizhu He, Kang Liu,
+and Jun Zhao. 2018. Extracting relational facts by
+an end-to-end neural model with copy mechanism.
+In Proceedings of the 56th Annual Meeting of the
+Association for Computational Linguistics (Volume
+1: Long Papers), pages 506–514, Melbourne, Aus-
+tralia. Association for Computational Linguistics.
+Ranran Haoran Zhang, Qianying Liu, Aysa Xuemo
+Fan, Heng Ji, Daojian Zeng, Fei Cheng, Daisuke
+Kawahara, and Sadao Kurohashi. 2020. Minimize
+exposure bias of Seq2Seq models in joint entity
+and relation extraction. In Findings of the Associa-
+tion for Computational Linguistics: EMNLP 2020,
+pages 236–246, Online. Association for Computa-
+tional Linguistics.
+Wenxuan Zhang, Xin Li, Yang Deng, Lidong Bing, and
+Wai Lam. 2021. Towards generative aspect-based
+sentiment analysis. In Proceedings of the 59th An-
+nual Meeting of the Association for Computational
+Linguistics and the 11th International Joint Confer-
+ence on Natural Language Processing (Volume 2:
+Short Papers), pages 504–510, Online. Association
+for Computational Linguistics.
+Hengyi Zheng, Rui Wen, Xi Chen, Yifan Yang, Yun-
+yan Zhang, Ziheng Zhang, Ningyu Zhang, Bin Qin,
+Xu Ming, and Yefeng Zheng. 2021. PRGC: Poten-
+tial relation and global correspondence based joint
+relational triple extraction.
+In Proceedings of the
+59th Annual Meeting of the Association for Compu-
+tational Linguistics and the 11th International Joint
+Conference on Natural Language Processing (Vol-
+ume 1: Long Papers), pages 6225–6235, Online. As-
+sociation for Computational Linguistics.
+Suncong Zheng, Feng Wang, Hongyun Bao, Yuexing
+Hao, Peng Zhou, and Bo Xu. 2017.
+Joint extrac-
+tion of entities and relations based on a novel tag-
+ging scheme.
+In Proceedings of the 55th Annual
+Meeting of the Association for Computational Lin-
+guistics (Volume 1: Long Papers), pages 1227–1236,
+Vancouver, Canada. Association for Computational
+Linguistics.
+Zexuan Zhong and Danqi Chen. 2021. A frustratingly
+easy approach for entity and relation extraction. In
+Proceedings of the 2021 Conference of the North
+American Chapter of the Association for Computa-
+tional Linguistics: Human Language Technologies,
+pages 50–61, Online. Association for Computational
+Linguistics.
+5767
+
+
+=== PDF PAGE 14 ===
+A
+Experiment Details
+This section describes the details of experiments,
+including pre-training and ﬁne-tuning on down-
+stream tasks.
+A.1
+Pre-training Details
+Data Construction
+We use the 20210401 ver-
+sion of Wikipedia2 and Wikidata3 dump and Con-
+ceptNet4 to construct the pre-train dataset.
+For Wikidata and Wikipedia, we use them to col-
+lect the tuples Tw = {< Th, eh, r, et, X >}, where
+Th is head entity type, eh is head entity, r is rela-
+tion, et is tail entity, X is sentence, and the Tw can
+be used to construct Dpair, Drecord and Dtext. Firstly,
+we construct entity type dictionary L and relation
+dictionary P from Wikidata. Wikidata has more
+than 40M entity items and each item has its corre-
+sponding properties which indicate the association
+between entities. For type dictionary L, we regard
+each item as an entity, use the “instance of” and
+“subclass of” property values as its corresponding
+entity types and consider other properties as the
+relation of the entity with others. To learn general
+knowledge, all entity types will be retained except
+those whose instances are < 5. For the type whose
+name is longer than 3 tokens, we use its headwords
+as the ﬁnal type for simplicity, e.g.,“state award
+of the Republic of Moldova” is converted to “state
+award”. For relation dictionary P, Wikidata has
+more than 9K kinds of properties5, we ﬁlter out
+the properties of external-id, URL, and math types.
+In this way, we obtain a collection of 31K types
+and retained 1535 properties which can serve as
+a solid foundation for universal IE. Secondly, we
+collect the mentions of each entity by using its
+anchor texts in Wikipedia and the top 3 frequent
+noun phrase occurrences of its entry page (Li et al.,
+2010). Then for each mention, we identify its en-
+tity types by linking it to its Wikidata item’s types.
+For each Wikipedia page, we split the text into sen-
+tences6 and ﬁlter out sentences that have no entities.
+Thirdly, we regard each entity as a head entity and
+ﬁnd the associated entities according to its proper-
+ties. The associated entity will set as as tail entity,
+and the property value will set as association type.
+If a head entity has no type, Th will be blank or
+2https://www.wikipedia.org/
+3https://www.wikidata.org/
+4https://conceptnet.io/
+5https://www.wikidata.org/wiki/
+Wikidata:List_of_properties
+6nltk.tokenize.punkt
+Algorithm 1 The pre-training process of UIE in a
+Python-like style.
+# The training details of UIE
+function pretraining_process
+for step in all_steps do
+batch = []
+# load ntext unstructured text samples
+texts = get_data(Dtext, ntext)
+# construct corrupted source text x′ and
+# corrupted spans x′′ for each text sample
+for x in texts do
+x′, x′′ = span_corrupt(x)
+batch.extend((None, x′, x′′))
+end for
+# load nrecord structured record samples
+records = get_data(Drecord, nrecord)
+for y in records do
+batch.extend((None, None, y))
+end for
+# load npair text-record parallel pairs
+text_record_pairs = get_data(Dpair, npair)
+# construct meta-schema smeta
+# for each text-record pair (x, y)
+for (x, y) in text_record_pairs do
+s = meta_schema_sample(y)
+batch.extend((s, x, y))
+end for
+# compute loss and backward
+LPair, LRecord, LText = UIE(batch)
+loss = LPair + LRecord + LText
+loss.backward()
+end for
+end function
+# The meta sample of UIE
+function meta_schema_sample(y)
+# get positive spots and associations
+# in the record y
+ss+, sa+ = get_schema_from_record(y)
+# sample negative spots
+ss- = sample_negative_spot(s+)
+# sample negative associations
+sa- = sample_negative_association(s+)
+return ss+ ∪ss- ∪sa+ ∪sa-
+end function
+has no associated tail entity, r and et will be blank.
+To this end, given a sentence, we can construct in-
+stances based on the collected tuples Tw by setting
+eh and et as INFOSPAN, and assigning Th as SPOT-
+NAME, r as ASSONAME. Finally, from Wikipedia
+and Wikidata, we construct Dpair, Drecord and Dtext
+with 65M instances, respectively. And we keep
+50K as the development dataset.
+To add common sense knowledge to structured
+extraction language (SEL), we extract the tuples Tc
+from ConceptNet. ConceptNet contains 48 associ-
+ations and has no context or entity types. So we
+leave the Th, Tt X blank and ﬁnally construct 1M
+instances.
+5768
+
+
+=== PDF PAGE 15 ===
+Hyper-parameter
+UIE-base
+UIE-large
+Pre-training
+Fine-tuning
+Pre-training
+Fine-tuning
+Ent/Rel/Evt
+Sentiment
+Low-resource
+Ent/Rel/Evt
+Sentiment
+Learning Rate
+1e-4
+1e-4, 3e-4, 5e-4
+1e-4
+1e-4
+5e-5, 1e-4, 3e-4
+Rejection Noise pϵ
+0.0
+0, 0.1, 0.2
+0.1
+0.0
+0, 0.1, 0.2
+Global Batch Size
+512
+64
+16
+16
+512
+32
+8
+Schedule
+linear
+linear
+linear
+constant
+linear
+linear
+linear
+Warmup Rate
+0.06
+0.06
+0.06
+0.0
+0.06
+0.06
+0.06
+Epoch/Step
+500K step
+50 epoch
+50 epoch
+200 epoch
+500K step
+50 epoch
+50 epoch
+Table 6: Hyper-parameters pre-training and ﬁne-tuning for UIE-base and UIE-large.
+Hyper-parameter
+UIE-base
+UIE-large
+# Layers of Encoder
+12
+24
+# Layers of Decoder
+12
+24
+Hidden Dimension
+768
+1,024
+FF hidden size
+2,048
+2,816
+Layer Normalize ϵ
+1e-6
+1e-6
+# Attention head
+12
+16
+Attention head size
+64
+64
+Table 7: Model architectures.
+|Ent|
+|Rel|
+|Evt|
+#Train
+#Val
+#Test
+ACE04
+7
+-
+-
+6,202
+745
+812
+ACE05-Ent
+7
+-
+-
+7,299
+971
+1,060
+CoNLL03
+4
+-
+-
+14,041
+3,250
+3,453
+ACE05-Rel
+7
+6
+-
+10,051
+2,420
+2,050
+CoNLL04
+4
+5
+-
+922
+231
+288
+NYT
+3
+24
+-
+56,196
+5,000
+5,000
+SciERC
+6
+7
+-
+1,861
+275
+551
+ACE05-Evt
+-
+-
+33
+19,216
+901
+676
+CASIE
+21
+-
+5
+11,189
+1,778
+3,208
+14res
+2
+3
+-
+1,266
+310
+492
+14lap
+2
+3
+-
+906
+219
+328
+15res
+2
+3
+-
+605
+148
+322
+16res
+2
+3
+-
+857
+210
+326
+Table 8: Detailed datasets statistics. |*| indicates the
+number of categories, and # is the number of sentences
+in the speciﬁc subset. We take sentiment types as spe-
+cial relation type: positive, negative, and neutral; and
+each sentiment triplet holds a aspect and a opinion.
+Training Details
+We ﬁrst initialize UIE-base and
+UIE-large with T5-v1.1-base and T5-v1.1-large
+checkpoints (Raffel et al., 2020), and the model
+architectures are shown in Table 7. We employ
+Adam optimizer (Kingma and Ba, 2015) as the
+optimizer with learning rate=1e-4, and use linear
+scheduling with a warming up proportion 6%. For
+negative spots and associations in the LPair, we ran-
+domly select negative spots and associations up
+to 10 for each instance, respectively. For LText,
+we set the corruption rate to 15% and the average
+corrupting span length to 3, following Raffel et al.
+(2020). We truncate the concatenated overall length
+of schema prompt s and raw text x, as well as the
+length of SEL expression y, together to 128 during
+pre-training. We train our base model and large
+model for both 500K steps with batch size 512 on
+8 NVIDIA A100 GPUs.
+The detailed pre-training process in a python-
+like style is shown in Algorithm 1. In each batch
+of pre-training processes for UIE, we construct a
+batch of triplets (s, x, y) containing text-record
+pairs, text instances, and record instances. In prac-
+tice, since 8 GPUs could only run the large model
+with an overall batch of 128 (batch=16 on each
+GPU), we update the model parameters after accu-
+mulating 4 gradients.
+A.2
+Details of Downstream Tasks
+We conduct downstream tasks on 4 IE tasks, 13
+datasets, and the detailed statistic of each dataset is
+shown in Table 8.
+Entity
+We conduct entity extraction experiments
+on three entity datasets: ACE047 (Mitchell et al.,
+2005), ACE05-Ent8 (Walker et al., 2006), and
+CoNLL03 (Tjong Kim Sang and De Meulder,
+2003). For nested entity extraction datasets ACE04
+and ACE05-Ent, we follow the pre-processing steps
+and data split of previous works (Li et al., 2020).
+Relation
+We conduct experiments on four wide-
+used end-to-end relation extraction datasets across
+several languages and domains:
+ACE05-Rel
+(Walker et al., 2006), CoNLL049 (Roth and Yih,
+2004), NYT10 (Riedel et al., 2010), and SciERC11
+(Luan et al., 2018). We follow the preprocessing
+7https://catalog.ldc.upenn.edu/LDC2005T09
+8https://catalog.ldc.upenn.edu/LDC2006T06
+9https://github.com/btaille/sincere
+10https://github.com/yubowen-ph/JointER
+11http://nlp.cs.washington.edu/sciIE/
+5769
+
+
+=== PDF PAGE 16 ===
+steps and data split of previous works (Taillé et al.,
+2020; Yu et al., 2020; Wadden et al., 2019).
+Event
+For ACE05-Evt, we follow the same types,
+data splits, and pre-processing steps as Lin et al.
+(2020). For CASIE (Satyapanich et al., 2020), we
+ﬁrst remove three incomplete annotated documents
+(999, 10001, 10002), then split the remaining doc-
+uments into three sets: train/val/test=697/100/200
+according to the time order of each document. We
+employ the state-of-the-art generation-based event
+extraction method TEXT2EVENT (Lu et al., 2021)
+as the comparable state-of-the-art system.
+Sentiment
+We conduct sentiment extraction ex-
+periments on the sentiment triplet extraction (Xu
+et al., 2020) of SemEval 14/15/16 aspect sentiment
+analysis datasets. We employ the pre-processing
+datasets of the previous work (Yan et al., 2021a)12.
+Evaluation
+We use span-based offset Micro-F1
+as the primary metric to evaluate the model:
+• Entity: an entity mention is correct if its offsets
+and type match a reference entity.
+• Relation Strict: relation with strict match, a re-
+lation is correct if its relation type is correct and
+the offsets and entity types of the related entity
+mentions are correct.
+• Relation Triplet: relation with boundary match,
+a relation is correct if its relation type is correct
+and the string of the subject/object are correct.
+• Event Trigger: an event trigger is correct if its
+offsets and event type matches a reference trigger.
+• Event Argument: an event argument is correct
+if its offsets, role type, and event type match a
+reference argument mention.
+• Sentiment Triplet: a correct triplet requires the
+offsets boundary of the target, the offsets bound-
+ary of the opinion span, and the target sentiment
+polarity to be all correct at the same time.
+To make a fair comparison with baseline systems,
+we mapped the generated string-level extraction
+results to offset-level for model evaluation. In de-
+tail, we reconstructed the offset of predicted en-
+tity/trigger mentions by ﬁnding the matched utter-
+ance in the input sequence one by one. For argu-
+ment mentions in relation and event tasks, we found
+the nearest matched utterance to the predicted en-
+tity/trigger mention as the predicted offset. This
+simple heuristic offset strategy achieves high ac-
+curacy. Compared to the string level evaluation,
+12https://github.com/yhcc/BARTABSA
+Methods
+PLM
+14res
+14lap
+15res
+16res
+(Xu et al., 2020)
+BERT-base
+62.40
+51.04
+57.53
+63.83
+(Yan et al., 2021a)
+BART-base
+65.25
+58.69
+59.26
+67.62
+(Xu et al., 2021)
+BERT-base
+71.85
+59.38
+63.27
+70.26
+(Zhang et al., 2021)
+T5-base
+72.16
+60.78
+62.10
+70.10
+SSI + SEL
+UIE-base
+72.55
+62.94
+64.41
+72.86
+T5-v1.1-base
+71.27
+58.69
+59.60
+70.24
+Table 9: Experiment results of UIE-base on the senti-
+ment triplet extraction tasks.
+Methods
+PLM
+P
+R
+F
+(Wang et al., 2020)
+BERT-base
+91.40
+92.60
+92.00
+(Sui et al., 2020)
+BERT-base
+92.50
+92.20
+92.30
+(Zheng et al., 2021)
+BERT-base
+93.50
+91.90
+92.70
+SSI + SEL
+T5-v1.1-base
+91.94
+93.28
+92.60
+Table 10: Experiment results of SSI and SEL on the
+NYT (the joint entity and relation extraction setting).
+the error rate of the reported offset level evalua-
+tion is less than 0.5%. More complicated mapping
+approaches are left as future work.
+Table 6 shows the detailed hyper-parameters for
+downstream tasks.
+A.3
+Comparison of UIE-base
+This section introduces detailed experiment results
+of UIE-base.
+Table 9 shows the performance of UIE-base
+and the state-of-the-art systems on the four aspect-
+based sentiment analysis datasets. As shown in
+Table 9, the proposed SEL and SSI also have
+strong portability to sentiment triplets extraction,
+which achieves the competitive performance with
+the state-of-the-art with task-speciﬁc architectures.
+With the uniﬁed pre-training, UIE-base achieves an
+improvement of 3.24 on average over T5-v1.1-base
+across four datasets. This veriﬁes the proposed uni-
+ﬁed pre-training algorithms can learn general IE
+ability even the sentiment knowledge is rarely in
+the pre-training stage.
+Table 10 shows the performance of SEL-SSI
+with the T5-v1.1-base for NYT. Due to the high
+overlapping of NYT and pre-trained data, we didn’t
+conduct the experiment of UIE on NYT. Even with-
+out pre-training, SSI + SEL still achieved the state-
+of-the-art performance on NYT. This is because
+of the ﬂexible generation architecture and the uni-
+versal SEL expression, UIE can naturally handle
+entity overlap problems.
+5770
+
+
+=== PDF PAGE 17 ===
+Task
+Dataset
+Structural Schema Instructor
+Entity
+ACE04/05-Ent
+<spot> facility <spot> geographical social political <spot> location <spot>
+organization <spot> person <spot> vehicle <spot> weapon
+Entity
+CoNLL03
+<spot> location <spot> miscellaneous <spot> organization <spot> person
+Relation
+ACE05-Rel
+<spot> facility <spot> geographical social political <spot> location <spot>
+organization <spot> person <spot> vehicle <spot> weapon <asoc> agent artifact
+<asoc> general afﬁliation <asoc> organization afﬁliation <asoc> part whole
+<asoc> personal social <asoc> physical
+Relation
+CoNLL04
+<spot> location <spot> organization <spot> other <spot> people <asoc> kill
+<asoc> live in <asoc> located in <asoc> organization in <asoc> work for
+Relation
+NYT
+<spot> location <spot> organization <spot> person <asoc> administrative divi-
+sions <asoc> advisors <asoc> capital <asoc> children <asoc> company <asoc>
+contains <asoc> country <asoc> ethnicity <asoc> founders <asoc> geographic
+distribution <asoc> industry <asoc> location <asoc> major shareholder of
+<asoc> major shareholders <asoc> nationality <asoc> neighborhood of <asoc>
+people <asoc> place founded <asoc> place lived <asoc> place of birth <asoc>
+place of death <asoc> profession <asoc> religion <asoc> teams
+Relation
+SciERC
+<spot> generic <spot> material <spot> method <spot> metric <spot> other
+scientiﬁc term <spot> task <asoc> compare <asoc> conjunction <asoc> evaluate
+for <asoc> feature of <asoc> hyponym of <asoc> part of <asoc> used for
+Event
+ACE05-Evt
+<spot> acquit <spot> appeal <spot> arrest jail <spot> attack <spot> born <spot>
+charge indict <spot> convict <spot> declare bankruptcy <spot> demonstrate
+<spot> die <spot> divorce <spot> elect <spot> end organization <spot> end
+position <spot> execute <spot> extradite <spot> ﬁne <spot> injure <spot>
+marry <spot> meet <spot> merge organization <spot> nominate <spot> pardon
+<spot> phone write <spot> release parole <spot> sentence <spot> start organi-
+zation <spot> start position <spot> sue <spot> transfer money <spot> transfer
+ownership <spot> transport <spot> trial hearing <asoc> adjudicator <asoc>
+agent <asoc> artifact <asoc> attacker <asoc> beneﬁciary <asoc> buyer <asoc>
+defendant <asoc> destination <asoc> entity <asoc> giver <asoc> instrument
+<asoc> organization <asoc> origin <asoc> person <asoc> place <asoc> plaintiff
+<asoc> prosecutor <asoc> recipient <asoc> seller <asoc> target <asoc> vehicle
+<asoc> victim
+Event
+CASIE
+<spot> capabilities <spot> common vulnerabilities and exposures <spot> data
+<spot> databreach <spot> device <spot> discover vulnerability <spot> ﬁle
+<spot> geopolitical entity <spot> malware <spot> money <spot> number
+<spot> organization <spot> patch <spot> patch vulnerability <spot> payment
+method <spot> person <spot> personally identiﬁable information <spot> phish-
+ing <spot> purpose <spot> ransom <spot> software <spot> system <spot>
+time <spot> version <spot> vulnerability <spot> website <asoc> attack pat-
+tern <asoc> attacker <asoc> capabilities <asoc> common vulnerabilities and
+exposures <asoc> compromised data <asoc> damage amount <asoc> discov-
+erer <asoc> issues addressed <asoc> number of data <asoc> number of victim
+<asoc> patch <asoc> patch number <asoc> payment method <asoc> place
+<asoc> price <asoc> purpose <asoc> releaser <asoc> supported platform <asoc>
+time <asoc> tool <asoc> trusted entity <asoc> victim <asoc> vulnerability
+<asoc> vulnerable system <asoc> vulnerable system owner <asoc> vulnerable
+system version
+Sentiment
+14/15/16-res
+<spot> aspect <spot> opinion <asoc> negative <asoc> neutral <asoc> positive
+Sentiment
+14-lap
+<spot> aspect <spot> opinion <asoc> negative <asoc> neutral <asoc> positive
+Table 11: Structured schema instructor for each dataset (we use <spot> and <asoc> rather than [spot] and [asoc]
+for better visualization).
+5771
+
+
+=== PDF PAGE 18 ===
+Task
+Dataset
+Structured Extraction Language
+Entity
+ACE04/ACE05-Ent
+((geographical social political: Filipino)
+(person: Filipino President)
+(person: Filipino President Ramos)
+(person: the six people awarded Magasaysay award)
+(person: Magasaysay))
+Entity
+CoNLL03
+((organization: EU)
+(miscellaneous: German)
+(miscellaneous: British))
+Relation
+ACE05-Rel
+((geographical social political: European)
+(geographical social political: troika
+(part whole: European))
+(geographical social political: itself)
+(geographical social political: Washington))
+Relation
+CoNLL04
+((location: Rome
+(located in: Lazio))
+(location: Lazio)
+(location: Naples
+(located in: Campania))
+(location: Campania))
+Relation
+NYT
+((person: William F. Weld
+(place lived: New York))
+(location: New York))
+Relation
+SciERC
+((method: HMMs)
+(other scientific term: weak duration constraints
+(feature of: HMMs)))
+Event
+ACE05-Evt
+((transport: heading
+(artifact: family)
+(destination: new hampshire)
+(origin: lakeland)
+(vehicle: plane)))
+Event
+CASIE
+((phishing: email scam
+(trusted entity: a Netflix notification)
+(victim: subscribers)
+(trusted entity: the streaming service))
+(file: a Netflix notification)
+(person: subscribers)
+(system: the streaming service))
+Sentiment
+14/15/16-res
+((aspect: staff
+(negative: horrible))
+(opinion: horrible))
+Sentiment
+14lap
+((opinion: good)
+(aspect: battery life
+(positive: good)))
+Table 12: Structured extraction language expressions for each dataset.
+5772

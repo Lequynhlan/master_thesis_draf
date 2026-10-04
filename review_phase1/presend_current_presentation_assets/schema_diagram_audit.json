@@ -1,0 +1,1983 @@
+{
+  "inputs_sha256": {
+    "D:\\project\\master_thesis\\01-10-2026\\chỉnh sửa mới nhất - 01-10\\ontology_v1.0.ttl": "ff0e7f8a9a49fe5b28bcc693bc1b6c6b7e14837829efaf8a6d48513df1890e11",
+    "D:\\project\\master_thesis\\01-10-2026\\chỉnh sửa mới nhất - 01-10\\shapes_v1.0.ttl": "0353e15a101bb1c127093ee58d231fe13dbe779357709fad80a37f4bee70d3f7",
+    "D:\\project\\master_thesis\\01-10-2026\\chỉnh sửa mới nhất - 01-10\\master_thesis_v1_synced_01-10.drawio": "30da7b105e958fcce86949410d017e3d8e8762be8248e79c5bf90f1cbc93ca46"
+  },
+  "results": [
+    {
+      "status": "PASS",
+      "where": "inputs",
+      "message": "TTL, SHACL and Draw.io XML parse successfully"
+    },
+    {
+      "status": "PASS",
+      "where": "00-WFKG Ontology",
+      "message": "94 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "00-WFKG Ontology",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "00-WFKG Ontology/cell=2411blnfpnkDnIr3tklR-3/subsidiary-owner-role",
+      "message": "hasSubsidiaryRelation source must equal parentCompany target for the same relation node; owner=2411blnfpnkDnIr3tklR-5; parent targets=['2411blnfpnkDnIr3tklR-5'] (role endpoint identity only, not generic class compatibility)"
+    },
+    {
+      "status": "PASS",
+      "where": "01-Tổng quan đề tài",
+      "message": "25 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "01-Tổng quan đề tài",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "02-Tin tức đến sự kiện",
+      "message": "17 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "02-Tin tức đến sự kiện",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "03-Chuẩn hóa thực thể",
+      "message": "42 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "03-Chuẩn hóa thực thể",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "04-Event-Stock trực tiếp",
+      "message": "26 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "04-Event-Stock trực tiếp",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "05-4 Đường liên hệ chính",
+      "message": "13 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "05-4 Đường liên hệ chính",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property",
+      "message": "8 unique cell IDs"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property",
+      "message": "Broken references: []"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Bank: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Company: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "CompanyAlias: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "CorporateLeader: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Event: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "EventStockCandidate: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "EventStockReaction: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Evidence: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "FinancialMetric: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "GovernmentOrganization: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "IndexMembership: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Industry: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "IndustryExposure: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "IndustryGroup: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "LeadershipPosition: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "MarketIndex: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "MarketIndexObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "MarketObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "NewsArticle: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "NewsSource: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "Stock: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "SubsidiaryRelation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "abnormalReturn: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "adjustedClose: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "aliasId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "aliasName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "aliasType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "articleId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "availableAt: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "belongsToGroup: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "belongsToIndustry: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "benchmarkIndex: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "candidateId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "candidateReason: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "candidateScore: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "candidateStatus: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "candidateStock: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "canonicalKey: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "clarifies: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "companyId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "companyType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "confidenceScore: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "contradicts: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "cumulativeAbnormalReturn: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "dataQualityFlag: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "derivedFromIndexObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "derivedFromObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "description: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "effectiveTradingDate: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "endOffset: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "eventId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "eventType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "evidenceId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "evidenceText: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "exchange: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "expectedDirection: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "exposureBank: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "exposureIndustry: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "exposureRatio: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "exposureStrength: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "extractedFrom: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "extractionConfidence: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "forEvent: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "fullName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "generatedAt: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasAlias: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasEventStockCandidate: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasFinancialMetric: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasIndexMembership: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasIndexObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasIndustryExposure: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasLeadershipPosition: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasMarketObservation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasReaction: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasStock: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "hasSubsidiaryRelation: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "impactScore: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "impactType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "indexCode: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "indexId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "indexName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "industryCode: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "industryGroupId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "industryGroupName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "industryId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "industryName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "inferenceCutoff: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "involves: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "involvesCompany: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "involvesLeader: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "issuedBy: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "linkingConfidence: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "marketReactionDirection: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "memberIndex: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "memberStock: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "methodVersion: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "metricId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "metricType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "metricValue: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "observationId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "occurredAt: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "onCandidate: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "organizationId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "organizationName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "parentCompany: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "periodEnd: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "periodStart: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "periodType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "personId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "positionAtCompany: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "positionHolder: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "positionTitle: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "publishedAt: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "publishedBy: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "reactionId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "reactionWeight: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "referencesMetric: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "relatedEvent: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "relatedToIndustry: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "relationConfidence: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "relationPath: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "relationStrength: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "reliabilityScore: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "reportedCategory: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "reports: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "returnValue: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "severityScore: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "shortName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "signedWeight: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "sourceConfidence: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "sourceId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "sourceName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "sourceReference: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "sourceType: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "startOffset: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "stockId: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "subsidiaryCompany: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "supersedes: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "supports: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "taxonomyName: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "tickerSymbol: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "title: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "tradingDate: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "unit: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "updates: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "url: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "validFrom: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "validTo: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "volume: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "windowEndOffset: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "appendix inventory",
+      "message": "windowStartOffset: name present only (not semantic proof)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=3: NewsArticle —publishedBy [1]→ NewsSource",
+      "message": "NewsArticle.publishedBy domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=3: NewsArticle —publishedBy [1]→ NewsSource",
+      "message": "publishedBy range: Draw.io=NewsSource; TTL=['NewsSource']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=3: NewsArticle —publishedBy [1]→ NewsSource",
+      "message": "publishedBy cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=4: NewsArticle —url [1]→ IRI",
+      "message": "NewsArticle.url domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=4: NewsArticle —url [1]→ IRI",
+      "message": "url: IRI matches SHACL nodeKind"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=4: NewsArticle —url [1]→ IRI",
+      "message": "url cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=5: Evidence —extractedFrom [1]→ NewsArticle",
+      "message": "Evidence.extractedFrom domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=5: Evidence —extractedFrom [1]→ NewsArticle",
+      "message": "extractedFrom range: Draw.io=NewsArticle; TTL=['NewsArticle']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=5: Evidence —extractedFrom [1]→ NewsArticle",
+      "message": "extractedFrom cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=6: Evidence —supports [1..*]→ Event",
+      "message": "Evidence.supports domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=6: Evidence —supports [1..*]→ Event",
+      "message": "supports range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=6: Evidence —supports [1..*]→ Event",
+      "message": "supports cardinality: Draw.io=(1, None); SHACL=(1, None) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=7: NewsArticle —reports [0..*]→ Event",
+      "message": "NewsArticle.reports domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=7: NewsArticle —reports [0..*]→ Event",
+      "message": "reports range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=7: NewsArticle —reports [0..*]→ Event",
+      "message": "reports cardinality: Draw.io=(0, None); SHACL=(0, None) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=8: Event —relatedEvent→ Event",
+      "message": "Event.relatedEvent domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=8: Event —relatedEvent→ Event",
+      "message": "relatedEvent range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "Event.clarifies domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "clarifies range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "Event.updates domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "updates range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "Event.contradicts domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "contradicts range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "Event.supersedes domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=9: Event —clarifies / updates / contradicts / supersedes→ Event",
+      "message": "supersedes range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=10: Event —issuedBy→ GovernmentOrganization",
+      "message": "Event.issuedBy domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=10: Event —issuedBy→ GovernmentOrganization",
+      "message": "issuedBy range: Draw.io=GovernmentOrganization; TTL=['GovernmentOrganization']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=11: Event —referencesMetric→ FinancialMetric",
+      "message": "Event.referencesMetric domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-3/label-line=11: Event —referencesMetric→ FinancialMetric",
+      "message": "referencesMetric range: Draw.io=FinancialMetric; TTL=['FinancialMetric']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=3: Event —involvesCompany (⊑ involves)→ Company",
+      "message": "Event.involvesCompany domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=3: Event —involvesCompany (⊑ involves)→ Company",
+      "message": "involvesCompany range: Draw.io=Company; TTL=['Company']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=4: Event —involvesLeader (⊑ involves)→ CorporateLeader",
+      "message": "Event.involvesLeader domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=4: Event —involvesLeader (⊑ involves)→ CorporateLeader",
+      "message": "involvesLeader range: Draw.io=CorporateLeader; TTL=['CorporateLeader']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=5: Event —relatedToIndustry→ Industry",
+      "message": "Event.relatedToIndustry domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=5: Event —relatedToIndustry→ Industry",
+      "message": "relatedToIndustry range: Draw.io=Industry; TTL=['Industry']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=6: Company —hasAlias→ CompanyAlias",
+      "message": "Company.hasAlias domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=6: Company —hasAlias→ CompanyAlias",
+      "message": "hasAlias range: Draw.io=CompanyAlias; TTL=['CompanyAlias']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=7: Company —hasSubsidiaryRelation→ SubsidiaryRelation",
+      "message": "Company.hasSubsidiaryRelation domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=7: Company —hasSubsidiaryRelation→ SubsidiaryRelation",
+      "message": "hasSubsidiaryRelation range: Draw.io=SubsidiaryRelation; TTL=['SubsidiaryRelation']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=8: Company —hasFinancialMetric→ FinancialMetric",
+      "message": "Company.hasFinancialMetric domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=8: Company —hasFinancialMetric→ FinancialMetric",
+      "message": "hasFinancialMetric range: Draw.io=FinancialMetric; TTL=['FinancialMetric']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=9: CorporateLeader —hasLeadershipPosition→ LeadershipPosition",
+      "message": "CorporateLeader.hasLeadershipPosition domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=9: CorporateLeader —hasLeadershipPosition→ LeadershipPosition",
+      "message": "hasLeadershipPosition range: Draw.io=LeadershipPosition; TTL=['LeadershipPosition']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=10: LeadershipPosition —positionHolder→ CorporateLeader",
+      "message": "LeadershipPosition.positionHolder domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=10: LeadershipPosition —positionHolder→ CorporateLeader",
+      "message": "positionHolder range: Draw.io=CorporateLeader; TTL=['CorporateLeader']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=11: LeadershipPosition —positionAtCompany→ Company",
+      "message": "LeadershipPosition.positionAtCompany domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=11: LeadershipPosition —positionAtCompany→ Company",
+      "message": "positionAtCompany range: Draw.io=Company; TTL=['Company']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=12: SubsidiaryRelation —subsidiaryCompany→ Company",
+      "message": "SubsidiaryRelation.subsidiaryCompany domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=12: SubsidiaryRelation —subsidiaryCompany→ Company",
+      "message": "subsidiaryCompany range: Draw.io=Company; TTL=['Company']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=13: SubsidiaryRelation —parentCompany→ Company",
+      "message": "SubsidiaryRelation.parentCompany domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=13: SubsidiaryRelation —parentCompany→ Company",
+      "message": "parentCompany range: Draw.io=Company; TTL=['Company']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=14: Company —belongsToIndustry→ Industry",
+      "message": "Company.belongsToIndustry domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=14: Company —belongsToIndustry→ Industry",
+      "message": "belongsToIndustry range: Draw.io=Industry; TTL=['Industry']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=15: Industry —belongsToGroup→ IndustryGroup",
+      "message": "Industry.belongsToGroup domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-4/label-line=15: Industry —belongsToGroup→ IndustryGroup",
+      "message": "belongsToGroup range: Draw.io=IndustryGroup; TTL=['IndustryGroup']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=3: Company —hasStock→ Stock",
+      "message": "Company.hasStock domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=3: Company —hasStock→ Stock",
+      "message": "hasStock range: Draw.io=Stock; TTL=['Stock']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=4: Bank —hasIndustryExposure→ IndustryExposure",
+      "message": "Bank.hasIndustryExposure domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=4: Bank —hasIndustryExposure→ IndustryExposure",
+      "message": "hasIndustryExposure range: Draw.io=IndustryExposure; TTL=['IndustryExposure']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=5: IndustryExposure —exposureBank→ Bank",
+      "message": "IndustryExposure.exposureBank domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=5: IndustryExposure —exposureBank→ Bank",
+      "message": "exposureBank range: Draw.io=Bank; TTL=['Bank']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=6: IndustryExposure —exposureIndustry→ Industry",
+      "message": "IndustryExposure.exposureIndustry domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=6: IndustryExposure —exposureIndustry→ Industry",
+      "message": "exposureIndustry range: Draw.io=Industry; TTL=['Industry']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=7: Stock —hasIndexMembership→ IndexMembership",
+      "message": "Stock.hasIndexMembership domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=7: Stock —hasIndexMembership→ IndexMembership",
+      "message": "hasIndexMembership range: Draw.io=IndexMembership; TTL=['IndexMembership']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=8: IndexMembership —memberStock→ Stock",
+      "message": "IndexMembership.memberStock domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=8: IndexMembership —memberStock→ Stock",
+      "message": "memberStock range: Draw.io=Stock; TTL=['Stock']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=9: IndexMembership —memberIndex→ MarketIndex",
+      "message": "IndexMembership.memberIndex domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=9: IndexMembership —memberIndex→ MarketIndex",
+      "message": "memberIndex range: Draw.io=MarketIndex; TTL=['MarketIndex']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=10: Stock —hasMarketObservation→ MarketObservation",
+      "message": "Stock.hasMarketObservation domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=10: Stock —hasMarketObservation→ MarketObservation",
+      "message": "hasMarketObservation range: Draw.io=MarketObservation; TTL=['MarketObservation']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=11: MarketIndex —hasIndexObservation→ MarketIndexObservation",
+      "message": "MarketIndex.hasIndexObservation domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=11: MarketIndex —hasIndexObservation→ MarketIndexObservation",
+      "message": "hasIndexObservation range: Draw.io=MarketIndexObservation; TTL=['MarketIndexObservation']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=12: Event —hasEventStockCandidate→ EventStockCandidate",
+      "message": "Event.hasEventStockCandidate domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=12: Event —hasEventStockCandidate→ EventStockCandidate",
+      "message": "hasEventStockCandidate range: Draw.io=EventStockCandidate; TTL=['EventStockCandidate']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=13: EventStockCandidate —forEvent [1]→ Event",
+      "message": "EventStockCandidate.forEvent domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=13: EventStockCandidate —forEvent [1]→ Event",
+      "message": "forEvent range: Draw.io=Event; TTL=['Event']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=13: EventStockCandidate —forEvent [1]→ Event",
+      "message": "forEvent cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=14: EventStockCandidate —candidateStock [1]→ Stock",
+      "message": "EventStockCandidate.candidateStock domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=14: EventStockCandidate —candidateStock [1]→ Stock",
+      "message": "candidateStock range: Draw.io=Stock; TTL=['Stock']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=14: EventStockCandidate —candidateStock [1]→ Stock",
+      "message": "candidateStock cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=15: EventStockCandidate —hasReaction→ EventStockReaction",
+      "message": "EventStockCandidate.hasReaction domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=15: EventStockCandidate —hasReaction→ EventStockReaction",
+      "message": "hasReaction range: Draw.io=EventStockReaction; TTL=['EventStockReaction']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=16: EventStockReaction —onCandidate [1]→ EventStockCandidate",
+      "message": "EventStockReaction.onCandidate domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=16: EventStockReaction —onCandidate [1]→ EventStockCandidate",
+      "message": "onCandidate range: Draw.io=EventStockCandidate; TTL=['EventStockCandidate']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=16: EventStockReaction —onCandidate [1]→ EventStockCandidate",
+      "message": "onCandidate cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=17: EventStockReaction —benchmarkIndex [1]→ MarketIndex",
+      "message": "EventStockReaction.benchmarkIndex domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=17: EventStockReaction —benchmarkIndex [1]→ MarketIndex",
+      "message": "benchmarkIndex range: Draw.io=MarketIndex; TTL=['MarketIndex']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=17: EventStockReaction —benchmarkIndex [1]→ MarketIndex",
+      "message": "benchmarkIndex cardinality: Draw.io=(1, 1); SHACL=(1, 1) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=18: EventStockReaction —derivedFromObservation [1..*]→ MarketObservation",
+      "message": "EventStockReaction.derivedFromObservation domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=18: EventStockReaction —derivedFromObservation [1..*]→ MarketObservation",
+      "message": "derivedFromObservation range: Draw.io=MarketObservation; TTL=['MarketObservation']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=18: EventStockReaction —derivedFromObservation [1..*]→ MarketObservation",
+      "message": "derivedFromObservation cardinality: Draw.io=(1, None); SHACL=(1, None) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=19: EventStockReaction —derivedFromIndexObservation [1..*]→ MarketIndexObservation",
+      "message": "EventStockReaction.derivedFromIndexObservation domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=19: EventStockReaction —derivedFromIndexObservation [1..*]→ MarketIndexObservation",
+      "message": "derivedFromIndexObservation range: Draw.io=MarketIndexObservation; TTL=['MarketIndexObservation']"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-5/label-line=19: EventStockReaction —derivedFromIndexObservation [1..*]→ MarketIndexObservation",
+      "message": "derivedFromIndexObservation cardinality: Draw.io=(1, None); SHACL=(1, None) (None=unbounded)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=3: NewsSource: sourceId, sourceName, sourceType, reliabilityScore",
+      "message": "NewsSource.sourceId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=3: NewsSource: sourceId, sourceName, sourceType, reliabilityScore",
+      "message": "NewsSource.sourceName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=3: NewsSource: sourceId, sourceName, sourceType, reliabilityScore",
+      "message": "NewsSource.sourceType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=3: NewsSource: sourceId, sourceName, sourceType, reliabilityScore",
+      "message": "NewsSource.reliabilityScore domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=3: NewsSource: sourceId, sourceName, sourceType, reliabilityScore",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=4: NewsArticle: articleId, title, publishedAt, availableAt",
+      "message": "NewsArticle.articleId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=4: NewsArticle: articleId, title, publishedAt, availableAt",
+      "message": "NewsArticle.title domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=4: NewsArticle: articleId, title, publishedAt, availableAt",
+      "message": "NewsArticle.publishedAt domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=4: NewsArticle: articleId, title, publishedAt, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=4: NewsArticle: articleId, title, publishedAt, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "Evidence.evidenceId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "Evidence.evidenceText domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "Evidence.startOffset domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "Evidence.endOffset domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=5: Evidence: evidenceId, evidenceText, startOffset, endOffset, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.eventId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.canonicalKey domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.eventType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.description domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.occurredAt domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.effectiveTradingDate domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Event.severityScore domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=6: Event: eventId, canonicalKey, eventType, description, occurredAt, availableAt, effectiveTradingDate, severityScore",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=7: GovernmentOrganization: organizationId, organizationName",
+      "message": "GovernmentOrganization.organizationId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=7: GovernmentOrganization: organizationId, organizationName",
+      "message": "GovernmentOrganization.organizationName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=7: GovernmentOrganization: organizationId, organizationName",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=8: CorporateLeader: personId, fullName",
+      "message": "CorporateLeader.personId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=8: CorporateLeader: personId, fullName",
+      "message": "fullName: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=8: CorporateLeader: personId, fullName",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=9: LeadershipPosition: positionTitle",
+      "message": "LeadershipPosition.positionTitle domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=9: LeadershipPosition: positionTitle",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Company.companyId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "fullName: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Company.shortName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Company.companyType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Bank.companyId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "fullName: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Bank.shortName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Bank.companyType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=10: Company/Bank: companyId, fullName, shortName, companyType",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=11: CompanyAlias: aliasId, aliasName, aliasType",
+      "message": "CompanyAlias.aliasId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=11: CompanyAlias: aliasId, aliasName, aliasType",
+      "message": "CompanyAlias.aliasName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=11: CompanyAlias: aliasId, aliasName, aliasType",
+      "message": "CompanyAlias.aliasType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=11: CompanyAlias: aliasId, aliasName, aliasType",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=12: Stock: stockId, tickerSymbol, exchange",
+      "message": "Stock.stockId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=12: Stock: stockId, tickerSymbol, exchange",
+      "message": "Stock.tickerSymbol domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=12: Stock: stockId, tickerSymbol, exchange",
+      "message": "Stock.exchange domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-6/label-line=12: Stock: stockId, tickerSymbol, exchange",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "IndustryExposure.exposureRatio domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "IndustryExposure.exposureStrength domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "IndustryExposure.reportedCategory domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "periodEnd: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "periodType: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=3: IndustryExposure: exposureRatio, exposureStrength, reportedCategory, periodEnd, periodType, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=4: Industry: industryId, industryCode, industryName, taxonomyName",
+      "message": "Industry.industryId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=4: Industry: industryId, industryCode, industryName, taxonomyName",
+      "message": "Industry.industryCode domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=4: Industry: industryId, industryCode, industryName, taxonomyName",
+      "message": "Industry.industryName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=4: Industry: industryId, industryCode, industryName, taxonomyName",
+      "message": "taxonomyName: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=4: Industry: industryId, industryCode, industryName, taxonomyName",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=5: IndustryGroup: industryGroupId, industryGroupName, taxonomyName",
+      "message": "IndustryGroup.industryGroupId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=5: IndustryGroup: industryGroupId, industryGroupName, taxonomyName",
+      "message": "IndustryGroup.industryGroupName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=5: IndustryGroup: industryGroupId, industryGroupName, taxonomyName",
+      "message": "taxonomyName: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=5: IndustryGroup: industryGroupId, industryGroupName, taxonomyName",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "FinancialMetric.metricId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "FinancialMetric.metricType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "FinancialMetric.metricValue domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "FinancialMetric.unit domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "periodStart: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "periodEnd: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "periodType: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=6: FinancialMetric: metricId, metricType, metricValue, unit, periodStart, periodEnd, periodType, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "observationId: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "tradingDate: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "adjustedClose: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "MarketObservation.volume domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "returnValue: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=7: MarketObservation: observationId, tradingDate, adjustedClose, volume, returnValue, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=8: MarketIndex: indexId, indexCode, indexName",
+      "message": "MarketIndex.indexId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=8: MarketIndex: indexId, indexCode, indexName",
+      "message": "MarketIndex.indexCode domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=8: MarketIndex: indexId, indexCode, indexName",
+      "message": "MarketIndex.indexName domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=8: MarketIndex: indexId, indexCode, indexName",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "observationId: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "tradingDate: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "adjustedClose: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "returnValue: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=9: MarketIndexObservation: observationId, tradingDate, adjustedClose, returnValue, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.candidateId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.impactType domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.relationPath domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.candidateReason domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.expectedDirection domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.relationStrength domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.sourceConfidence domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.extractionConfidence domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.linkingConfidence domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "relationConfidence: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.confidenceScore domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.candidateScore domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.candidateStatus domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.inferenceCutoff domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "EventStockCandidate.generatedAt domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "methodVersion: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=11: EventStockCandidate: candidateId, impactType, relationPath, candidateReason, expectedDirection, relationStrength, sourceConfidence, extractionConfidence, linkingConfidence, relationConfidence, confidenceScore, candidateScore, candidateStatus, inferenceCutoff, generatedAt, availableAt, methodVersion",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.reactionId domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.windowStartOffset domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.windowEndOffset domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.abnormalReturn domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.cumulativeAbnormalReturn domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.marketReactionDirection domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.impactScore domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.reactionWeight domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "PASS",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "EventStockReaction.signedWeight domain matches TTL (subclass accepted)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "methodVersion: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "availableAt: no explicit/inherited OWL domain; shared ownership not inferred"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "06-Phụ lục Entity Property/cell=bRsWfqp-iSm1W4H_WVv9-7/label-line=13: EventStockReaction: reactionId, windowStartOffset, windowEndOffset, abnormalReturn, cumulativeAbnormalReturn, marketReactionDirection, impactScore, reactionWeight, signedWeight, methodVersion, availableAt",
+      "message": "Datatype range not printed in this label; only ownership/property kind compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "dataQualityFlag: mentioned only in shared/narrative text; no structured entry compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "involves: mentioned only in shared/narrative text; no structured entry compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "sourceReference: mentioned only in shared/narrative text; no structured entry compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "validFrom: mentioned only in shared/narrative text; no structured entry compared"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "validTo: mentioned only in shared/narrative text; no structured entry compared"
+    },
+    {
+      "status": "PASS",
+      "where": "SHACL",
+      "message": "44 SELECT constraints parse (not behavioral execution)"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "appendix",
+      "message": "Only printed cardinalities and direct SHACL property shapes compared; qualified/logical/SPARQL constraints not equated to cardinality labels"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "diagram",
+      "message": "Other tabs: structure plus tab00 subsidiary-owner-role endpoint identity only; remaining route semantics, free-form labels, connector class semantics and layout require human review"
+    },
+    {
+      "status": "NOT CHECKED",
+      "where": "validation",
+      "message": "No SHACL conformance execution, runtime, calendar, scoring/evaluation or DOCX audit"
+    },
+    {
+      "status": "PASS",
+      "where": "read-only",
+      "message": "SHA256 before/after unchanged"
+    }
+  ],
+  "counts": {
+    "PASS": 337,
+    "NOT CHECKED": 57
+  }
+}
