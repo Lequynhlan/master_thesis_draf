@@ -96,7 +96,7 @@ Bộ test legacy tại `review_phase1/test_audit_schema_diagram.py` trong worksp
 
 Khi phát hiện FAIL, đọc vị trí và nội dung rồi sửa thủ công artifact được duyệt. Tool không có chế độ auto-fix.
 
-## Kiểm thử hành vi SHACL baseline 1.0.4
+## Kiểm thử hành vi SHACL baseline 1.0.5
 
 `test_baseline_shacl.py` là bộ regression test riêng, không thay đổi chức năng của audit ở trên. Test dùng fixture tổng hợp trong bộ nhớ; không tạo lại demo, CSV hoặc hình lịch sử trong báo cáo và không phải kết quả RQ.
 
@@ -110,8 +110,8 @@ py -3.13 -B tools/audit_schema_diagram.py
 
 Ở môi trường khác, dùng đúng interpreter có `rdflib` và `pyshacl`; không dùng `pip` của một Python khác. Cờ `-B` tránh tạo `__pycache__` trong bộ bàn giao. Không cần cài thêm gói trong môi trường hiện tại.
 
-Bộ hiện tại có 31 unittest (một số test có subtest cho nhiều trạng thái). Giữ 19 regression ban đầu về confidence/score, giá benchmark, daily return/CAR, impactScore, direction, inverse, self-link và thời điểm Reaction; bổ sung REACTION_READY không có Reaction với cả plain/typed string, status ngoài enum, các trạng thái non-ready có/không Reaction, cutoff sớm/muộn hơn Event và thứ tự generatedAt/availableAt. Positive control xác nhận replay chạy muộn vẫn dùng cutoff gốc. Inference bị tắt khi validate để không che lỗi thiếu inverse. Đây là dữ liệu synthetic, không phải pipeline thật.
+Bộ hiện tại có 32 unittest (test severity có 5 subtest cho giá trị thiếu, hai biên và hai giá trị ngoài miền). Giữ 19 regression ban đầu về confidence/score, giá benchmark, daily return/CAR, impactScore, direction, inverse, self-link và thời điểm Reaction; bổ sung REACTION_READY không có Reaction với cả plain/typed string, status ngoài enum, các trạng thái non-ready có/không Reaction, cutoff sớm/muộn hơn Event và thứ tự generatedAt/availableAt. Positive control xác nhận replay chạy muộn vẫn dùng cutoff gốc. Inference bị tắt khi validate để không che lỗi thiếu inverse. Đây là dữ liệu synthetic, không phải pipeline thật.
 
-SHACL baseline khóa `inferenceCutoff = Event.availableAt`, tau=0.10 và epsilon=0. Lifecycle chấp nhận plain hoặc typed xsd:string với cùng giá trị enum, không chấp nhận status ngoài enum. Thay cutoff regime/tau/epsilon phải dùng specification/shape/configuration được định phiên bản riêng. Calendar, daily effectiveTradingDate, dictionary membership/vocabulary, Evidence selection, strength assignment và snapshot immutability vẫn cần curated gate/validator Phase 2; 31 test không chứng minh các phần đó đã triển khai. Mã thoát 0 nghĩa là tất cả test đã qua; mã khác 0 là thất bại hoặc lỗi môi trường.
+SHACL baseline khóa `inferenceCutoff = Event.availableAt`, tau=0.10 và epsilon=0. Lifecycle chấp nhận plain hoặc typed xsd:string với cùng giá trị enum, không chấp nhận status ngoài enum. Thay cutoff regime/tau/epsilon phải dùng specification/shape/configuration được định phiên bản riêng. Calendar, daily effectiveTradingDate, dictionary membership/vocabulary, Evidence selection, strength assignment và snapshot immutability vẫn cần curated gate/validator Phase 2; 32 test không chứng minh các phần đó đã triển khai. Mã thoát 0 nghĩa là tất cả test đã qua; mã khác 0 là thất bại hoặc lỗi môi trường.
 
-Kết quả kiểm tra contract 1.0.4: 31/31 SHACL unittest, 8/8 diagram-audit unittest; audit 337 PASS, 0 FAIL, 57 NOT CHECKED và 44 SELECT parse được. Ma trận 9 góp ý, PDF hiện hành và giới hạn xác minh được ghi ở `../PHASE1_ACCEPTANCE.md`. Không diễn giải các con số này thành coverage percentage hoặc kết quả RQ.
+Kết quả kiểm tra contract 1.0.5: 32/32 SHACL unittest, 8/8 diagram-audit unittest; audit 337 PASS, 0 FAIL, 57 NOT CHECKED và 44 SELECT parse được. Ma trận 9 góp ý, trạng thái PDF và giới hạn xác minh được ghi ở `../PHASE1_ACCEPTANCE.md`. Không diễn giải các con số này thành coverage percentage hoặc kết quả RQ.

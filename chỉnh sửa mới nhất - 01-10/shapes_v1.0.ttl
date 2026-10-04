@@ -1,4 +1,4 @@
-# SHACL contract version: 1.0.4
+# SHACL contract version: 1.0.5
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix wfkg: <https://example.org/wfkg/v1#> .
@@ -80,6 +80,8 @@ wfkg:CorporateLeaderShape a sh:NodeShape ;
 wfkg:EventShape a sh:NodeShape ;
     sh:property [ sh:datatype xsd:decimal ;
             sh:maxCount 1 ;
+            sh:minInclusive 0.0 ;
+            sh:maxInclusive 1.0 ;
             sh:path wfkg:severityScore ],
         [ sh:class wfkg:Event ;
             sh:path wfkg:updates ],

@@ -1,0 +1,105 @@
+{
+  "contract": "1.0.5",
+  "scope": "Phase 1 specification reconciliation, structural regression, Draw.io audit, and HDBank fixture validation only; no Phase 2 pipeline or RQ results",
+  "environment": {
+    "python": "3.14.4",
+    "rdflib": "7.6.0",
+    "pyshacl": "0.40.1"
+  },
+  "tests": {
+    "shacl_baseline": {
+      "passed": 32,
+      "failed": 0,
+      "note": "includes optional severityScore bounds; synthetic regression fixtures"
+    },
+    "drawio_audit": {
+      "passed": 8,
+      "failed": 0,
+      "note": "rerun against contract 1.0.5 expected version"
+    },
+    "schema_diagram": {
+      "exit_code": 0,
+      "counts": {
+        "PASS": 337,
+        "NOT CHECKED": 57
+      },
+      "note": "44 SELECT syntax parsed; NOT CHECKED is not PASS"
+    },
+    "formats": {
+      "ontology_triples": 457,
+      "shapes_triples": 1094,
+      "classes": 22,
+      "event_types": 14,
+      "drawio_tabs": [
+        "00-WFKG Ontology",
+        "01-Tổng quan đề tài",
+        "02-Tin tức đến sự kiện",
+        "03-Chuẩn hóa thực thể",
+        "04-Event-Stock trực tiếp",
+        "05-4 Đường liên hệ chính",
+        "06-Phụ lục Entity Property"
+      ],
+      "docx_zip_integrity": true,
+      "word_media_unchanged": true
+    },
+    "report_text_checks": {
+      "concrete_path_identity_in_docx": true,
+      "historical_fixture_contract_preserved": true,
+      "severity_bounds_in_report": true,
+      "vertical_slice_not_rq_claim": true,
+      "runner_claim_corrected": true
+    },
+    "hdbank_fixture": {
+      "shapes": "1.0.5 (unchanged)",
+      "inference": "none",
+      "shacl_conforms": true,
+      "shacl_results": 0,
+      "sparql_queries_passed": 6,
+      "sparql_queries_failed": 0,
+      "expected_query_values": {
+        "Q1_source_article": 3,
+        "Q2_dividend_event": 1,
+        "Q3_issuer_ticker_and_assertion": 1,
+        "Q4_evidence_count": 4,
+        "Q5_candidate_count": 0,
+        "Q6_reaction_count": 0
+      },
+      "environment": {
+        "python": "3.14.4",
+        "rdflib": "7.6.0",
+        "pyshacl": "0.40.1"
+      },
+      "note": "One canonical HDBank dividend Event backed by three Article resources; zero Candidate and Reaction are expected. Fixture checks RDF/SHACL/SPARQL results, not Phase 2 pipeline or RQ claims."
+    }
+  },
+  "pdf": {
+    "status": "NOT_REGENERATED_FROM_CONTRACT_1.0.5_DOCX",
+    "superseded_file": "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh_superseded_1.0.4.pdf",
+    "sha256": "784fc179637f4cb804219ee84a8a68ce97a1a38182981ab2b149a6b58d10e183",
+    "required_action": "Export edited DOCX to PDF in Microsoft Word, inspect pagination/tables/images, then update this manifest before representing the Word/PDF pair as final"
+  },
+  "artifacts_sha256": {
+    "ANNOTATION_GUIDELINE.md": "9c22864e19192474e7e0906bbad75217cf99ada10e38bec64b572deef4e6804b",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx": "914aa07c731936b5d6e818aafd392fd35fcee7a44ddc5fa339ef664f5afc9c99",
+    "Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh_superseded_1.0.4.pdf": "784fc179637f4cb804219ee84a8a68ce97a1a38182981ab2b149a6b58d10e183",
+    "EVALUATION_PROTOCOL.md": "c23f68e04d54447924f64aab1ee9f562c3ae3ec3b4396dc7df3a6a41bd020c87",
+    "EVENT_DICTIONARY.yaml": "4bc0eb4acbde36f51b0e733b958403e2af2205ca8e12deb28cf0c52565d3e727",
+    "EVENT_SCHEMA.md": "e43c08345d20cf545236b26a639310deace93c3f65fbb0cdfd0d663c6ed1cdd9",
+    "FINAL_DECISIONS.md": "06beea442cf5361a1698391854a8386bf048ffb8e4fbb41aaf5e3b6f2210299d",
+    "PHASE1_ACCEPTANCE.md": "f9f0d4d519b97b20cc404e9a2741204de2680864d98e884465ec0b449ba5c631",
+    "SCORING_SPEC.md": "217b2393f9e1668ac5272c082bd350a8a1fc9ee4e0076f49cccae8b8e30388fc",
+    "master_thesis_v1_synced_01-10.drawio": "e8574ca17bd910c0aa79d95c2edb7f018a0c51773acb3533bc94638d62ad8d3c",
+    "ontology_v1.0.ttl": "8bf53768b660d85e2456c9a4d4e9aca36f5016e1d912d287a3651e81fbd28614",
+    "shapes_v1.0.ttl": "cf98b655e3a936411447505152029b42d2e02b14b904a406fc5ed4af70eb3d13",
+    "tools/README.md": "7cef7c401055a07743887e664fe7c9e63ab97f42d0191cdd12b667d4aaef2158",
+    "tools/audit_schema_diagram.py": "6757ca189e7248c710c6d160b72c73ec1f47eea118656af31f74862bdaa6cc49",
+    "tools/test_baseline_shacl.py": "376536c038884621b939bab22c1ee277911f1d52d981503e7ef54f34515c07e4",
+    "tools/test_schema_diagram_audit.py": "dd31af5db37fcd38df8d4531afcb58b810effa36361a81e9e478d3ea1970b31f",
+    "tools/verification_contract_1.0.4.json": "011ce3a54d718278deebdc2af660a3f43b52bc1701fcbad5e8409cd2dfdc271a",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/TEST_PLAN.md": "ab696be52d9fdbbd3c0318e23c5fdd2588802b2498426fc4b3b07b11e48999d2",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/data.ttl": "7512fba520023d6c03476263bd1279e5e0fc2ce2e1f682702304940856cf081b",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/queries.rq": "8f952d5dd8ae817bd49844a4faa1d8a624da9c653fa7c5b13f8aefa7a8bad046",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/expected.json": "f41eeda0b7addd033a1a7aee11f6e490611367d2e224ed1c6fab7d2acef9247f",
+    "tools/news_fixture_2026-10-01_hdbank_dividend/run_checks.py": "d9233f9f5b5925d8397f2d30ee14c77ea8daa2fc949f466b5b42d389346b5651"
+  }
+}

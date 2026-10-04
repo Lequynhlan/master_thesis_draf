@@ -1,6 +1,6 @@
 # SCORING_SPEC.md
 
-Version: 1.0.4
+Version: 1.0.5
 Namespace: `https://example.org/wfkg/v1#`
 
 ## 1. Candidate-time score
@@ -106,6 +106,8 @@ SHACL checks baseline impact normalization and marketReactionDirection against C
 - Every input observation must have `availableAt` no later than the Reaction availability time.
 
 ## 4. Multi-path aggregation
+
+Candidate identity uses the stable Event URI and the concretePathKey contract in EVENT_SCHEMA.md. Distinct concrete paths sharing a route code retain separate scores and Candidate URIs; exact duplicates are deduplicated before aggregation. Component-neutralization and industry-strength variants preserve the original concrete-path population, Evidence selection and original path identity/audit; only the declared scores/strength and methodVersion change.
 
 For inference ranking, multiple paths for the same `(Event, Stock)` are aggregated by `max(candidateScore)` after grouping by the locked method version and cutoff. Tied representative paths use Candidate URI ascending; ranked Stocks use score descending then Stock URI ascending (case-sensitive Unicode codepoint order). This includes the all-1 unweighted baseline. CAR is not added across duplicate paths. Post-window analysis may report each path's `reactionWeight`, but must not treat paths as independent events.
 

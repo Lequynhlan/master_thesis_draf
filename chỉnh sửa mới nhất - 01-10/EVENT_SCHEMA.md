@@ -1,6 +1,6 @@
 # EVENT_SCHEMA.md
 
-Version: 1.0.4
+Version: 1.0.5
 
 ## Canonical namespace
 
@@ -27,6 +27,16 @@ NewsArticle -> Evidence -> Event -> EventStockCandidate -> Market observations -
 - `Reaction derivedFromObservation MarketObservation`: `1..*`.
 - `Reaction derivedFromIndexObservation MarketIndexObservation`: `1..*`.
 
+## Candidate identity: stable Event and concrete path
+
+One Candidate represents one **concrete eligible path**, not just one route code. `relationPath == impactType` remains one of the four codes; it is not a URI sequence.
+
+The immutable lookup key is `(canonical Event URI, canonical Stock URI, relationPath, concretePathKey, inferenceCutoff, methodVersion)`. Resolve Event key aliases before lookup; `canonicalKey_at_cutoff` is an audit value, never the Candidate identity. Optional-key enrichment preserves Event URI, Candidate IDs and original snapshots. A genuinely new substantive assertion has a distinct Event URI under the dictionary.
+
+`concretePathKey` is an external audit/identity-registry field, not a new RDF property/class. Construct its canonical representation as a JSON array of ordered typed items, Unicode NFC, compact UTF-8 JSON with no whitespace; URIs remain case-sensitive. Use SHA-256 of those bytes as the key and retain the representation alongside it. Items are: route code; selected route-entry entity URI; selected immutable relation-version URI (none for DIRECT); typed route endpoint URIs in traversal order; terminal Company URI and Stock URI; immutable terminal Company–Stock mapping record ID. Missing/ambiguous identity or mapping-record version suppresses the path. Registry records must have stable version IDs before inference; do not fabricate IDs from scores. Evidence IDs, scores, timestamps of execution and canonicalKey aliases are not path identity fields.
+
+Distinct leadership positions/subsidiary relations/exposure versions or entry entities yield distinct paths even when Event, Stock and route code match. Exact duplicate concrete paths yield one Candidate. Freeze all eligible path keys, selected fact/mapping versions, Evidence assignment and scores at cutoff; replay is idempotent and cannot reselect a corrected input silently. Corrections use a separately versioned reconstruction outside the frozen baseline. Curated gates enforce identity/deduplication; generic SHACL topology checks do not prove this contract. For Stock ranking and route metrics, retain the existing max aggregation and tie-break rules in SCORING_SPEC.md and EVALUATION_PROTOCOL.md; never sum repeated paths/CAR.
+
 ## Baseline impactType and relationPath contract
 
 `relationPath` is a stable route code and must equal `impactType` in the Phase 1 baseline. Allowed pairs are `DIRECT`, `INDIRECT_INDUSTRY`, `INDIRECT_SUBSIDIARY` and `INDIRECT_LEADERSHIP`. Their graph paths are:
@@ -45,15 +55,15 @@ candidateScore = confidenceScore * relationStrength
 reactionWeight = impactScore * confidenceScore * relationStrength
 ```
 
-`candidateScore` is allowed at `inferenceCutoff = Event.availableAt` for baseline prospective-information ranking. `reactionWeight` is allowed only after the complete event window and all required observations are available. Candidate inputs satisfy input.availableAt <= inferenceCutoff; Reaction observations satisfy observation.availableAt <= Reaction.availableAt, not <= inferenceCutoff. The canonical property is `reactionWeight`; the legacy bare property `weight` is not part of the 1.0.4 contract.
+`candidateScore` is allowed at `inferenceCutoff = Event.availableAt` for baseline prospective-information ranking. `reactionWeight` is allowed only after the complete event window and all required observations are available. Candidate inputs satisfy input.availableAt <= inferenceCutoff; Reaction observations satisfy observation.availableAt <= Reaction.availableAt, not <= inferenceCutoff. The canonical property is `reactionWeight`; the legacy bare property `weight` is not part of the 1.0.5 contract.
 
-## Baseline validation boundary (1.0.4)
+## Baseline validation boundary (1.0.5)
 
 The graph submitted for baseline validation must contain both directions of hasEventStockCandidate/forEvent and hasReaction/onCandidate, either explicitly materialized by the writer or already derived before submission with recorded inference provenance. SHACL does not repair missing inverse links; tests run with inference=none. Every linked Reaction requires REACTION_READY on its exact Candidate, including a Reaction discoverable only through onCandidate. A REJECTED Candidate cannot have a Reaction. Incomplete/mismatched inverse assertions fail validation rather than disappearing from lifecycle queries.
 
-SHACL validates impactScore=min(1,abs(CAR)/0.10), marketReactionDirection from the exact sign of CAR with epsilon=0, and the existing weight equations. Calendar/session coverage, daily effectiveTradingDate, dictionary membership, calibrated model/role provenance, frozen Evidence aggregation, strength assignment and immutable snapshots still require curated pipeline gates. Synthetic regression tests in tools/test_baseline_shacl.py exercise structural rules only; they do not recreate historical report figures or demonstrate NLP/RQ performance.
+SHACL also bounds optional Event.severityScore to [0,1] without making it required. SHACL validates impactScore=min(1,abs(CAR)/0.10), marketReactionDirection from the exact sign of CAR with epsilon=0, and the existing weight equations. Calendar/session coverage, daily effectiveTradingDate, dictionary membership, calibrated model/role provenance, frozen Evidence aggregation, strength assignment and immutable snapshots still require curated pipeline gates. Synthetic regression tests in tools/test_baseline_shacl.py exercise structural rules only; they do not recreate historical report figures or demonstrate NLP/RQ performance.
 
-## AR/CAR source and provenance contract (1.0.4)
+## AR/CAR source and provenance contract (1.0.5)
 
 - `adjustedClose` is the authoritative input for both `MarketObservation` and `MarketIndexObservation`; each value must be positive and retain its `sourceReference`. `returnValue` is a derived/cache field, never the sole source for recomputing a reaction.
 - Window offsets are exchange-session offsets relative to `Event.effectiveTradingDate` (`t0`). For a window `[a,b]`, the Reaction must link one Stock observation and one benchmark observation for every session `t_(a-1), t_a, ..., t_b`. The predecessor `t_(a-1)` supplies the denominator for the first in-window return.
@@ -83,7 +93,7 @@ evaluation retrospectively.
 - `LeadershipPosition`, `SubsidiaryRelation`, `IndexMembership`: select the latest available version under the business-key contract below **before** testing validity. `validFrom` is required, `validTo` optional; dates are inclusive. Missing start is ineligible, not an unbounded tenure.
 - `IndustryExposure` uses reporting-period selection below; `validFrom`/`validTo` are optional metadata, not the baseline eligibility filter.
 
-## Frozen cutoff and daily calendar contract (1.0.4)
+## Frozen cutoff and daily calendar contract (1.0.5)
 
 - Use timezone-aware instants; compare instants in UTC and derive dates in `Asia/Ho_Chi_Minh`. A naive timestamp is rejected. Equality at cutoff is eligible (`<=`).
 - Event availability is the earliest supporting Evidence availability; Evidence availability must be no earlier than both its Article's `publishedAt` and actual first system availability. Do not invent crawler latency. Missing acquisition timestamps require a declared publication-time proxy dataset, not a claim of observed historical availability.

@@ -1,6 +1,6 @@
 # ANNOTATION_GUIDELINE.md
 
-Version: 1.0.4
+Version: 1.0.5
 
 ## Annotation units
 
@@ -67,3 +67,7 @@ At least 25% of the gold set is labeled independently by two annotators. Compute
 ## Quality gates
 
 No gold item is final without an Evidence span, canonical Event ID, event type, required roles, entity IDs where applicable and annotator/version metadata. The final test set is sealed after adjudication and is not used to tune extraction, linking, score weights or event windows.
+
+## Stable identity during annotation
+
+Resolve canonicalKey aliases to the canonical Event URI under EVENT_DICTIONARY.yaml; optional-key enrichment never creates a new Event or changes historical Candidate identity. EVENT_SCHEMA.md defines concretePathKey in the external audit registry. Gold relevance remains an Event–Stock label, with independent route-support labels; do not count separate concrete paths as separate gold Event–Stock examples.

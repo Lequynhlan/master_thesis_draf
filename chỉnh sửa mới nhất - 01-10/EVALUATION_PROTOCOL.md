@@ -1,6 +1,6 @@
 # EVALUATION_PROTOCOL.md
 
-Version: 1.0.4
+Version: 1.0.5
 
 ## Dataset separation
 
@@ -10,6 +10,12 @@ Version: 1.0.4
 - `final_evaluation`: sealed chronological test set, read only after all methods and thresholds are frozen.
 
 The same canonical Event must not appear across splits. Articles reporting the same Event stay in one split. The split manifest records article IDs, Event IDs, dates, class counts and hashes.
+
+## Candidate identity and prospective pilot scope
+
+Use EVENT_SCHEMA.md stable Event URI/concretePathKey identity, with distinct Candidate URIs for distinct concrete paths and method variants. Multiple paths do not multiply a gold Event–Stock pair: project onto a route where required, then apply the specified max aggregation before top-K. Key-alias enrichment cannot create a new evaluation Event or change a frozen ranking.
+
+VN30 bank stocks and VN30 benchmark are **proposed pilot scope**, not a frozen final dataset or completed experiment. Final stock frame, benchmark, exchange/calendar, interval and vendor/adjustment snapshot require user approval and a run manifest before evaluation; no measured outcome is claimed here. See FINAL_DECISIONS.md.
 
 ## Phase 1 source-reliability control
 
@@ -118,7 +124,7 @@ Overall RQ3 uses independently adjudicated overall relevance `r(e, stock) in {0,
 
 ## Baseline component ablation contract
 
-The baseline path-strength table, exposureStrength=exposureRatio normalization, and maximum eligible complete-Evidence extraction aggregation are frozen in SCORING_SPEC.md 1.0.4. The industry-strength variant changes only INDUSTRY strength; its population, Evidence selection and other path strengths remain identical to baseline. Record the exact strength/aggregation configuration and selected Evidence IDs in each run's audit manifest. Baseline Reaction validation uses tau=0.10 and epsilon=0; any alternative requires a separately versioned shape/configuration rather than silently bypassing baseline SHACL.
+The baseline path-strength table, exposureStrength=exposureRatio normalization, and maximum eligible complete-Evidence extraction aggregation are frozen in SCORING_SPEC.md 1.0.5. The industry-strength variant changes only INDUSTRY strength; its population, Evidence selection and other path strengths remain identical to baseline. Record the exact strength/aggregation configuration and selected Evidence IDs in each run's audit manifest. Baseline Reaction validation uses tau=0.10 and epsilon=0; any alternative requires a separately versioned shape/configuration rather than silently bypassing baseline SHACL.
 
 Run exactly three separate confidence-component ablations: set only `extractionConfidence`, only `linkingConfidence`, or only `relationConfidence` to `1`. Keep `sourceConfidence=0.5` in every variant; source-confidence ablation is outside this baseline. This is component neutralization, not a claim of perfect confidence and not removal of extraction, linking or route validation. Recompute `confidenceScore` and `candidateScore` with the formulas in SCORING_SPEC.md. Preserve original scores in the audit record and store each variant under its own `methodVersion` and Candidate URI without rewriting baseline Candidates.
 
@@ -142,6 +148,6 @@ Freeze the ontology, SHACL shapes, dictionary, annotation guideline, market/cale
 
 ## Run manifest
 
-Record contract version 1.0.4, per-Event immutable `availableAt`/cutoff, day-0 opening/calendar selection, actual `generatedAt` and replay status; the sealed eligibility/reporting manifest and coverage misses; Stock-frame version/hash and sampling design; per-Event resolved universe/label hashes, negative counts and UNRESOLVED exclusions; route-projection view, metric-defined Event denominators and minimum-support gate status. Record Reaction-only exclusions separately from ranking exclusions. These are evaluation contracts only; no Phase 2 metric executor or pipeline implementation is introduced here.
+Record contract version 1.0.5, per-Event immutable `availableAt`/cutoff, day-0 opening/calendar selection, actual `generatedAt` and replay status; the sealed eligibility/reporting manifest and coverage misses; Stock-frame version/hash and sampling design; per-Event resolved universe/label hashes, negative counts and UNRESOLVED exclusions; route-projection view, metric-defined Event denominators and minimum-support gate status. Record Reaction-only exclusions separately from ranking exclusions. These are evaluation contracts only; no Phase 2 metric executor or pipeline implementation is introduced here.
 
 Every run records ontology version, SHACL version, dictionary version, annotation guideline version, methodVersion, cutoff timezone, market calendar, staleness threshold, tau, epsilon, event windows, random seed, input manifest hash and output hash. For AR/CAR reproducibility, also record the market-data provider and dataset/snapshot ID or hash, adjusted-price/corporate-action adjustment convention and version, exchange, calendar ID/version/hash, benchmarkIndex URI, and reaction-validator version. For `IndustryExposure`, record `periodType` (baseline `YEAR`) and reporting scope (`consolidated` or `standalone`). Record the final chronological interval, target sample size, minimum support by `impactType`, and actual per-type support. Store validation totals and failures for observation ownership, date coverage/pairing, daily return recomputation, AR and CAR recomputation. A Reaction task run with a missing or mismatched required session is invalid, not a partial-window result; this does not exclude an otherwise eligible inference/ranking case. Synthetic demo results are structural tests only and are excluded from RQ conclusions.

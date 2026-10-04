@@ -94,7 +94,7 @@ class SubsidiaryRoleAuditTests(unittest.TestCase):
         values = self.values()
         self.assertIn('inferenceCutoff = Event.availableAt', values['mZ28CVNe_N0uJWWchiWa-45'])
         self.assertIn('generatedAt', values['mZ28CVNe_N0uJWWchiWa-45'])
-        self.assertIn('1.0.4', values['weTA0hvWxfCujyoZNfAk-11'])
+        self.assertIn('1.0.5', values['weTA0hvWxfCujyoZNfAk-11'])
         self.assertIn('observation.availableAt ≤ Reaction.availableAt', values['mZ28CVNe_N0uJWWchiWa-32'])
 
 

@@ -1,73 +1,45 @@
-# Đối chiếu góp ý và kiểm tra gói Phase 1
+# Bàn giao đặc tả Phase 1 và đối chiếu góp ý
 
-Contract: **1.0.4**. Namespace giữ nguyên `https://example.org/wfkg/v1#`; ontology giữ 22 lớp, Draw.io giữ 7 tab. TTL/SHACL là nguồn chuẩn về schema/cardinality; các specification Markdown/YAML khóa thuật toán và protocol; Draw.io là minh họa. Không mở rộng lớp, không triển khai pipeline dữ liệu thật trong đợt hiệu đính này.
+Contract **1.0.5**. Giữ namespace `https://example.org/wfkg/v1#`, 22 lớp, 14 loại Event và bốn route. TTL/SHACL là nguồn chuẩn về schema; Markdown/YAML quy định thuật toán và protocol; Draw.io minh họa các quy tắc đó. Lần hiệu đính này chốt định danh Candidate cho từng đường cụ thể và thêm kiểm tra miền của `severityScore`; chưa chạy pipeline hay kết quả RQ.
 
-Nguồn yêu cầu: `ban_thay_gop_y/gop_y_phase1_truoc_code_phase2.txt` của workspace. Ma trận dưới đây ghi mức đáp ứng **đặc tả Phase 1**, không thay thế việc thầy duyệt lại hoặc acceptance end-to-end Phase 2.
+## Đối chiếu 9 góp ý của thầy
 
-## 1. Ma trận 9 góp ý
-
-Số trang là trang vật lý của PDF hiện hành, được xác định sau khi Microsoft Word render, không suy ra từ paragraph index.
-
-| Mục góp ý | Nội dung đã khóa/hiệu đính | Nguồn trong gói và locator báo cáo | Phạm vi xác minh/việc Phase 2 |
+| # | Trạng thái đặc tả | Nội dung và nơi đã thống nhất | Còn ở giai đoạn sau |
 |---|---|---|---|
-| 1. PDF–Draw.io–TTL | Thống nhất WFKG/namespace, 4 route baseline; chỉ chiều con→mẹ, Industry→exposure Bank, không broadcast cùng ngành hoặc parent→subsidiary. Sửa owner `hasSubsidiaryRelation`, ticker string/Stock URI, RDF `hasAlias`, GovernmentOrganization và datatype `availableAt`. Comment cutoff TTL và ghi chú temporal tab 03 đã sửa theo nguồn chuẩn. | `ontology_v1.0.ttl`, `shapes_v1.0.ttl`, Draw.io tab 00/01/02/03/05; PDF mục 2.1, tr.4–6; phụ lục A, tr.43–45. | RDF/XML parse, audit appendix và parent-owner invariant; tab 03 được render lại sau sửa. Audit không chứng minh tất cả connector semantics. |
-| 2. Daily effectiveTradingDate | Day 0 là phiên đầu có opening **strictly after** Event.availableAt; tin trước open dùng phiên đó, đúng open/intraday dùng phiên sau. Khóa `inferenceCutoff = Event.availableAt`; replay generatedAt muộn không được lấy future inputs. Không có complete assignment thì ghi miss, không lùi cutoff. | `EVENT_SCHEMA.md`: Effective trading date, Candidate temporal eligibility, Daily windows; PDF mục 2.4/2.7, tr.20–25. | SHACL kiểm equality và timestamp ordering. Calendar/exchange/session thật cần validator Phase 2; ví dụ 26/08 14:16→27/08 là giả định lịch, không phải lịch được bộ test xác thực. |
-| 3. Confidence components | Lưu source/extraction/linking/relation và điểm tổng trên Candidate. Source baseline 0,5. Chọn complete Evidence assignment theo extraction, required-role min; max giữa assignments và URI tie-break. Linking phải dùng cùng assignment; khóa input table bốn route, DIRECT relation confidence, registry/automatic mapping/fallback và provenance. | `SCORING_SPEC.md`: Component sources and aggregation; `ANNOTATION_GUIDELINE.md`; PDF bảng Candidate tr.12–14, mục 2.7 tr.24–26. | Synthetic tests bắt missing/wrong score. Selection/calibration thực, input decision audit và immutable snapshot phải triển khai ở Phase 2. Không gọi heuristic confidence là xác suất calibrated hoặc giả định component độc lập. |
-| 4. candidateScore/reactionWeight | candidateScore=confidenceScore×relationStrength cho inference ranking; reactionWeight thêm impactScore chỉ sau window. Chỉ max(candidateScore) trong cùng Event–Stock/method/cutoff; reactionWeight báo riêng từng path, không cộng CAR lặp. DIRECT strength=1, indirect=0,5; biến thể exposureRatio được định version riêng. | `SCORING_SPEC.md`, Draw.io tab 04/05; PDF RQ3 tr.2 và mục 2.7 tr.24–26, mục 2.8 tr.26–28. | SHACL kiểm công thức baseline và lifecycle; chưa chạy ranking/exposure variant trên dữ liệu thật. |
-| 5. Market provenance | Stock/benchmark adjustedClose, nguồn, availability; Reaction truy observations đúng asset/date, đủ predecessor và mọi phiên trong window; AR ngày 0 và tổng CAR, tau/epsilon baseline rõ. | TTL/SHACL, `EVENT_SCHEMA.md`: Daily windows; PDF bảng observations tr.11–12, Reaction tr.15, mục 2.7 tr.24–26. | Behavioral tests về benchmark close, daily return, CAR, impact/direction. Exchange-calendar continuity và raw vendor adjustment/version là gate Phase 2, không được suy từ ngày synthetic. |
-| 6. Event Dictionary | 14 eventType, description/required/optional roles/key/direction/positive-negative/confusables. Bổ sung role-specific normalization vocabulary và reporting-period grammar; unknown/ambiguous giữ HOLD, không invent token hoặc suy năm từ ngày báo. | `EVENT_DICTIONARY.yaml`, `ANNOTATION_GUIDELINE.md`; PDF mục 2.5 tr.22–23, phụ lục D tr.47. | YAML parse và cấu trúc 14 entries kiểm lại. Chưa có NLP/key-normalization executor; mapping/token là extraction contract, không phải class mới. |
-| 7. Data rules | Article reports 0..* ở staging, curated yêu cầu Event đủ điều kiện. Ba relation temporal chọn latest available theo business key trước validity, không fallback bản cũ. IndustryExposure tách reporting scope, YEAR baseline, periodEnd≤cutoff, availableAt≤cutoff, newest-period/availability/URI selection và stale≤365 ngày. Exposure variant strength=ratio, không đổi baseline hằng số. | `EVENT_SCHEMA.md`: Temporal relation version selection / IndustryExposure selection; `SCORING_SPEC.md`; PDF tr.18, 21 và phụ lục C tr.46; Query 7 tr.37 ghi prerequisite scope-prefilter. | Cardinality và schema có kiểm; registry/calendar/selection gate thực chưa triển khai. Missing fact/link không được cứu bằng confidence fallback. |
-| 8. Evaluation | Tách vertical slice 100–300 bài/development/validation/final; double-label 25%, agreement/adjudication. Freeze Event/Stock frame/universe độc lập score/CAR; out-of-universe prediction invalid, không post-filter top-K. Giữ gold Event bị extractor miss với empty ranking/FN. Overall relevance 0/1/2, route support độc lập trên common negatives; projection trước max/top-K, gain/IDCG/macro Event/empty cases/bootstrap được khóa. Bổ sung exact one-to-one RQ1 matching và method contracts: shared extractor; keyword toàn văn/alias chính xác/score 1/bucket DIRECT; RQ2 KG score 1, RQ3 mới so candidateScore. | `EVALUATION_PROTOCOL.md`, `ANNOTATION_GUIDELINE.md`; PDF mục 2.8 tr.26–28, kế hoạch tr.41, phụ lục D tr.47. | Đây là protocol đã đặc tả, chưa thu final dataset, gán nhãn kép, chạy metrics/bootstrap hay chứng minh RQ1–RQ3. Unmapped output có ledger riêng, không bị bỏ im lặng. Không loại Event vì model thiếu complete assignment để nâng recall. |
-| 9. Property appendix | Đồng bộ object/datatype names/owners/ranges/cardinality được biểu diễn; có subsidiaryCompany/memberStock/exposureBank/exposureIndustry/forEvent. Audit script có trong gói; thêm mutation tests parent-owner vì domain/range Company không phân biệt mẹ/con. | Draw.io tab 06, `tools/audit_schema_diagram.py`, `tools/test_schema_diagram_audit.py`; PDF mục 3.3/3.4 tr.41–42 và phụ lục A tr.43–45. | 337 PASS/0 FAIL/**57 NOT CHECKED**; không biến audit thành generic diagram validator. Những shared/narrative/implicit constraints vẫn có giới hạn, xem tools/README.md. |
+| 1. PDF–Draw.io–TTL | Đáp ứng ở mức đặc tả | Namespace/WFKG và bốn route nhất quán; đường ngoài baseline được ghi FUTURE EXTENSION. TTL/SHACL là nguồn chuẩn; Draw.io là minh họa. `ontology_v1.0.ttl`, `shapes_v1.0.ttl`, tab 00/05/06, `EVENT_SCHEMA.md` và báo cáo mục ontology/phụ lục. | Audit có phạm vi giới hạn; không chứng minh toàn bộ ngữ nghĩa của sơ đồ. |
+| 2. Daily effectiveTradingDate | Đáp ứng quy tắc | Day 0 là phiên có giờ mở strictly later `Event.availableAt`; cutoff bằng đúng `Event.availableAt`, không lùi cutoff khi thiếu assignment. `EVENT_SCHEMA.md` và báo cáo mục temporal/cutoff. | Calendar phiên thật và timezone/exchange cần khóa trong manifest Phase 2. |
+| 3. Confidence components | Đáp ứng ở mức đặc tả | Bốn thành phần và điểm tổng được lưu/freeze; cùng Evidence assignment hoàn chỉnh; bảng confidence bốn route và provenance/fallback được nêu trong `SCORING_SPEC.md`, `ANNOTATION_GUIDELINE.md` và báo cáo. | Thực thi entity linker, calibration và audit snapshot chưa được kiểm chứng. |
+| 4. candidateScore/reactionWeight | Đáp ứng | `candidateScore` chỉ xếp hạng tại cutoff; `reactionWeight` chỉ tính sau window. Đặc tả khóa score tổng hợp theo max, không cộng CAR trùng; `SCORING_SPEC.md`, `EVALUATION_PROTOCOL.md`, Draw.io và báo cáo RQ3. | Chưa có metric/ranking executor chạy trên dữ liệu thật. |
+| 5. Market return provenance | Đáp ứng ở mức schema/protocol | Stock và benchmark observation lưu adjusted close; Reaction tham chiếu mọi phiên cần thiết, kể cả predecessor; return/AR/CAR tính lại được theo công thức trong `EVENT_SCHEMA.md`, `SCORING_SPEC.md` và TTL. | Provider, adjustment convention, calendar và snapshot dữ liệu thật còn phải khóa. |
+| 6. Event Dictionary | Đáp ứng | 14 eventType có roles, key/identity policy, direction, ví dụ và confusables trong `EVENT_DICTIONARY.yaml`; annotation quy định nhãn. | Chất lượng NLP/chuẩn hóa/identity chưa được đo trên corpus thật. |
+| 7. Data rules | Đáp ứng ở mức đặc tả | Staging `NewsArticle reports Event` cho phép 0..*; quan hệ có phiên bản chọn latest available trước khi kiểm validity; IndustryExposure có period/scope và staleness 365 ngày riêng; có exposure-strength variant. `EVENT_SCHEMA.md`, `SCORING_SPEC.md`, `EVALUATION_PROTOCOL.md`. | Registry/selection gate cần triển khai và kiểm trên dữ liệu thật. |
+| 8. Evaluation protocol | Đáp ứng protocol; chưa có kết quả | Vertical slice 100–300 bài chỉ smoke/debug; final evaluation tách riêng, sealed; tối thiểu 25% gold double-label, agreement/adjudication; metric chia route và macro Event được định nghĩa trong `ANNOTATION_GUIDELINE.md` và `EVALUATION_PROTOCOL.md`. | Chưa chốt manifest corpus cuối, chưa gán nhãn/đo agreement hoặc chạy RQ. |
+| 9. Draw.io property appendix | Đáp ứng trong phạm vi audit | Property appendix có các quan hệ được yêu cầu; audit XML/TTL/SHACL trong `tools/audit_schema_diagram.py` và test của nó. | 337 assertion PASS, 0 FAIL, 57 NOT CHECKED; phần NOT CHECKED cần rà bằng mắt, không phải PASS. |
 
-## 2. Kết quả thực thi và tái chạy
+## Hiệu đính đồng bộ
 
-Từ thư mục gói, dùng interpreter đã có RDFLib/pySHACL:
+- `EventStockCandidate` có một bản ghi cho **mỗi đường cụ thể**, để không nhập nhằng hai quan hệ lãnh đạo/công ty con có cùng route code nhưng confidence khác. Khóa identity dùng Event URI chuẩn ổn định + Stock URI + route + `concretePathKey` + cutoff + method version. Alias/enrichment của `canonicalKey` không thay Event URI hoặc Candidate lịch sử. Định dạng JSON canonical, SHA-256, thành phần identity, điều kiện suppression và phạm vi audit được định nghĩa ở `EVENT_SCHEMA.md`; đây là pipeline/audit field, không thêm ontology property/lớp. `SCORING_SPEC.md` và protocol giữ quy tắc max hiện hành.
+- `Event.severityScore` vẫn optional; SHACL kiểm tra decimal `[0,1]` khi được khai báo. Regression mới xác nhận absent và hai đầu mút hợp lệ, giá trị ngoài miền không hợp lệ.
+- Event–Company confidence trong báo cáo nay ghi đúng toàn bộ assignment score `A`, cùng quy tắc trong scoring spec.
+- Các câu về VN30 đổi từ phạm vi đã khóa sang pilot dự kiến; benchmark/final universe vẫn phải có manifest.
+- Vertical slice và hình/query cũ được ghi là smoke/synthetic/history, không là kết quả RQ. “READY” trong hình cũ chỉ là nhãn lịch sử; trạng thái dữ liệu mới là `REACTION_READY`. Câu kiểm tra runner được chuyển thành gate Phase 2.
+- Contract tăng từ 1.0.4 lên 1.0.5 vì thêm ràng buộc SHACL và chốt khóa logic Candidate. Không đổi namespace, tên file ontology hoặc số lớp.
 
-```text
-py -3.13 -B tools/test_baseline_shacl.py
-py -3.13 -B tools/test_schema_diagram_audit.py
-py -3.13 -B tools/audit_schema_diagram.py
-```
+## Kiểm tra đã chạy trên bản 1.0.5
 
-- SHACL behavioral regression: **31/31 unittest qua**, inference=none. Có negative REACTION_READY thiếu Reaction với plain/typed string, cutoff sớm/muộn, invalid enum, inverse/score/market consistency; positive replay dùng cutoff gốc. Một số method chứa nhiều subtest: số 31 không phải số tất cả fixture hoặc tỷ lệ coverage.
-- Diagram-audit regression: **8/8 unittest qua**, mutation XML trong bộ nhớ, không sửa gói.
-- Structural audit: **337 PASS, 0 FAIL, 57 NOT CHECKED**; **44 SELECT parse** được, input SHA256 không đổi trong lần audit. SELECT parse không phải behavioral execution.
-- RDF/Turtle, YAML và XML parse được; giữ **22 OWL classes**, **14 dictionary eventType**, **7 Draw.io tabs**.
-- DOCX package health check: `ok=true`, không có issue. Kiểm tra này không phải OOXML XSD validation hoặc bảo đảm layout.
-- Log và hash của lần kiểm tra được ghi tại `tools/verification_contract_1.0.4.json`; số liệu đến từ execution, không phải expected output hoặc kết quả RQ.
+- SHACL regression: **32/32** unittest qua bằng Python 3.12, RDFLib 7.6.0 và pySHACL 0.40.1. Gồm regression miền `severityScore`; dữ liệu đều là fixture tổng hợp.
+- Draw.io audit regression: **8/8** test qua sau cập nhật kỳ vọng phiên bản.
+- Audit sơ đồ: **337 PASS, 0 FAIL, 57 NOT CHECKED**; 44 SELECT constraint parse được. Không thực thi mọi constraint như behavioral SHACL.
+- Các kết quả cũ của contract 1.0.4 được giữ trong `tools/verification_contract_1.0.4.json`; manifest mới `tools/verification_contract_1.0.5.json` chỉ ghi hash/test của gói hiện tại và trạng thái PDF.
 
-## 3. Word/PDF và kiểm tra trình bày
+## Điểm cần bạn chốt trước khi khóa final evaluation
 
-Báo cáo hiện hành:
+1. Stock universe cuối: constituent ngân hàng theo VN30, ngày hiệu lực từng mã và khoảng thời gian đánh giá; VN30 có tiếp tục là benchmark không.
+2. Nguồn giá/benchmark và điều chỉnh corporate action; sàn, timezone, exchange calendar/version. Các lựa chọn phải có snapshot/hash trong run manifest trước khi mở test.
+3. Corpus gold cuối, người gán nhãn độc lập và người phân xử bất đồng; giữ mức double-label tối thiểu 25% như protocol.
 
-- `Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.docx`
-- `Bao_cao_Phase_1_Ontology_WFKG_ban_chot_da_dong_bo_hieu_dinh.pdf`
+Các lựa chọn này không cản trở việc gửi **đặc tả Phase 1** để thầy rà soát, nhưng phải được quyết định trước khi chạy final evaluation. Không có số đo RQ hoặc tuyên bố hiệu quả mô hình trong bộ hiện hành.
 
-PDF được xuất lại bằng Microsoft Word từ DOCX sau sửa, **47 trang**; export không lưu thay đổi vào nguồn và SHA256 nguồn không đổi trong export. Text extraction không phát hiện ký tự NULL hoặc replacement glyph. Đã xem contact-sheet bố cục toàn bộ 47 trang và ảnh trang sửa/mẫu đầu–giữa–cuối; không thấy trang trắng, bảng tràn trang hoặc overlap lớn. Đây là layout review, không khẳng định đã proofreading từng ký tự trên mọi trang.
+## Trạng thái Word/PDF
 
-Giữ **9 ảnh demo lịch sử**, hash media không đổi; ảnh hiện nằm ở các trang 31–36, 38–40. Caption nêu synthetic/history, chưa tái chạy contract hiện hành; ảnh không phải validation hoặc RQ evidence.
-
-Draw.io: lần trước đã render 7 tab bằng official Draw.io viewer và Chrome. Lần này chỉ tab 03 thay đổi; đã render lại tab đó, nới ô ghi chú và xem ảnh để kiểm tra chữ không tràn. Các tab khác không đổi. Tab 00/06 dày thông tin, cần zoom khi đọc; không coi việc render thành công là mọi nhãn đã được kiểm tra ngữ nghĩa tự động. Renderer và ảnh kiểm tra chỉ nằm ở scratch, không là dependency vận hành của gói.
-
-## 4. Phát hiện ở lượt review lại và thay đổi
-
-Lượt đối chiếu độc lập phát hiện các điểm không thể kết luận chỉ bằng test PASS. Đã sửa:
-
-1. Comment `inferenceCutoff` của TTL dùng nhầm Evidence **complete sớm nhất**. Nguồn chuẩn là Evidence **hỗ trợ sớm nhất**, thiếu complete assignment thì ghi miss, không dời cutoff.
-2. RQ3 tr.2 ghi max cả reactionWeight. Đã sửa chỉ max candidateScore; hậu nghiệm báo reactionWeight riêng từng path.
-3. Tab 03 mô tả mọi relation bằng validity. Đã tách IndustryExposure theo reporting scope/kỳ/staleness.
-4. Markdown chưa nêu latest-version-before-validity như báo cáo. Đã khóa business keys, identity correction registry, tie-break và không fallback bản cũ ở EVENT_SCHEMA; scoring/annotation dẫn chiếu cùng quy tắc.
-5. Keyword/co-occurrence chưa khóa text unit, matching, score và route view. Đã khóa ba method trong EVALUATION_PROTOCOL, đồng bộ mục 2.8 báo cáo.
-6. RQ1 chưa khóa prediction–gold matching. Đã chốt text/hash/offsets, exact one-to-one, duplicate FP, unmatched FN, roles, end-to-end/oracle linking và downstream alignment/coverage ledger.
-7. Query 7 và phụ lục exposure thiếu reporting-scope prerequisite. Đã ghi scope-prefilter trên graph truy vấn và scope trong nhóm chọn bản báo cáo. Review cuối xác nhận Query 7 còn so trực tiếp key fields: đã giới hạn rõ đây chỉ là minh họa khi key fields không đổi, không phải correction-aware executor; inference thực bắt buộc dùng registry selection ở EVENT_SCHEMA trước. Đã khóa complete-assignment gate chung cho cả keyword và hai KG method, không để keyword tự cứu missing assignment.
-
-Giữ contract schema 1.0.4, 22 lớp, dictionary 14 loại, namespace và tên artifact; đây là bản hiệu đính/chốt rõ quy tắc trước code. Hash manifest hiện hành xác định đúng snapshot bàn giao, không dùng hash của bản trước sửa để chứng minh bản này. Không nâng các quy tắc vừa đặc tả thành executor đã chạy.
-
-## 5. Gate trước Phase 2 và giới hạn kết luận
-
-Sau hai lượt review độc lập và lượt tự đối chiếu các sửa cuối, không còn phát hiện blocking chưa xử lý trong 9 yêu cầu ở mức **specification trước code Phase 2**. Các điểm phát hiện, cách sửa và giới hạn query/validator đã được ghi ở mục 4. Gói được chuẩn bị để **gửi thầy check lại một lần** theo kết luận góp ý. Đây không thay thế approval của thầy, không tuyên bố mọi constraint đều được kiểm tra tự động hoặc final evaluation đã hoàn tất.
-
-Phase 2 còn phải hiện thực/kiểm thử: input snapshot bất biến; calendar/session và temporal eligibility; versioned registry/REF mapping; complete Evidence/link decisions và normalization; IndustryExposure selection/staleness; data provenance/adjustment; curated gate; metric/ranking executor với universe/route views; annotation agreement; real-data vertical slice. Chỉ sau những gate đó mới mở rộng dữ liệu và chạy held-out RQ1–RQ3.
-
-Không thay đổi namespace/tên các artifact hiện hành, không thêm lớp, không cài package, không commit/push. Các bản backup/render/probe không nằm trong acceptance set của gói.
+DOCX đã hiệu đính ở contract 1.0.5. Máy hiện tại không có Microsoft Word; bản LibreOffice giải nén vào scratch không khởi động được, nên tôi chưa thể xuất và kiểm tra PDF mới từ DOCX. Để không đưa PDF cũ vào nhầm như thể đã đồng bộ, PDF trước đó được giữ riêng dưới tên `..._superseded_1.0.4.pdf`; PDF này **không phải bản final**. Cần mở DOCX 1.0.5 bằng Word, xuất PDF, rà số trang/bảng/ảnh và cập nhật hash manifest trước khi gọi cả cặp Word/PDF là final.

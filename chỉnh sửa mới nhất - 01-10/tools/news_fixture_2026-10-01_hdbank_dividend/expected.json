@@ -1,0 +1,37 @@
+{
+  "Q1_source_article": [
+    [
+      "vietnamplus-2026-10-01-hdb-stock-dividend",
+      "VietnamPlus",
+      "2026-10-01T16:06:00+07:00"
+    ],
+    [
+      "vnba-2026-10-01-hdb-stock-dividend-record-date",
+      "Hiệp hội Ngân hàng Việt Nam (VNBA)",
+      "2026-10-01T10:11:00+00:00"
+    ],
+    [
+      "tinnhanhchungkhoan-2026-10-02-hdb-dividend",
+      "Tin nhanh chứng khoán (ĐTCK)",
+      "2026-10-02T11:22:00+07:00"
+    ]
+  ],
+  "Q2_dividend_event": [
+    [
+      "DIVIDEND",
+      "DIVIDEND|https://example.org/wfkg/v1#company_hdbank|DECLARE_STOCK|2026-10-12|HDBANK:2319/2026/CV-HDBank",
+      "2026-10-01T10:11:00+00:00",
+      "2026-10-02"
+    ]
+  ],
+  "Q3_issuer_ticker_and_assertion": [
+    [
+      "Ngân hàng Thương mại cổ phần Phát triển Thành phố Hồ Chí Minh",
+      "HDB",
+      "HDBank dự kiến trả cổ tức năm 2025 bằng cổ phiếu với tỷ lệ 25%; ngày đăng ký cuối cùng để lập danh sách cổ đông hưởng quyền là 2026-10-12. Tin cũng nêu riêng phương án phát hành thêm 5% từ quỹ dự trữ bổ sung vốn điều lệ; tỷ lệ tổng hai cấu phần là 30%."
+    ]
+  ],
+  "Q4_evidence_count": [["4"]],
+  "Q5_candidate_count": [["0"]],
+  "Q6_reaction_count": [["0"]]
+}

@@ -1,4 +1,4 @@
-version: "1.0.4"
+version: "1.0.5"
 namespace: "https://example.org/wfkg/v1#"
 cutoff_timezone: "Asia/Ho_Chi_Minh"
 identity_policy:
@@ -10,6 +10,7 @@ identity_policy:
   normalization: "Apply versioned key_normalization and normalization_vocabulary to every canonical-key role; canonical typed registry IDs; Unicode NFC; trim/collapse whitespace; evidenced dates ISO-8601; escape percent then pipe as %25 and %7C before joining normalized fields. Unknown/unmapped/ambiguous values stay HOLD_FOR_REVIEW."
   matching: "Match an existing Event only with positive evidence of the same business occurrence and compatible known roles; missing is not a wildcard. Ambiguous/missing identity stays staging, without a curated canonicalKey."
   enrichment: "When an optional key value is discovered, keep the canonical Event URI; retain old key as an external alias in the identity registry. Never split solely because a date/role became known."
+  candidate_identity: "Resolve canonicalKey aliases to the stable canonical Event URI before Candidate lookup. Optional-key enrichment never changes Event URI or existing Candidate IDs, cutoff inputs or scores; retain canonicalKey_at_cutoff in the immutable audit. See EVENT_SCHEMA.md concrete-path identity contract. Not a new RDF property."
   non_merge_relations: [updates, clarifies, contradicts, supersedes]
 out_of_scope_confusables:
   FORECAST: "Forecast-only claims: review/out of baseline dictionary, not an ontology class."

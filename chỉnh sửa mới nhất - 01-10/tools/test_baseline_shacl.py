@@ -1,4 +1,4 @@
-"""Contract 1.0.4 synthetic structural regressions, NOT a demo pipeline or RQ evidence.
+"""Contract 1.0.5 synthetic structural regressions, NOT a demo pipeline or RQ evidence.
 Run: py -3.13 -B tools/test_baseline_shacl.py
 Dependencies: rdflib, pyshacl. Input artifacts are read-only.
 """
@@ -84,6 +84,14 @@ class BaselineShapeTests(unittest.TestCase):
         if message:
             messages = '\n'.join(str(v) for v in report.objects(None, SH.resultMessage))
             self.assertIn(message, messages)
+
+    def test_optional_severity_range(self):
+        # Absence stays valid; boundaries pass, out-of-range values fail.
+        self.check(True)
+        for value, expected in (("0", True), ("1", True), ("0.5", True), ("-0.01", False), ("1.01", False)):
+            with self.subTest(severity=value):
+                set_value(self.graph, 'event', 'severityScore', decimal(value))
+                self.check(expected)
 
     def test_valid_control(self):
         self.check(True)
