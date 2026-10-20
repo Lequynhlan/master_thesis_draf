@@ -1,0 +1,6 @@
+torch==2.11.0
+transformers==5.5.4
+numpy==2.4.3
+rdflib==7.6.0
+PyYAML==6.0.3
+py-vncorenlp==0.1.4

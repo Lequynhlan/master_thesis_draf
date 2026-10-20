@@ -1,0 +1,1 @@
+"""Adapters for daily inputs."""

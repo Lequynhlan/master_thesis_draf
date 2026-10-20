@@ -1,0 +1,6 @@
+# Install torch first from the CUDA wheel index selected for your NVIDIA driver:
+# python -m pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
+transformers==5.5.4
+numpy==2.4.3
+py-vncorenlp==0.1.4
+PyYAML==6.0.3

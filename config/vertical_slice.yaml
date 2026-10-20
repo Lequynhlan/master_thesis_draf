@@ -1,0 +1,121 @@
+project:
+  name: vietnamese-financial-kg
+  timezone: Asia/Ho_Chi_Minh
+
+vertical_slice:
+  article_limit: 100
+  # Danh sách VN30 sau kỳ rà soát tháng 7/2026, hiệu lực từ 2026-08-03.
+  universe_reference_date: "2026-10-16"
+  stock_symbols:
+    - ACB
+    - BID
+    - CTG
+    - HDB
+    - LPB
+    - MBB
+    - SHB
+    - SSB
+    - STB
+    - TCB
+    - VCB
+    - VIB
+    - VPB
+  benchmark_index: VNINDEX
+  market_observation_date_from: "2026-07-16"
+  market_observation_date_to: "2026-10-16"
+  # Chọn khoảng thời gian sau khi chốt tập 100 bài và kiểm tra coverage dữ liệu giá.
+  article_date_from: null
+  article_date_to: null
+
+market_data:
+  # Cố định một backend để adjusted close không đổi phương pháp giữa các lần crawl.
+  source: kbs
+
+extractor:
+  provider: huggingface
+  model_id: vinai/phobert-base-v2
+  checkpoint_path: models/phobert_bkee_event_detection_v2
+  entity_checkpoint_path: models/phobert_bkee_emd_v1
+  trigger_conditioned_argument_checkpoint_path: models/phobert_bkee_eae_trigger_conditioned_v1
+  label_mapping_path: models/phobert_bkee_event_detection_v2/label_mapping.json
+  model_version: "bkee-bio-dev-selected-v2"
+  event_detection_task: BKEE_EVENT_DETECTION_BIO_TOKEN_CLASSIFICATION
+  event_type_system: BKEE_33_TYPES
+  device: null
+  # Chỉ gắn cờ rà soát body ngắn; không loại body khỏi đầu vào trích xuất.
+  short_body_review_chars: 500
+
+event_study:
+  # Offsets là phiên giao dịch tương đối với effectiveTradingDate.
+  effective_date_cutoff: "08:00:00"
+  cutoff_timezone: Asia/Ho_Chi_Minh
+  window_start_offset: 0
+  window_end_offset: 3
+  supplemental_window_start_offset: 1
+  supplemental_window_end_offset: 3
+  market_timezone: Asia/Ho_Chi_Minh
+  benchmark_index: VNINDEX
+
+paths:
+  schema_ontology: schema/ontology.ttl
+  schema_shapes: schema/shapes.ttl
+  raw_initial_data: data/raw/initial_data_load
+  raw_daily: data/raw/daily
+  snapshots: data/snapshots
+  gold: data/gold
+  output: data/output
+  runs: runs
+  # Cohort khóa cố định để mọi lần build KG dùng cùng đúng 100 bài báo.
+  news_selection_manifest: data/output/news_article_selection_manifest.json
+
+# URL Vietstock lấy từ liên kết nội bộ trên trang nguồn hoặc được xác minh
+# trực tiếp bằng mã/sàn hiển thị. URL CafeF cũng được crawler đối chiếu mã trước khi lưu.
+stock_profile_pages:
+  ACB:
+    vietstock: https://finance.vietstock.vn/ACB-ngan-hang-tmcp-a-chau.htm
+    cafef: https://cafef.vn/du-lieu/acb/thong-tin-chung.chn
+  BID:
+    vietstock: https://finance.vietstock.vn/BID-ngan-hang-tmcp-dau-tu-va-phat-trien-viet-nam.htm
+    cafef: https://cafef.vn/du-lieu/bid/thong-tin-chung.chn
+  CTG:
+    vietstock: https://finance.vietstock.vn/CTG-ngan-hang-tmcp-cong-thuong-viet-nam.htm
+    cafef: https://cafef.vn/du-lieu/ctg/thong-tin-chung.chn
+  HDB:
+    vietstock: https://finance.vietstock.vn/HDB-ngan-hang-tmcp-phat-trien-thanh-pho-ho-chi-minh.htm
+    cafef: https://cafef.vn/du-lieu/hose/hdb-ngan-hang-tmcp-phat-trien-tp-ho-chi-minh.chn
+  LPB:
+    vietstock: https://finance.vietstock.vn/LPB-ngan-hang-tmcp-buu-dien-lien-viet.htm
+    cafef: https://cafef.vn/du-lieu/lpb/thong-tin-chung.chn
+  MBB:
+    vietstock: https://finance.vietstock.vn/MBB-ngan-hang-tmcp-quan-doi.htm
+    cafef: https://cafef.vn/du-lieu/mbb/thong-tin-chung.chn
+  SHB:
+    vietstock: https://finance.vietstock.vn/SHB-ngan-hang-tmcp-sai-gon-ha-noi.htm
+    cafef: https://cafef.vn/du-lieu/shb/thong-tin-chung.chn
+  SSB:
+    vietstock: https://finance.vietstock.vn/SSB-ngan-hang-tmcp-dong-nam-a.htm
+    cafef: https://cafef.vn/du-lieu/ssb/thong-tin-chung.chn
+  STB:
+    vietstock: https://finance.vietstock.vn/STB-ngan-hang-tmcp-sai-gon-thuong-tin.htm
+    cafef: https://cafef.vn/du-lieu/stb/thong-tin-chung.chn
+  TCB:
+    vietstock: https://finance.vietstock.vn/TCB-ngan-hang-tmcp-ky-thuong-viet-nam.htm
+    cafef: https://cafef.vn/du-lieu/hose/tcb-ngan-hang-tmcp-ky-thuong-viet-nam-techcombank.chn
+  VCB:
+    vietstock: https://finance.vietstock.vn/VCB-ngan-hang-tmcp-ngoai-thuong-viet-nam.htm
+    cafef: https://cafef.vn/du-lieu/vcb/thong-tin-chung.chn
+  VIB:
+    vietstock: https://finance.vietstock.vn/VIB-ngan-hang-tmcp-quoc-te-viet-nam.htm
+    cafef: https://cafef.vn/du-lieu/vib/thong-tin-chung.chn
+  VPB:
+    vietstock: https://finance.vietstock.vn/VPB-ngan-hang-tmcp-viet-nam-thinh-vuong.htm
+    cafef: https://cafef.vn/du-lieu/vpb/thong-tin-chung.chn
+
+# Trang lịch sử giao dịch có trường chọn mã chỉ số VNINDEX.
+market_index_pages:
+  VNINDEX: https://cafef.vn/du-lieu/lich-su-giao-dich-vnindex-2.chn
+
+vn30_membership:
+  # Danh mục chính thức HOSE kỳ 7/2026, hiệu lực từ 2026-08-03.
+  effective_from: "2026-08-03"
+  source_url: https://staticfile.hsx.vn/Uploads/UploadDocuments/2479382/15072026%20CBTT%20-%20Danh%20muc%20thanh%20phan%20HOSE-Index%20thang%207.2026.pdf

@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vietnamese-financial-kg"
+version = "0.1.0"
+description = "Vertical slice for a Vietnamese financial knowledge graph pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0",
+    "rdflib>=7.0",
+    "pyshacl>=0.25",
+]
+
+[project.optional-dependencies]
+extractor = [
+    "torch>=2.2",
+    "transformers>=4.40",
+    "py-vncorenlp>=0.1.4",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+]
+browser = [
+    "playwright>=1.45",
+]
+pdf = [
+    "pypdf>=5",
+]
+
+[project.scripts]
+wfkg = "wfkg.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

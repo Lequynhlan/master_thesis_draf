@@ -1,0 +1,9 @@
+# Frozen reviewed PoC configuration. Generic live config remains unchanged.
+integration:
+  id: WFKG_VERTICAL_SLICE_INTEGRATED_POC_V1
+  release_manifest: runs/wfkg_vertical_slice_news_100_release_v1/release_manifest.json
+  benchmark_index: VN30
+  reaction_tolerance: 1e-12
+  extraction_mode: analyst_reviewed_snapshot
+  automatic_ner: false
+  commit_to_main_kg: false
